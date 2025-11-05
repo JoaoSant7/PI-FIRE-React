@@ -85,7 +85,7 @@ export default function App() {
         {/* Rodapé */}
         <View style={styles.footer}>
           <Text style={styles.footerText}>
-            <Text style={styles.signUpText}>Cadastre-se</Text>
+            <Text style={styles.signUpText}></Text>
           </Text>
         </View>
 
@@ -108,12 +108,12 @@ const styles = StyleSheet.create({
   fireTitle: {
     fontSize: 48,
     fontWeight: 'bold',
-    color: '#FF6B35', // Laranja que remete ao fogo - pode ajustar a cor
+    color: '#bc010c', // Laranja que remete ao fogo - pode ajustar a cor
     textAlign: 'center',
     marginBottom: 10,
-    textShadowColor: 'rgba(255, 107, 53, 0.3)',
-    textShadowOffset: { width: 0, height: 4 },
-    textShadowRadius: 10,
+    //textShadowColor: 'rgba(255, 107, 53, 0.3)',
+    //textShadowOffset: { width: 0, height: 4 },
+    //textShadowRadius: 10,
   },
   subtitle: {
     fontSize: 16,
@@ -147,16 +147,17 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   forgotPasswordText: {
-    color: '#FF6B35',
+    color: '#bc010c',
     fontSize: 14,
     fontWeight: '500',
+    fontStyle: 'bold',
   },
   loginButton: {
-    backgroundColor: '#FF6B35',
+    backgroundColor: '#bc010c',
     paddingVertical: 16,
     borderRadius: 10,
     alignItems: 'center',
-    shadowColor: '#FF6B35',
+    shadowColor: '#bc010c',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -179,9 +180,5 @@ const styles = StyleSheet.create({
   footerText: {
     color: '#666',
     fontSize: 14,
-  },
-  signUpText: {
-    color: '#FF6B35',
-    fontWeight: 'bold',
   },
 });
