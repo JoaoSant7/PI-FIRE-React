@@ -18,15 +18,36 @@ export default function HomeScreen({ navigation }) {
         
         {/* Botões de Acesso */}
         <TouchableOpacity style={styles.menuButton}>
-          <Text style={styles.menuButtonText}>Unidade</Text>
+          <Text style={styles.menuButtonText}>Dashboard</Text>
         </TouchableOpacity>
         
         <TouchableOpacity style={styles.menuButton}>
-          <Text style={styles.menuButtonText}>Descrição</Text>
+          <Text style={styles.menuButtonText}>Listar Ocorrências</Text>
         </TouchableOpacity>
         
         <TouchableOpacity style={styles.menuButton}>
-          <Text style={styles.menuButtonText}>Vítimas</Text>
+          <Text style={styles.menuButtonText}>Registrar Nova Ocorrência</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Barra Inferior */}
+      <View style={styles.bottomNav}>
+        <TouchableOpacity style={styles.navItem}>
+          {/* Substitua este Text pelo seu ícone de Configurações */}
+          <Text style={styles.navIcon}>⚙️</Text>
+          <Text style={styles.navText}>Configurações</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity style={styles.navItem}>
+          {/* Substitua este Text pelo seu ícone de Usuário */}
+          <Text style={styles.navIcon}>🏠</Text>
+          <Text style={styles.navText}>Início</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity style={styles.navItem}>
+          {/* Substitua este Text pelo seu ícone de Início */}
+          <Text style={styles.navIcon}>👤</Text>
+          <Text style={styles.navText}>Usuário</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -92,5 +113,29 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     color: '#bc010c',
+  },
+  bottomNav: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    backgroundColor: '#bc010c',
+    borderTopWidth: 1,
+    borderTopColor: '#e1e1e1',
+    paddingVertical: 15,
+    paddingHorizontal: 10,
+  },
+  navItem: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+  },
+  navIcon: {
+    fontSize: 24,
+    marginBottom: 5,
+  },
+  navText: {
+    fontSize: 12,
+    color: '#f8f8f8',
+    fontWeight: '500',
   },
 });
