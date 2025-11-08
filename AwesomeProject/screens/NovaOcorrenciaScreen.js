@@ -405,21 +405,24 @@ const OcorrenciaScreen = () => {
             </View>
           </View>
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Destino da vítima:</Text>
-            <View style={styles.pickerContainer}>
-              <Picker
-                selectedValue={destino}
-                onValueChange={setDestino}
-                style={styles.picker}
-              >
-                <Picker.Item label="Entregue ao Hospital" value="Entregue ao Hospital" />
-                <Picker.Item label="Liberada no local" value="Liberada no local" />
-                <Picker.Item label="Encaminhada à delegacia" value="Encaminhada à delegacia" />
-              </Picker>
-            </View>
-          </View>
-        </View>
+<View style={styles.inputGroup}>
+  <Text style={styles.label}>Destino da vítima:</Text>
+  <View style={styles.pickerContainer}>
+    <Picker
+      selectedValue={destino}
+      onValueChange={setDestino}
+      style={styles.picker}
+    >
+      <Picker.Item label="Encaminhado ao Suporte Avançado" value="Encaminhado ao Suporte Avançado" />
+      <Picker.Item label="Encaminhado ao Suporte Básico" value="Encaminhado ao Suporte Básico" />
+      <Picker.Item label="Entregue ao Hospital" value="Entregue ao Hospital" />
+      <Picker.Item label="Óbito" value="Óbito" />
+      <Picker.Item label="Outro" value="Outro" />
+      <Picker.Item label="Permaneceu no Local após atendimento" value="Permaneceu no Local após atendimento" />
+    </Picker>
+  </View>
+</View>
+
 
         {/* Viatura e Forma de acionamento - QUARTO */}
         <View style={styles.section}>
@@ -447,21 +450,22 @@ const OcorrenciaScreen = () => {
             />
           </View>
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Forma de acionamento:</Text>
-            <View style={styles.pickerContainer}>
-              <Picker
-                selectedValue={acionamento}
-                onValueChange={setAcionamento}
-                style={styles.picker}
-              >
-                <Picker.Item label="PESSOALMENTE" value="PESSOALMENTE" />
-                <Picker.Item label="TELEFONE" value="TELEFONE" />
-                <Picker.Item label="RÁDIO" value="RÁDIO" />
-                <Picker.Item label="OUTRO" value="OUTRO" />
-              </Picker>
-            </View>
-          </View>
+<View style={styles.inputGroup}>
+  <Text style={styles.label}>Forma de acionamento:</Text>
+  <View style={styles.pickerContainer}>
+    <Picker
+      selectedValue={acionamento}
+      onValueChange={setAcionamento}
+      style={styles.picker}
+    >
+      <Picker.Item label="CIODS" value="CIODS" />
+      <Picker.Item label="CO DO GRUPAMENTO" value="CO DO GRUPAMENTO" />
+      <Picker.Item label="OUTRO" value="OUTRO" />
+      <Picker.Item label="PESSOALMENTE" value="PESSOALMENTE" />
+    </Picker>
+  </View>
+</View>
+
 
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Local do acionamento:</Text>
