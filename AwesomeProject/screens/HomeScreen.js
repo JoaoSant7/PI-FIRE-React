@@ -2,6 +2,7 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, StatusBar } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import UserIcon from '../components/UserIcon'; // Importe o seu ícone SVG
 
 export default function HomeScreen({ navigation }) {
   // Funções para os botões da barra inferior
@@ -89,7 +90,8 @@ export default function HomeScreen({ navigation }) {
           style={styles.navItem} 
           onPress={handleUsuario}
         >
-          <Icon name="person" size={24} color="#f8f8f8" />
+          {/* Substituindo o ícone MaterialIcons pelo seu SVG */}
+          <UserIcon width={24} height={24} color="#f8f8f8" />
           <Text style={styles.navText}>Usuário</Text>
         </TouchableOpacity>
       </View>
