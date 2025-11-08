@@ -108,236 +108,7 @@ const OcorrenciaScreen = () => {
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView}>
-        {/* Informações da Vítima */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Informações da vítima</Text>
-          
-          <View style={styles.switchContainer}>
-            <Text style={styles.label}>Vítima envolvida:</Text>
-            <Switch
-              value={envolvida}
-              onValueChange={setEnvolvida}
-            />
-            <Text style={styles.switchLabel}>{envolvida ? 'Sim' : 'Não'}</Text>
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Sexo da vítima:</Text>
-            <View style={styles.pickerContainer}>
-              <Picker
-                selectedValue={sexo}
-                onValueChange={setSexo}
-                style={styles.picker}
-              >
-                <Picker.Item label="Masculino" value="Masculino" />
-                <Picker.Item label="Feminino" value="Feminino" />
-                <Picker.Item label="Outro" value="Outro" />
-              </Picker>
-            </View>
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Idade da vítima:</Text>
-            <TextInput
-              style={styles.input}
-              value={idade}
-              onChangeText={setIdade}
-              placeholder="Digite a idade"
-              placeholderTextColor="#999"
-              keyboardType="numeric"
-            />
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Classificação da vítima:</Text>
-            <View style={styles.pickerContainer}>
-              <Picker
-                selectedValue={classificacao}
-                onValueChange={setClassificacao}
-                style={styles.picker}
-              >
-                <Picker.Item label="Vítima ilesa" value="Vítima ilesa" />
-                <Picker.Item label="Ferida leve" value="Ferida leve" />
-                <Picker.Item label="Ferida grave" value="Ferida grave" />
-                <Picker.Item label="Óbito" value="Óbito" />
-              </Picker>
-            </View>
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Destino da vítima:</Text>
-            <View style={styles.pickerContainer}>
-              <Picker
-                selectedValue={destino}
-                onValueChange={setDestino}
-                style={styles.picker}
-              >
-                <Picker.Item label="Entregue ao Hospital" value="Entregue ao Hospital" />
-                <Picker.Item label="Liberada no local" value="Liberada no local" />
-                <Picker.Item label="Encaminhada à delegacia" value="Encaminhada à delegacia" />
-              </Picker>
-            </View>
-          </View>
-        </View>
-
-        {/* Viatura e Forma de acionamento */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Viatura e Forma de acionamento</Text>
-          
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Viatura empregada:</Text>
-            <TextInput
-              style={styles.input}
-              value={viatura}
-              onChangeText={setViatura}
-              placeholder="Digite a viatura empregada"
-              placeholderTextColor="#999"
-            />
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Número da viatura:</Text>
-            <TextInput
-              style={styles.input}
-              value={numeroViatura}
-              onChangeText={setNumeroViatura}
-              placeholder="Digite o número da viatura"
-              placeholderTextColor="#999"
-            />
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Forma de acionamento:</Text>
-            <View style={styles.pickerContainer}>
-              <Picker
-                selectedValue={acionamento}
-                onValueChange={setAcionamento}
-                style={styles.picker}
-              >
-                <Picker.Item label="PESSOALMENTE" value="PESSOALMENTE" />
-                <Picker.Item label="TELEFONE" value="TELEFONE" />
-                <Picker.Item label="RÁDIO" value="RÁDIO" />
-                <Picker.Item label="OUTRO" value="OUTRO" />
-              </Picker>
-            </View>
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Local do acionamento:</Text>
-            <TextInput
-              style={styles.input}
-              value={localAcionamento}
-              onChangeText={setLocalAcionamento}
-              placeholder="Digite o local do acionamento"
-              placeholderTextColor="#999"
-            />
-          </View>
-        </View>
-
-        {/* Endereço */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Endereço</Text>
-          
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Município:</Text>
-            <TextInput
-              style={styles.input}
-              value={municipio}
-              onChangeText={setMunicipio}
-              placeholder="Digite o município"
-              placeholderTextColor="#999"
-            />
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Região:</Text>
-            <TextInput
-              style={styles.input}
-              value={regiao}
-              onChangeText={setRegiao}
-              placeholder="Digite a região"
-              placeholderTextColor="#999"
-            />
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Bairro:</Text>
-            <TextInput
-              style={styles.input}
-              value={bairro}
-              onChangeText={setBairro}
-              placeholder="Digite o bairro"
-              placeholderTextColor="#999"
-            />
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Tipo de logradouro:</Text>
-            <View style={styles.pickerContainer}>
-              <Picker
-                selectedValue={tipoLogradouro}
-                onValueChange={setTipoLogradouro}
-                style={styles.picker}
-              >
-                <Picker.Item label="AVENIDA" value="AVENIDA" />
-                <Picker.Item label="RUA" value="RUA" />
-                <Picker.Item label="TRAVESSA" value="TRAVESSA" />
-                <Picker.Item label="ALAMEDA" value="ALAMEDA" />
-                <Picker.Item label="ESTRADA" value="ESTRADA" />
-              </Picker>
-            </View>
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>AIS:</Text>
-            <TextInput
-              style={styles.input}
-              value={ais}
-              onChangeText={setAis}
-              placeholder="Digite o AIS"
-              placeholderTextColor="#999"
-              keyboardType="numeric"
-            />
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Logradouro:</Text>
-            <TextInput
-              style={styles.input}
-              value={logradouro}
-              onChangeText={setLogradouro}
-              placeholder="Digite o logradouro"
-              placeholderTextColor="#999"
-            />
-          </View>
-
-          <View style={styles.row}>
-            <View style={[styles.inputGroup, styles.flex1]}>
-              <Text style={styles.label}>Latitude:</Text>
-              <TextInput
-                style={styles.input}
-                value={latitude}
-                onChangeText={setLatitude}
-                placeholder="Digite a latitude"
-                placeholderTextColor="#999"
-                keyboardType="numbers-and-punctuation"
-              />
-            </View>
-            <View style={[styles.inputGroup, styles.flex1, styles.marginLeft]}>
-              <Text style={styles.label}>Longitude:</Text>
-              <TextInput
-                style={styles.input}
-                value={longitude}
-                onChangeText={setLongitude}
-                placeholder="Digite a longitude"
-                placeholderTextColor="#999"
-                keyboardType="numbers-and-punctuation"
-              />
-            </View>
-          </View>
-        </View>
-
-        {/* Dados Internos */}
+        {/* Dados Internos - PRIMEIRO */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Dados internos</Text>
           
@@ -416,7 +187,7 @@ const OcorrenciaScreen = () => {
           </View>
         </View>
 
-        {/* Ocorrência */}
+        {/* Ocorrência - SEGUNDO */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Ocorrência</Text>
           
@@ -538,6 +309,235 @@ const OcorrenciaScreen = () => {
               placeholder="HH:MM:SS"
               placeholderTextColor="#999"
             />
+          </View>
+        </View>
+
+        {/* Informações da Vítima - TERCEIRO */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Informações da vítima</Text>
+          
+          <View style={styles.switchContainer}>
+            <Text style={styles.label}>Vítima envolvida:</Text>
+            <Switch
+              value={envolvida}
+              onValueChange={setEnvolvida}
+            />
+            <Text style={styles.switchLabel}>{envolvida ? 'Sim' : 'Não'}</Text>
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Sexo da vítima:</Text>
+            <View style={styles.pickerContainer}>
+              <Picker
+                selectedValue={sexo}
+                onValueChange={setSexo}
+                style={styles.picker}
+              >
+                <Picker.Item label="Masculino" value="Masculino" />
+                <Picker.Item label="Feminino" value="Feminino" />
+                <Picker.Item label="Outro" value="Outro" />
+              </Picker>
+            </View>
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Idade da vítima:</Text>
+            <TextInput
+              style={styles.input}
+              value={idade}
+              onChangeText={setIdade}
+              placeholder="Digite a idade"
+              placeholderTextColor="#999"
+              keyboardType="numeric"
+            />
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Classificação da vítima:</Text>
+            <View style={styles.pickerContainer}>
+              <Picker
+                selectedValue={classificacao}
+                onValueChange={setClassificacao}
+                style={styles.picker}
+              >
+                <Picker.Item label="Vítima ilesa" value="Vítima ilesa" />
+                <Picker.Item label="Ferida leve" value="Ferida leve" />
+                <Picker.Item label="Ferida grave" value="Ferida grave" />
+                <Picker.Item label="Óbito" value="Óbito" />
+              </Picker>
+            </View>
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Destino da vítima:</Text>
+            <View style={styles.pickerContainer}>
+              <Picker
+                selectedValue={destino}
+                onValueChange={setDestino}
+                style={styles.picker}
+              >
+                <Picker.Item label="Entregue ao Hospital" value="Entregue ao Hospital" />
+                <Picker.Item label="Liberada no local" value="Liberada no local" />
+                <Picker.Item label="Encaminhada à delegacia" value="Encaminhada à delegacia" />
+              </Picker>
+            </View>
+          </View>
+        </View>
+
+        {/* Viatura e Forma de acionamento - QUARTO */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Viatura e Forma de acionamento</Text>
+          
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Viatura empregada:</Text>
+            <TextInput
+              style={styles.input}
+              value={viatura}
+              onChangeText={setViatura}
+              placeholder="Digite a viatura empregada"
+              placeholderTextColor="#999"
+            />
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Número da viatura:</Text>
+            <TextInput
+              style={styles.input}
+              value={numeroViatura}
+              onChangeText={setNumeroViatura}
+              placeholder="Digite o número da viatura"
+              placeholderTextColor="#999"
+            />
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Forma de acionamento:</Text>
+            <View style={styles.pickerContainer}>
+              <Picker
+                selectedValue={acionamento}
+                onValueChange={setAcionamento}
+                style={styles.picker}
+              >
+                <Picker.Item label="PESSOALMENTE" value="PESSOALMENTE" />
+                <Picker.Item label="TELEFONE" value="TELEFONE" />
+                <Picker.Item label="RÁDIO" value="RÁDIO" />
+                <Picker.Item label="OUTRO" value="OUTRO" />
+              </Picker>
+            </View>
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Local do acionamento:</Text>
+            <TextInput
+              style={styles.input}
+              value={localAcionamento}
+              onChangeText={setLocalAcionamento}
+              placeholder="Digite o local do acionamento"
+              placeholderTextColor="#999"
+            />
+          </View>
+        </View>
+
+        {/* Endereço - QUINTO */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Endereço</Text>
+          
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Município:</Text>
+            <TextInput
+              style={styles.input}
+              value={municipio}
+              onChangeText={setMunicipio}
+              placeholder="Digite o município"
+              placeholderTextColor="#999"
+            />
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Região:</Text>
+            <TextInput
+              style={styles.input}
+              value={regiao}
+              onChangeText={setRegiao}
+              placeholder="Digite a região"
+              placeholderTextColor="#999"
+            />
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Bairro:</Text>
+            <TextInput
+              style={styles.input}
+              value={bairro}
+              onChangeText={setBairro}
+              placeholder="Digite o bairro"
+              placeholderTextColor="#999"
+            />
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Tipo de logradouro:</Text>
+            <View style={styles.pickerContainer}>
+              <Picker
+                selectedValue={tipoLogradouro}
+                onValueChange={setTipoLogradouro}
+                style={styles.picker}
+              >
+                <Picker.Item label="AVENIDA" value="AVENIDA" />
+                <Picker.Item label="RUA" value="RUA" />
+                <Picker.Item label="TRAVESSA" value="TRAVESSA" />
+                <Picker.Item label="ALAMEDA" value="ALAMEDA" />
+                <Picker.Item label="ESTRADA" value="ESTRADA" />
+              </Picker>
+            </View>
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>AIS:</Text>
+            <TextInput
+              style={styles.input}
+              value={ais}
+              onChangeText={setAis}
+              placeholder="Digite o AIS"
+              placeholderTextColor="#999"
+              keyboardType="numeric"
+            />
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Logradouro:</Text>
+            <TextInput
+              style={styles.input}
+              value={logradouro}
+              onChangeText={setLogradouro}
+              placeholder="Digite o logradouro"
+              placeholderTextColor="#999"
+            />
+          </View>
+
+          <View style={styles.row}>
+            <View style={[styles.inputGroup, styles.flex1]}>
+              <Text style={styles.label}>Latitude:</Text>
+              <TextInput
+                style={styles.input}
+                value={latitude}
+                onChangeText={setLatitude}
+                placeholder="Digite a latitude"
+                placeholderTextColor="#999"
+                keyboardType="numbers-and-punctuation"
+              />
+            </View>
+            <View style={[styles.inputGroup, styles.flex1, styles.marginLeft]}>
+              <Text style={styles.label}>Longitude:</Text>
+              <TextInput
+                style={styles.input}
+                value={longitude}
+                onChangeText={setLongitude}
+                placeholder="Digite a longitude"
+                placeholderTextColor="#999"
+                keyboardType="numbers-and-punctuation"
+              />
+            </View>
           </View>
         </View>
 
