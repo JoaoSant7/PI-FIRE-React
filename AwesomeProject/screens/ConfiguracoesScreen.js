@@ -1,11 +1,20 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, Switch } from 'react-native';
 
 export default function ConfiguracoesScreen() {
+  const [isEnabled, setIsEnabled] = useState(false);
+  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Configurações</Text>
-      <Text style={styles.subtitle}>Tela de Configurações</Text>
+      <View style={styles.switchContainer}>
+        <Text style={styles.switchText}>Notificações</Text>
+        <Switch
+          onValueChange={toggleSwitch}
+          value={isEnabled}
+        />
+      </View>
     </View>
   );
 }
@@ -13,7 +22,6 @@ export default function ConfiguracoesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
   },
@@ -21,11 +29,19 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     color: '#bc010c',
-    marginBottom: 10,
+    marginBottom: 30,
   },
-  subtitle: {
+  switchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+    padding: 10,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 10,
+  },
+  switchText: {
     fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
+    color: '#333',
   },
 });
