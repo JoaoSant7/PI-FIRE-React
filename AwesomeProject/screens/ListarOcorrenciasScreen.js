@@ -1,0 +1,163 @@
+// screens/ListaOcorrenciasScreen.js
+import React from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, StatusBar, ScrollView } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+
+export default function ListaOcorrenciasScreen({ navigation }) {
+  // Dados placeholder para ocorrências
+  const ocorrencias = [
+    { id: 1, tipo: 'Incêndio', local: 'Av. Principal, 123', status: 'Em Andamento', hora: '14:30' },
+    { id: 2, tipo: 'Acidente', local: 'Rua das Flores, 456', status: 'Finalizada', hora: '10:15' },
+    { id: 3, tipo: 'Resgate', local: 'Praça Central', status: 'Em Andamento', hora: '16:45' },
+    { id: 4, tipo: 'Incêndio', local: 'Condomínio Solar', status: 'Finalizada', hora: '08:20' },
+  ];
+
+  const getStatusColor = (status) => {
+    return status === 'Em Andamento' ? '#FF9800' : '#4CAF50';
+  };
+
+  return (
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#bc010c" />
+      
+      {/* Header */}
+      <View style={styles.header}>
+        <TouchableOpacity 
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}
+        >
+          <Icon name="arrow-back" size={24} color="#fff" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Lista de Ocorrências</Text>
+        <View style={styles.placeholder} />
+      </View>
+
+      <ScrollView style={styles.content}>
+        <View style={styles.placeholderSection}>
+          <Icon name="list" size={80} color="#bc010c" />
+          <Text style={styles.placeholderTitle}>Ocorrências</Text>
+          <Text style={styles.placeholderText}>
+            Lista de todas as ocorrências registradas no sistema
+          </Text>
+        </View>
+
+        {/* Lista de ocorrências */}
+        {ocorrencias.map((ocorrencia) => (
+          <TouchableOpacity key={ocorrencia.id} style={styles.ocorrenciaCard}>
+            <View style={styles.ocorrenciaHeader}>
+              <Text style={styles.ocorrenciaTipo}>{ocorrencia.tipo}</Text>
+              <View style={[styles.statusBadge, { backgroundColor: getStatusColor(ocorrencia.status) }]}>
+                <Text style={styles.statusText}>{ocorrencia.status}</Text>
+              </View>
+            </View>
+            <View style={styles.ocorrenciaInfo}>
+              <Icon name="location-on" size={16} color="#666" />
+              <Text style={styles.ocorrenciaLocal}>{ocorrencia.local}</Text>
+            </View>
+            <View style={styles.ocorrenciaInfo}>
+              <Icon name="access-time" size={16} color="#666" />
+              <Text style={styles.ocorrenciaHora}>{ocorrencia.hora}</Text>
+            </View>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  header: {
+    backgroundColor: '#bc010c',
+    paddingTop: 60,
+    paddingBottom: 20,
+    paddingHorizontal: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  backButton: {
+    padding: 5,
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#fff',
+    textAlign: 'center',
+    flex: 1,
+  },
+  placeholder: {
+    width: 24,
+  },
+  content: {
+    flex: 1,
+    padding: 20,
+  },
+  placeholderSection: {
+    alignItems: 'center',
+    paddingVertical: 30,
+    backgroundColor: '#f8f8f8',
+    borderRadius: 12,
+    marginBottom: 20,
+  },
+  placeholderTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#333',
+    marginTop: 15,
+    marginBottom: 10,
+  },
+  placeholderText: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+    paddingHorizontal: 20,
+  },
+  ocorrenciaCard: {
+    backgroundColor: '#f8f8f8',
+    padding: 15,
+    borderRadius: 12,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#e1e1e1',
+  },
+  ocorrenciaHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  ocorrenciaTipo: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  statusBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 15,
+  },
+  statusText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  ocorrenciaInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 5,
+  },
+  ocorrenciaLocal: {
+    fontSize: 14,
+    color: '#666',
+    marginLeft: 5,
+  },
+  ocorrenciaHora: {
+    fontSize: 14,
+    color: '#666',
+    marginLeft: 5,
+  },
+});

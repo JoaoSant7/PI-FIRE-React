@@ -6,7 +6,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 export default function HomeScreen({ navigation }) {
   // Funções para os botões da barra inferior
   const handleConfiguracoes = () => {
-    // navigation.navigate('Configuracoes');
+    navigation.navigate('Configuracoes');
     alert('Abrindo Configurações');
   };
 
@@ -16,23 +16,23 @@ export default function HomeScreen({ navigation }) {
   };
 
   const handleUsuario = () => {
-    // navigation.navigate('Perfil');
+    navigation.navigate('Usuario',{ email: 'email_do_usuario@exemplo.com' });
     alert('Abrindo Perfil do Usuário');
   };
 
   // Funções para os botões principais (se quiser adicionar depois)
   const handleDashboard = () => {
-    // navigation.navigate('Dashboard');
+    navigation.navigate('Dashboard');
     alert('Abrindo Dashboard');
   };
 
   const handleListarOcorrencias = () => {
-    // navigation.navigate('ListaOcorrencias');
+    navigation.navigate('ListaOcorrencias');
     alert('Abrindo Lista de Ocorrências');
   };
 
   const handleRegistrarOcorrencia = () => {
-    // navigation.navigate('NovaOcorrencia');
+    navigation.navigate('NovaOcorrencia');
     alert('Abrindo Registro de Nova Ocorrência');
   };
 
