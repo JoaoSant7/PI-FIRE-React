@@ -57,3 +57,4 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   // ... (os mesmos estilos que te passei anteriormente)
 });
+
