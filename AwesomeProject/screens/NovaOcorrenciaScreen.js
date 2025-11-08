@@ -41,7 +41,7 @@ const OcorrenciaScreen = () => {
   const [dataHora, setDataHora] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [numeroAviso, setNumeroAviso] = useState('');
-  const [diretoria, setDiretoria] = useState('');
+  const [diretoria, setDiretoria] = useState('DIM');
   const [grupamento, setGrupamento] = useState('');
   const [pontoBase, setPontoBase] = useState('');
   const [dataAcionamento, setDataAcionamento] = useState(new Date());
@@ -145,25 +145,34 @@ const OcorrenciaScreen = () => {
 
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Diretoria:</Text>
-            <TextInput
-              style={styles.input}
-              value={diretoria}
-              onChangeText={setDiretoria}
-              placeholder="Digite a diretoria"
-              placeholderTextColor="#999"
-            />
-          </View>
+          <TextInput
+          style={styles.input}
+          value={diretoria}
+          onChangeText={setDiretoria} // Isso permite que o usuário altere o valor
+          placeholder="Digite a diretoria"
+          placeholderTextColor="#999"
+        />
+  </View>
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Grupamento:</Text>
-            <TextInput
-              style={styles.input}
-              value={grupamento}
-              onChangeText={setGrupamento}
-              placeholder="Digite o grupamento"
-              placeholderTextColor="#999"
-            />
-          </View>
+<View style={styles.inputGroup}>
+  <Text style={styles.label}>Grupamento:</Text>
+  <View style={styles.pickerContainer}>
+    <Picker
+      selectedValue={grupamento}
+      onValueChange={(itemValue) => setGrupamento(itemValue)}
+      style={styles.picker}
+      mode="dropdown"
+      dropdownIconColor="#000"
+    >
+      <Picker.Item label="Selecione o grupamento" value="" />
+      <Picker.Item label="GBAPH" value="GBAPH" />
+      <Picker.Item label="GBMar" value="GBMar" />
+      <Picker.Item label="GBI" value="GBI" />
+      <Picker.Item label="GBS" value="GBS" />
+      {/* Adicione mais itens conforme necessário */}
+    </Picker>
+  </View>
+</View>
 
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Ponto base:</Text>
@@ -200,28 +209,56 @@ const OcorrenciaScreen = () => {
                 style={styles.picker}
               >
                 <Picker.Item label="APH" value="APH" />
-                <Picker.Item label="Incêndio" value="Incêndio" />
-                <Picker.Item label="Resgate" value="Resgate" />
-                <Picker.Item label="Outros" value="Outros" />
+                <Picker.Item label="INCÊNDIO" value="Incêndio" />
+                <Picker.Item label="SALVAMENTO" value="Resgate" />
+                <Picker.Item label="PRODUTOS PERIGOSOS" value="PRODUTOS PERIGOSOS" />
+                <Picker.Item label="PREVENÇÃO" value="PREVENÇÃO" />
               </Picker>
             </View>
           </View>
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Grupo da ocorrência:</Text>
-            <View style={styles.pickerContainer}>
-              <Picker
-                selectedValue={grupoOcorrencia}
-                onValueChange={setGrupoOcorrencia}
-                style={styles.picker}
-              >
-                <Picker.Item label="Emergências Clínicas Diversas" value="Emergências Clínicas Diversas" />
-                <Picker.Item label="Acidentes de Trânsito" value="Acidentes de Trânsito" />
-                <Picker.Item label="Queimaduras" value="Queimaduras" />
-                <Picker.Item label="Outros" value="Outros" />
-              </Picker>
-            </View>
-          </View>
+<View style={styles.inputGroup}>
+  <Text style={styles.label}>Grupo da ocorrência:</Text>
+  <View style={styles.pickerContainer}>
+    <Picker
+      selectedValue={grupoOcorrencia}
+      onValueChange={setGrupoOcorrencia}
+      style={styles.picker}
+    >
+      <Picker.Item label="Acidente de Trânsito Atropelamento" value="Acidente de Trânsito Atropelamento" />
+      <Picker.Item label="Acidente de Trânsito Choque" value="Acidente de Trânsito Choque" />
+      <Picker.Item label="Acidente de Trânsito Colisão Abalroamento" value="Acidente de Trânsito Colisão Abalroamento" />
+      <Picker.Item label="Apoio em Operações" value="Apoio em Operações" />
+      <Picker.Item label="APH Diversos" value="APH Diversos" />
+      <Picker.Item label="Emergência Cardíaca" value="Emergência Cardíaca" />
+      <Picker.Item label="Emergência Respiratória" value="Emergência Respiratória" />
+      <Picker.Item label="Emergências Clínicas Diversas" value="Emergências Clínicas Diversas" />
+      <Picker.Item label="Evento com Animal" value="Evento com Animal" />
+      <Picker.Item label="Evento com Árvores" value="Evento com Árvores" />
+      <Picker.Item label="Evento com Cadáver" value="Evento com Cadáver" />
+      <Picker.Item label="Evento com Meio de Transporte" value="Evento com Meio de Transporte" />
+      <Picker.Item label="Evento com Pessoa" value="Evento com Pessoa" />
+      <Picker.Item label="Evento Esportivo" value="Evento Esportivo" />
+      <Picker.Item label="Evento Festivo" value="Evento Festivo" />
+      <Picker.Item label="Explosão" value="Explosão" />
+      <Picker.Item label="Incêndio em Edificação Concentração de Público" value="Incêndio em Edificação Concentração de Público" />
+      <Picker.Item label="Incêndio em Edificação Escolar" value="Incêndio em Edificação Escolar" />
+      <Picker.Item label="Incêndio em Edificação Industrial" value="Incêndio em Edificação Industrial" />
+      <Picker.Item label="Incêndio em Edificação Outros" value="Incêndio em Edificação Outros" />
+      <Picker.Item label="Incêndio em Edificação Residencial" value="Incêndio em Edificação Residencial" />
+      <Picker.Item label="Incêndio em Meio de Transporte Terrestre" value="Incêndio em Meio de Transporte Terrestre" />
+      <Picker.Item label="Incêndio em Vegetação" value="Incêndio em Vegetação" />
+      <Picker.Item label="Incêndio em Via Pública" value="Incêndio em Via Pública" />
+      <Picker.Item label="Incêndios Diversos" value="Incêndios Diversos" />
+      <Picker.Item label="Prevenção Aquática" value="Prevenção Aquática" />
+      <Picker.Item label="Prevenção Diversos" value="Prevenção Diversos" />
+      <Picker.Item label="Queda" value="Queda" />
+      <Picker.Item label="Vazamento" value="Vazamento" />
+      <Picker.Item label="Vítima de Agressão" value="Vítima de Agressão" />
+    </Picker>
+  </View>
+</View>
+
 
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Subgrupo da ocorrência:</Text>
