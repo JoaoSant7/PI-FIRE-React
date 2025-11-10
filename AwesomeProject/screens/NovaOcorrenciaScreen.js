@@ -435,19 +435,22 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
           </InputGroup>
 
 <InputGroup label="Região">
-  <Picker
-    selectedValue={formData.regiao}
-    onValueChange={(value) => updateFormData('regiao', value)}
-  >
-    <Picker.Item label="Selecione a região" value="" />
-    {REGIOES.map((regiao) => (
-      <Picker.Item 
-        key={regiao.value} 
-        label={regiao.label} 
-        value={regiao.value} 
-      />
-    ))}
-  </Picker>
+  <View style={styles.pickerContainer}>
+    <Picker
+      selectedValue={formData.regiao}
+      onValueChange={(value) => updateFormData('regiao', value)}
+      style={styles.picker}
+    >
+      <Picker.Item label="Selecione a região" value="" />
+      {REGIOES.map((regiao) => (
+        <Picker.Item 
+          key={regiao.value} 
+          label={regiao.label} 
+          value={regiao.value} 
+        />
+      ))}
+    </Picker>
+  </View>
 </InputGroup>
 
           <InputGroup label="Bairro">
@@ -636,6 +639,23 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontStyle: 'italic',
   },
+
+  // 🔹 Estilos adicionados para o Picker
+  pickerContainer: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    backgroundColor: '#fff',
+    overflow: 'hidden',
+    marginTop: 4,
+  },
+  picker: {
+    height: 56,
+    color: '#333',
+    fontSize: 16,
+    paddingHorizontal: 8,
+  },
 });
+
 
 export default NovaOcorrenciaScreen;
