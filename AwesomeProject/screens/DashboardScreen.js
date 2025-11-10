@@ -2,8 +2,22 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, StatusBar, ScrollView } from 'react-native';
 import { MaterialIcons as Icon } from '@expo/vector-icons';
+import BottomNav from '../components/BottomNav';
 
 export default function DashboardScreen({ navigation }) {
+  
+  const handleConfiguracoes = () => {
+    navigation.navigate('Configuracoes'); // Corrigido: 'Configuracoes'
+  };
+
+  const handleInicio = () => {
+    navigation.navigate('Home'); // Corrigido: 'Home'
+  };
+
+  const handleUsuario = () => {
+    navigation.navigate('Usuario'); // Corrigido: 'Usuario'
+  };
+
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#bc010c" />
@@ -46,9 +60,18 @@ export default function DashboardScreen({ navigation }) {
           </View>
         </View>
       </ScrollView>
+
+      {/* Barra Inferior */}
+      <BottomNav
+        onConfigPress={handleConfiguracoes}
+        onHomePress={handleInicio}
+        onUserPress={handleUsuario}
+      />
     </View>
   );
 }
+
+// ... (os estilos permanecem os mesmos)
 
 const styles = StyleSheet.create({
   container: {
@@ -61,6 +84,7 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     padding: 20,
+    marginBottom: 70, // Adicione esta margem para evitar que o conteúdo fique atrás da BottomNav
   },
   placeholderSection: {
     alignItems: 'center',
