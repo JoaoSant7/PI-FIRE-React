@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { 
   StyleSheet, 
   Text, 
@@ -10,18 +10,23 @@ import {
   Platform,
   ScrollView
 } from 'react-native';
+import { AuthContext } from '../App'; // Importe o AuthContext
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { login } = useContext(AuthContext); // Use o contexto
 
   const handleLogin = () => {
     // Aqui você implementará a lógica de login
     console.log('Email:', email);
     console.log('Password:', password);
-    // Exemplo de validação simples: se email e senha não estão vazios, navega para Home
+    
+    // Exemplo de validação simples: se email e senha não estão vazios, faz login
     if (email && password) {
-      navigation.navigate('Home');
+      // Em vez de navigation.navigate, chame a função login do contexto
+      // Isso mudará isAuthenticated para true e automaticamente mostrará o MainStack
+      login();
     } else {
       alert('Por favor, preencha email e senha!');
     }

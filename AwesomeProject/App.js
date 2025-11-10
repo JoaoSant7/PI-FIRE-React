@@ -1,5 +1,6 @@
 // App.js
-import React from 'react';
+import { View, Text } from 'react-native'; // Adicione esta linha
+import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { StatusBar } from 'react-native';
@@ -94,15 +95,57 @@ const MainStack = () => (
   </Stack.Navigator>
 );
 
+// Criando Context para gerenciar autenticação
+export const AuthContext = React.createContext();
+
 // Componente Principal
 export default function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Simulando verificação de autenticação (em app real, verificar token, etc.)
+  useEffect(() => {
+    const checkAuthStatus = async () => {
+      // Aqui você verificaria se o usuário está logado
+      // Por exemplo: verificar AsyncStorage, token JWT, etc.
+      // const token = await AsyncStorage.getItem('userToken');
+      // setIsAuthenticated(!!token);
+      
+      // Por enquanto, vamos simular um delay de carregamento
+      setTimeout(() => {
+        setIsLoading(false);
+        // setIsAuthenticated(!!token); // Descomente quando implementar a lógica real
+      }, 1000);
+    };
+
+    checkAuthStatus();
+  }, []);
+
+  const authContextValue = {
+    isAuthenticated,
+    setIsAuthenticated,
+    login: () => setIsAuthenticated(true),
+    logout: () => setIsAuthenticated(false),
+  };
+
+  // Tela de carregamento enquanto verifica autenticação
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: THEME_COLORS.primary }}>
+        <Text style={{ color: 'white', fontSize: 18 }}>Carregando...</Text>
+      </View>
+    );
+  }
+
   return (
-    <NavigationContainer>
-      <StatusBar 
-        backgroundColor={THEME_COLORS.primary} 
-        barStyle="light-content" 
-      />
-      <MainStack />
-    </NavigationContainer>
+    <AuthContext.Provider value={authContextValue}>
+      <NavigationContainer>
+        <StatusBar 
+          backgroundColor={THEME_COLORS.primary} 
+          barStyle="light-content" 
+        />
+        {isAuthenticated ? <MainStack /> : <AuthStack />}
+      </NavigationContainer>
+    </AuthContext.Provider>
   );
 }
