@@ -44,10 +44,10 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
     pontoBase: '',
     
     // Ocorrência
-    natureza: 'APH',
-    grupoOcorrencia: 'Emergências Clínicas Diversas',
-    subgrupoOcorrencia: 'Queda da Própria Altura',
-    situacao: 'Atendida',
+    natureza: '',
+    grupoOcorrencia: '',
+    subgrupoOcorrencia: '',
+    situacao: '',
     horaSaidaQuartel: '',
     horaLocal: '',
     horaSaidaLocal: '',
@@ -55,23 +55,23 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
     vitimaSamu: false,
     
     // Vítima
-    envolvida: true,
-    sexo: 'Masculino',
+    envolvida: false,
+    sexo: '',
     idade: '',
-    classificacao: 'Vítima ilesa',
-    destino: 'Entregue ao Hospital',
+    classificacao: '',
+    destino: '',
     
     // Viatura
     viatura: '',
     numeroViatura: '',
-    acionamento: 'PESSOALMENTE',
+    acionamento: '',
     localAcionamento: '',
     
     // Endereço
     municipio: '',
     regiao: '',
     bairro: '',
-    tipoLogradouro: 'AVENIDA',
+    tipoLogradouro: '',
     ais: '',
     logradouro: '',
     latitude: '',
@@ -163,28 +163,28 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
               diretoria: 'DIM',
               grupamento: '',
               pontoBase: '',
-              natureza: 'APH',
-              grupoOcorrencia: 'Emergências Clínicas Diversas',
-              subgrupoOcorrencia: 'Queda da Própria Altura',
-              situacao: 'Atendida',
+              natureza: '',
+              grupoOcorrencia: 's',
+              subgrupoOcorrencia: '',
+              situacao: '',
               horaSaidaQuartel: '',
               horaLocal: '',
               horaSaidaLocal: '',
               motivoNaoAtendida: '',
               vitimaSamu: false,
-              envolvida: true,
-              sexo: 'Masculino',
+              envolvida: false,
+              sexo: '',
               idade: '',
-              classificacao: 'Vítima ilesa',
-              destino: 'Entregue ao Hospital',
+              classificacao: '',
+              destino: '',
               viatura: '',
               numeroViatura: '',
-              acionamento: 'PESSOALMENTE',
+              acionamento: '',
               localAcionamento: '',
               municipio: '',
               regiao: '',
               bairro: '',
-              tipoLogradouro: 'AVENIDA',
+              tipoLogradouro: '',
               ais: '',
               logradouro: '',
               latitude: '',
@@ -201,7 +201,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
     <View style={styles.container}>
       <ScrollView style={styles.scrollView}>
         
-        {/* Seção: Dados Internos */}
+        {/*Seção: Dados Internos */}
         <Section title="Dados Internos">
           <InputGroup label="Data e Hora">
             <DatePickerInput
@@ -254,30 +254,34 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
               selectedValue={formData.natureza}
               onValueChange={(value) => updateFormData('natureza', value)}
               items={NATUREZAS}
+              placeholder="Selecione a Natureza da Ocorrência"
             />
           </InputGroup>
 
-          <InputGroup label="Grupo da Ocorrência *">
+          <InputGroup label="Grupo da Ocorrência">
             <PickerInput
               selectedValue={formData.grupoOcorrencia}
               onValueChange={(value) => updateFormData('grupoOcorrencia', value)}
               items={GRUPOS_OCORRENCIA}
+              placeholder="Selecione o Grupo de Ocorrência"
             />
           </InputGroup>
 
-          <InputGroup label="Subgrupo da Ocorrência *">
+          <InputGroup label="Subgrupo da Ocorrência">
             <PickerInput
               selectedValue={formData.subgrupoOcorrencia}
               onValueChange={(value) => updateFormData('subgrupoOcorrencia', value)}
               items={SUBGRUPOS_OCORRENCIA}
+              placeholder="Selecione o Subgrupo da Ocorrência"
             />
           </InputGroup>
 
-          <InputGroup label="Situação da Ocorrência *">
+          <InputGroup label="Situação da Ocorrência">
             <PickerInput
               selectedValue={formData.situacao}
               onValueChange={(value) => updateFormData('situacao', value)}
               items={SITUACOES}
+              placeholder="Selecione a Situação da Ocorrência"
             />
           </InputGroup>
 
@@ -302,7 +306,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
 
           {/* Motivo para ocorrência não atendida */}
           {formData.situacao === 'Não atendida' && (
-            <InputGroup label="Motivo da Não Atendimento *">
+            <InputGroup label="Motivo da Não Atendimento">
               <TextInput
                 value={formData.motivoNaoAtendida}
                 onChangeText={(value) => updateFormData('motivoNaoAtendida', value)}
@@ -360,6 +364,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
               selectedValue={formData.sexo}
               onValueChange={(value) => updateFormData('sexo', value)}
               items={SEXOS}
+              placeholder="Selecione o sexo da vítima"
             />
           </InputGroup>
 
@@ -372,22 +377,44 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
             />
           </InputGroup>
 
-          <InputGroup label="Classificação da Vítima">
-            <PickerInput
-              selectedValue={formData.classificacao}
-              onValueChange={(value) => updateFormData('classificacao', value)}
-              items={CLASSIFICACOES}
-            />
-          </InputGroup>
+<InputGroup label="Classificação da Vítima">
+  <View style={styles.pickerContainer}>
+    <Picker
+      selectedValue={formData.classificacao}
+      onValueChange={(value) => updateFormData('classificacao', value)}
+      style={styles.picker}
+    >
+      <Picker.Item label="Selecione a Classificação da Vítima" value="" />
+      {CLASSIFICACOES.map((item) => (
+        <Picker.Item 
+          key={item.value} 
+          label={item.label} 
+          value={item.value} 
+        />
+      ))}
+    </Picker>
+  </View>
+</InputGroup>
 
-          <InputGroup label="Destino da Vítima">
-            <PickerInput
-              selectedValue={formData.destino}
-              onValueChange={(value) => updateFormData('destino', value)}
-              items={DESTINOS}
-            />
-          </InputGroup>
-        </Section>
+<InputGroup label="Destino da Vítima">
+  <View style={styles.pickerContainer}>
+    <Picker
+      selectedValue={formData.destino}
+      onValueChange={(value) => updateFormData('destino', value)}
+      style={styles.picker}
+    >
+      <Picker.Item label="Selecione o Destino da Vítima" value="" />
+      {DESTINOS.map((item) => (
+        <Picker.Item
+          key={item.value}
+          label={item.label}
+          value={item.value}
+        />
+      ))}
+    </Picker>
+  </View>
+</InputGroup>
+</Section>
 
         {/* Seção: Viatura e Acionamento */}
         <Section title="Viatura e Acionamento">
@@ -407,13 +434,25 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
             />
           </InputGroup>
 
-          <InputGroup label="Forma de Acionamento">
-            <PickerInput
-              selectedValue={formData.acionamento}
-              onValueChange={(value) => updateFormData('acionamento', value)}
-              items={ACIONAMENTOS}
-            />
-          </InputGroup>
+<InputGroup label="Forma de Acionamento">
+  <View style={styles.pickerContainer}>
+    <Picker
+      selectedValue={formData.acionamento}
+      onValueChange={(value) => updateFormData('acionamento', value)}
+      style={styles.picker}
+    >
+      <Picker.Item label="Selecione a Forma de Acionamento" value="" />
+      {ACIONAMENTOS.map((item) => (
+        <Picker.Item 
+          key={item.value} 
+          label={item.label} 
+          value={item.value} 
+        />
+      ))}
+    </Picker>
+  </View>
+</InputGroup>
+
 
           <InputGroup label="Local do Acionamento">
             <TextInput
@@ -461,13 +500,15 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
             />
           </InputGroup>
 
-          <InputGroup label="Tipo de Logradouro">
-            <PickerInput
-              selectedValue={formData.tipoLogradouro}
-              onValueChange={(value) => updateFormData('tipoLogradouro', value)}
-              items={TIPOS_LOGRADOURO}
-            />
-          </InputGroup>
+<InputGroup label="Tipo de Logradouro">
+  <PickerInput
+    selectedValue={formData.tipoLogradouro}
+    onValueChange={(value) => updateFormData('tipoLogradouro', value)}
+    items={TIPOS_LOGRADOURO}
+    placeholder="Selecione o Tipo de Logradouro"
+  />
+</InputGroup>
+
 
           <InputGroup label="AIS">
             <TextInput
@@ -525,7 +566,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
         </View>
 
         <View style={styles.requiredNote}>
-          <Text style={styles.requiredText}>* Campos obrigatórios</Text>
+          <Text style={styles.requiredText}>FIRE ALPHA</Text>
         </View>
       </ScrollView>
     </View>
