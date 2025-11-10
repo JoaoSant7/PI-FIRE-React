@@ -1,19 +1,29 @@
+// constants/ocorrencias.js
+
+// Regiões organizadas em ordem alfabética
+export const REGIOES = [
+  { label: 'AGRESTE', value: 'AGRESTE' },
+  { label: 'RMR', value: 'RMR' },
+  { label: 'SERTÃO', value: 'SERTÃO' },
+  { label: 'ZONA DA MATA', value: 'ZONA DA MATA' },
+];
+
 export const GRUPAMENTOS = [
   { label: 'GBAPH', value: 'GBAPH' },
-  { label: 'GBMar', value: 'GBMar' },
   { label: 'GBI', value: 'GBI' },
+  { label: 'GBMar', value: 'GBMar' },
   { label: 'GBS', value: 'GBS' },
 ];
 
 export const NATUREZAS = [
   { label: 'APH', value: 'APH' },
   { label: 'INCÊNDIO', value: 'Incêndio' },
-  { label: 'SALVAMENTO', value: 'Resgate' },
-  { label: 'PRODUTOS PERIGOSOS', value: 'PRODUTOS PERIGOSOS' },
   { label: 'PREVENÇÃO', value: 'PREVENÇÃO' },
+  { label: 'PRODUTOS PERIGOSOS', value: 'PRODUTOS PERIGOSOS' },
+  { label: 'SALVAMENTO', value: 'Resgate' },
 ];
 
-// constants/ocorrencias.js
+// Grupos de ocorrência organizados alfabeticamente
 export const GRUPOS_OCORRENCIA = [
   { label: "Acidente de Trânsito Atropelamento", value: "Acidente de Trânsito Atropelamento" },
   { label: "Acidente de Trânsito Choque", value: "Acidente de Trânsito Choque" },
@@ -45,35 +55,32 @@ export const GRUPOS_OCORRENCIA = [
   { label: "Queda", value: "Queda" },
   { label: "Vazamento", value: "Vazamento" },
   { label: "Vítima de Agressão", value: "Vítima de Agressão" }
-];
-
-// Export padrão também pode ser útil
-export default GRUPOS_OCORRENCIA;
+].sort((a, b) => a.label.localeCompare(b.label));
 
 export const SUBGRUPOS_OCORRENCIA = [
-  { label: 'Queda da Própria Altura', value: 'Queda da Própria Altura' },
-  { label: 'Queda de Altura', value: 'Queda de Altura' },
   { label: 'Desmaio', value: 'Desmaio' },
   { label: 'Outros', value: 'Outros' },
+  { label: 'Queda da Própria Altura', value: 'Queda da Própria Altura' },
+  { label: 'Queda de Altura', value: 'Queda de Altura' },
 ];
 
 export const SITUACOES = [
   { label: 'Atendida', value: 'Atendida' },
-  { label: 'Não atendida', value: 'Não atendida' },
   { label: 'Cancelada', value: 'Cancelada' },
+  { label: 'Não atendida', value: 'Não atendida' },
 ];
 
 export const SEXOS = [
-  { label: 'Masculino', value: 'Masculino' },
   { label: 'Feminino', value: 'Feminino' },
+  { label: 'Masculino', value: 'Masculino' },
   { label: 'Outro', value: 'Outro' },
 ];
 
 export const CLASSIFICACOES = [
-  { label: 'Vítima ilesa', value: 'Vítima ilesa' },
-  { label: 'Ferida leve', value: 'Ferida leve' },
   { label: 'Ferida grave', value: 'Ferida grave' },
+  { label: 'Ferida leve', value: 'Ferida leve' },
   { label: 'Óbito', value: 'Óbito' },
+  { label: 'Vítima ilesa', value: 'Vítima ilesa' },
 ];
 
 export const DESTINOS = [
@@ -93,9 +100,12 @@ export const ACIONAMENTOS = [
 ];
 
 export const TIPOS_LOGRADOURO = [
+  { label: 'ALAMEDA', value: 'ALAMEDA' },
   { label: 'AVENIDA', value: 'AVENIDA' },
+  { label: 'ESTRADA', value: 'ESTRADA' },
   { label: 'RUA', value: 'RUA' },
   { label: 'TRAVESSA', value: 'TRAVESSA' },
-  { label: 'ALAMEDA', value: 'ALAMEDA' },
-  { label: 'ESTRADA', value: 'ESTRADA' },
 ];
+
+// Export padrão
+export default GRUPOS_OCORRENCIA;
