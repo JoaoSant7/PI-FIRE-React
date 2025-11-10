@@ -1,5 +1,7 @@
 // screens/NovaOcorrenciaScreen.js
 import React, { useState } from 'react';
+import { Picker } from '@react-native-picker/picker';
+import { REGIOES } from '../constants/pickerData';
 import {
   View,
   ScrollView,
@@ -432,13 +434,21 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
             />
           </InputGroup>
 
-          <InputGroup label="Região">
-            <TextInput
-              value={formData.regiao}
-              onChangeText={(value) => updateFormData('regiao', value)}
-              placeholder="Digite a região"
-            />
-          </InputGroup>
+<InputGroup label="Região">
+  <Picker
+    selectedValue={formData.regiao}
+    onValueChange={(value) => updateFormData('regiao', value)}
+  >
+    <Picker.Item label="Selecione a região" value="" />
+    {REGIOES.map((regiao) => (
+      <Picker.Item 
+        key={regiao.value} 
+        label={regiao.label} 
+        value={regiao.value} 
+      />
+    ))}
+  </Picker>
+</InputGroup>
 
           <InputGroup label="Bairro">
             <TextInput
