@@ -34,6 +34,18 @@ import {
   TIPOS_LOGRADOURO
 } from '../constants/pickerData';
 
+// Adicionar constantes para os motivos de não atendimento
+const MOTIVOS_NAO_ATENDIMENTO = [
+  { label: 'Selecione o motivo', value: '' },
+  { label: 'Falso Alarme', value: 'Falso Alarme' },
+  { label: 'Ausência no Local', value: 'Ausência no Local' },
+  { label: 'Desistência', value: 'Desistência' },
+  { label: 'Atendido por Outra Unidade', value: 'Atendido por Outra Unidade' },
+  { label: 'Erro de Acionamento', value: 'Erro de Acionamento' },
+  { label: 'Impossibilidade de Acesso', value: 'Impossibilidade de Acesso' },
+  { label: 'Outro', value: 'Outro' },
+];
+
 const NovaOcorrenciaScreen = ({ navigation }) => {
   // Estado principal do formulário
   const [formData, setFormData] = useState({
@@ -327,17 +339,24 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
             </InputGroup>
           </View>
 
-          {/* Motivo para ocorrência não atendida */}
+          {/* Motivo para ocorrência não atendida - Agora como Picker */}
           {formData.situacao === 'Não atendida' && (
-            <InputGroup label="Motivo da Não Atendimento">
-              <TextInput
-                value={formData.motivoNaoAtendida}
-                onChangeText={(value) => updateFormData('motivoNaoAtendida', value)}
-                placeholder="Digite o motivo"
-                multiline
-                numberOfLines={3}
-                style={styles.textArea}
-              />
+            <InputGroup label="Motivo do Não Atendimento">
+              <View style={styles.pickerContainer}>
+                <Picker
+                  selectedValue={formData.motivoNaoAtendida}
+                  onValueChange={(value) => updateFormData('motivoNaoAtendida', value)}
+                  style={styles.picker}
+                >
+                  {MOTIVOS_NAO_ATENDIMENTO.map((item) => (
+                    <Picker.Item 
+                      key={item.value} 
+                      label={item.label} 
+                      value={item.value} 
+                    />
+                  ))}
+                </Picker>
+              </View>
             </InputGroup>
           )}
 
