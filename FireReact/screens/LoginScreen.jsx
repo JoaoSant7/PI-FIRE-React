@@ -44,7 +44,7 @@ export default function LoginScreen({ navigation }) {
     >
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Image
-          source={require('../components/Fire.png')}
+          source={require('../components/Fire.svg')}
           style={styles.logo}
           resizeMode="contain"
         />
