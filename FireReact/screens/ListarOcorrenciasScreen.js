@@ -2,7 +2,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, StatusBar, ScrollView } from 'react-native';
 import { MaterialIcons as Icon } from '@expo/vector-icons';
-import BottomNav from '../components/BottomNav'; // Importe o BottomNav
 
 export default function ListaOcorrenciasScreen({ navigation }) {
   // Dados placeholder para ocorrências
@@ -12,19 +11,6 @@ export default function ListaOcorrenciasScreen({ navigation }) {
     { id: 3, tipo: 'Resgate', local: 'Praça Central', status: 'Em Andamento', hora: '16:45' },
     { id: 4, tipo: 'Incêndio', local: 'Condomínio Solar', status: 'Finalizada', hora: '08:20' },
   ];
-
-  // Funções para a barra inferior
-  const handleConfiguracoes = () => {
-    navigation.navigate('Configuracoes');
-  };
-
-  const handleInicio = () => {
-    navigation.navigate('Home');
-  };
-
-  const handleUsuario = () => {
-    navigation.navigate('Usuario', { email: 'email_do_usuario@exemplo.com' });
-  };
 
   const getStatusColor = (status) => {
     return status === 'Em Andamento' ? '#FF9800' : '#4CAF50';
@@ -63,13 +49,6 @@ export default function ListaOcorrenciasScreen({ navigation }) {
           </TouchableOpacity>
         ))}
       </ScrollView>
-
-      {/* Barra Inferior */}
-      <BottomNav
-        onConfigPress={handleConfiguracoes}
-        onHomePress={handleInicio}
-        onUserPress={handleUsuario}
-      />
     </View>
   );
 }
@@ -85,7 +64,6 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     padding: 20,
-    marginBottom: 10, // Adicione esta margem para evitar que o conteúdo fique atrás da BottomNav
   },
   placeholderSection: {
     alignItems: 'center',
