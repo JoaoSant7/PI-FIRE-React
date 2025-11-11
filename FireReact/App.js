@@ -12,6 +12,7 @@ import ConfiguracoesScreen from './screens/ConfiguracoesScreen';
 import DashboardScreen from './screens/DashboardScreen';
 import ListarOcorrenciasScreen from './screens/ListarOcorrenciasScreen';
 import NovaOcorrenciaScreen from './screens/NovaOcorrenciaScreen';
+import OcorrenciaRegistradaScreen from './screens/OcorrenciaRegistradaScreen'; // Nova tela adicionada
 
 // Configurações do tema
 const THEME_COLORS = {
@@ -89,6 +90,16 @@ const MainStack = () => (
       options={{ 
         ...headerOptions,
         title: 'Nova Ocorrência'
+      }}
+    />
+    {/* Nova tela de confirmação adicionada */}
+    <Stack.Screen 
+      name="OcorrenciaRegistrada" 
+      component={OcorrenciaRegistradaScreen}
+      options={{ 
+        ...headerOptions,
+        title: 'Ocorrência Registrada',
+        headerLeft: null // Remove o botão de voltar para evitar que o usuário volte para a tela de nova ocorrência
       }}
     />
   </Stack.Navigator>

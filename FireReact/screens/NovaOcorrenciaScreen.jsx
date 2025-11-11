@@ -139,7 +139,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
     return true;
   };
 
-  // Função para salvar a ocorrência
+  // Função para salvar a ocorrência - CORRIGIDA
   const handleSave = () => {
     if (!validateForm()) return;
 
@@ -162,16 +162,8 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
 
             console.log('Dados da ocorrência:', ocorrenciaData);
             
-            Alert.alert(
-              'Sucesso',
-              'Ocorrência salva com sucesso!',
-              [
-                {
-                  text: 'OK',
-                  onPress: () => navigation.goBack()
-                }
-              ]
-            );
+            // CORREÇÃO: Navega diretamente para a tela de confirmação
+            navigation.navigate('OcorrenciaRegistrada');
           }
         }
       ]
