@@ -1,13 +1,16 @@
 // components/PlusIcon.js
 import React from 'react';
-import Svg, { Path } from 'react-native-svg';
+import Svg, { Path, Circle } from 'react-native-svg';
 
-const PlusIcon = ({ width = 24, height = 24, color = '#fff' }) => (
-  <Svg width={width} height={height} viewBox="0 0 24 24" fill="none">
+const PlusIcon = ({ width = 50, height = 50, color = '#bc010c' }) => (
+  <Svg width={width} height={height} viewBox="0 0 50 50" fill="none">
+    {/* Círculo de fundo branco */}
+    <Circle cx="25" cy="25" r="24" fill="white" stroke="#bc010c" strokeWidth="1"/>
+    {/* Símbolo de plus vermelho */}
     <Path
-      d="M12 5V19M5 12H19"
+      d="M25 15V35M15 25H35"
       stroke={color}
-      strokeWidth="2.5"
+      strokeWidth="3"
       strokeLinecap="round"
       strokeLinejoin="round"
     />

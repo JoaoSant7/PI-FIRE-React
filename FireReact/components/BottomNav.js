@@ -25,11 +25,11 @@ const BottomNav = ({
       
       {/* Botão Nova Ocorrência - Centro */}
       <TouchableOpacity 
-        style={styles.navItem} 
+        style={styles.centralNavItem} 
         onPress={onNewOccurrencePress}
       >
         <View style={styles.centralIconWrapper}>
-          <PlusIcon width={28} height={28} color="#f8f8f8" />
+          <PlusIcon width={42} height={42} color="#bc010c" />
         </View>
         <Text style={styles.navText}>Nova Ocorrência</Text>
       </TouchableOpacity>
@@ -64,12 +64,16 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 5,
   },
+  centralNavItem: {
+    alignItems: 'center',
+    flex: 1,
+    paddingHorizontal: 5,
+  },
   iconWrapper: {
     marginBottom: 4,
   },
   centralIconWrapper: {
     marginBottom: 4,
-    // Removemos qualquer elevação especial
   },
   navText: {
     color: '#f8f8f8',
