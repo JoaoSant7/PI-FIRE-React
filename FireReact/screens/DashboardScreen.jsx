@@ -1,136 +1,184 @@
-// screens/DashboardScreen.js
+// screens/DashboardScreen.jsx
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, StatusBar, ScrollView } from 'react-native';
-import { MaterialIcons as Icon } from '@expo/vector-icons';
-import BottomNav from '../components/BottomNav';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  SafeAreaView,
+  Dimensions,
+} from 'react-native';
 
-export default function DashboardScreen({ navigation }) {
-  
-  const handleConfiguracoes = () => {
-    navigation.navigate('Configuracoes'); // Corrigido: 'Configuracoes'
+const DashboardScreen = () => {
+  // Dados mockados - você pode substituir por dados reais
+  const dashboardData = {
+    totalOcorrencias: '1.247',
+    emAndamento: '156',
+    ocorrenciasAtendidas: '1.091',
+    tempoMedioResposta: '15min',
   };
 
-  const handleInicio = () => {
-    navigation.navigate('Home'); // Corrigido: 'Home'
-  };
-
-  const handleUsuario = () => {
-    navigation.navigate('Usuario'); // Corrigido: 'Usuario'
-  };
+  const ScreenWidth = Dimensions.get('window').width;
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#bc010c" />
-      
-      <ScrollView style={styles.content}>
-        <View style={styles.placeholderSection}>
-          <Icon name="dashboard" size={80} color="#bc010c" />
-          <Text style={styles.placeholderTitle}>Dashboard</Text>
-          <Text style={styles.placeholderText}>
-            Aqui serão exibidos os gráficos e estatísticas das ocorrências
-          </Text>
+    <SafeAreaView style={styles.container}>
+      <ScrollView style={styles.scrollView}>
+        {/* Cabeçalho */}
+        <View style={styles.header}>
+          <Text style={styles.title}>Dashboard Operacional</Text>
         </View>
 
-        {/* Cards de estatísticas placeholder */}
-        <View style={styles.statsContainer}>
-          <View style={styles.statCard}>
-            <Icon name="warning" size={30} color="#bc010c" />
-            <Text style={styles.statNumber}>24</Text>
-            <Text style={styles.statLabel}>Ocorrências Hoje</Text>
-          </View>
-          
-          <View style={styles.statCard}>
-            <Icon name="check-circle" size={30} color="#4CAF50" />
-            <Text style={styles.statNumber}>18</Text>
-            <Text style={styles.statLabel}>Finalizadas</Text>
+        {/* Visão Geral */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Visão Geral (Mês)</Text>
+          <View style={styles.statsContainer}>
+            <View style={styles.statItem}>
+              <Text style={styles.statValue}>{dashboardData.totalOcorrencias}</Text>
+              <Text style={styles.statLabel}>Total de Ocorrências</Text>
+            </View>
+            <View style={styles.statItem}>
+              <Text style={styles.statValue}>{dashboardData.emAndamento}</Text>
+              <Text style={styles.statLabel}>Em Andamento</Text>
+            </View>
+            <View style={styles.statItem}>
+              <Text style={styles.statValue}>{dashboardData.ocorrenciasAtendidas}</Text>
+              <Text style={styles.statLabel}>Ocorrências Atendidas</Text>
+            </View>
+            <View style={styles.statItem}>
+              <Text style={styles.statValue}>{dashboardData.tempoMedioResposta}</Text>
+              <Text style={styles.statLabel}>Tempo Médio Resposta</Text>
+            </View>
           </View>
         </View>
 
-        <View style={styles.statsContainer}>
-          <View style={styles.statCard}>
-            <Icon name="schedule" size={30} color="#FF9800" />
-            <Text style={styles.statNumber}>6</Text>
-            <Text style={styles.statLabel}>Em Andamento</Text>
-          </View>
+        {/* Divisor */}
+        <View style={styles.divider} />
+
+        {/* Análise de Natureza */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Análise de Natureza</Text>
           
-          <View style={styles.statCard}>
-            <Icon name="group" size={30} color="#2196F3" />
-            <Text style={styles.statNumber}>42</Text>
-            <Text style={styles.statLabel}>Agentes Ativos</Text>
+          {/* Ocorrências por Natureza */}
+          <View style={styles.chartSection}>
+            <Text style={styles.chartTitle}>Ocorrências por Natureza</Text>
+            <View style={[styles.chartPlaceholder, {width: ScreenWidth - 40}]}>
+              <Text style={styles.placeholderText}>
+                *Espaço para Gráfico de Pizza/Barra*
+              </Text>
+            </View>
+          </View>
+
+          {/* Ocorrências Semanais */}
+          <View style={styles.chartSection}>
+            <Text style={styles.chartTitle}>Ocorrências Semanais</Text>
+            <View style={[styles.chartPlaceholder, {width: ScreenWidth - 40}]}>
+              <Text style={styles.placeholderText}>
+                *Espaço para Gráfico de Linha*
+              </Text>
+            </View>
           </View>
         </View>
       </ScrollView>
-
-      {/* Barra Inferior */}
-      <BottomNav
-        onConfigPress={handleConfiguracoes}
-        onHomePress={handleInicio}
-        onUserPress={handleUsuario}
-      />
-    </View>
+    </SafeAreaView>
   );
-}
-
-// ... (os estilos permanecem os mesmos)
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#f5f5f5',
   },
-  placeholder: {
-    width: 24,
-  },
-  content: {
+  scrollView: {
     flex: 1,
-    padding: 20,
-    marginBottom: 70, // Adicione esta margem para evitar que o conteúdo fique atrás da BottomNav
   },
-  placeholderSection: {
-    alignItems: 'center',
-    paddingVertical: 40,
-    backgroundColor: '#f8f8f8',
-    borderRadius: 12,
-    marginBottom: 20,
+  header: {
+    backgroundColor: '#fff',
+    paddingVertical: 20,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
   },
-  placeholderTitle: {
+  title: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#333',
-    marginTop: 15,
-    marginBottom: 10,
-  },
-  placeholderText: {
-    fontSize: 16,
-    color: '#666',
     textAlign: 'center',
-    paddingHorizontal: 20,
+  },
+  section: {
+    backgroundColor: '#fff',
+    margin: 16,
+    borderRadius: 8,
+    padding: 16,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 16,
   },
   statsContainer: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     justifyContent: 'space-between',
-    marginBottom: 15,
   },
-  statCard: {
-    flex: 1,
-    backgroundColor: '#f8f8f8',
-    padding: 20,
-    borderRadius: 12,
+  statItem: {
+    width: '48%',
     alignItems: 'center',
-    marginHorizontal: 5,
-    borderWidth: 1,
-    borderColor: '#e1e1e1',
+    marginBottom: 16,
+    padding: 12,
+    backgroundColor: '#f8f9fa',
+    borderRadius: 6,
   },
-  statNumber: {
-    fontSize: 28,
+  statValue: {
+    fontSize: 24,
     fontWeight: 'bold',
-    color: '#333',
-    marginVertical: 5,
+    color: '#2c3e50',
+    marginBottom: 4,
   },
   statLabel: {
     fontSize: 12,
     color: '#666',
     textAlign: 'center',
-    fontWeight: '500',
+  },
+  divider: {
+    height: 1,
+    backgroundColor: '#e0e0e0',
+    marginHorizontal: 16,
+  },
+  chartSection: {
+    marginBottom: 24,
+  },
+  chartTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 12,
+  },
+  chartPlaceholder: {
+    height: 200,
+    backgroundColor: '#f8f9fa',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+    borderStyle: 'dashed',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+  },
+  placeholderText: {
+    color: '#999',
+    fontSize: 14,
+    textAlign: 'center',
+    fontStyle: 'italic',
   },
 });
+
+export default DashboardScreen;

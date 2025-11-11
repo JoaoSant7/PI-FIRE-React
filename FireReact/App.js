@@ -1,9 +1,8 @@
 // App.js
-import { View, Text } from 'react-native'; // Adicione esta linha
 import React, { useState, useEffect } from 'react';
+import { View, Text, StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { StatusBar } from 'react-native';
 
 // Import de Screens
 import LoginScreen from './screens/LoginScreen';
@@ -73,7 +72,7 @@ const MainStack = () => (
       component={DashboardScreen}
       options={{ 
         ...headerOptions,
-        title: 'Dashboard'
+        title: 'Dashboard Operacional'
       }}
     />
     <Stack.Screen 
@@ -103,7 +102,7 @@ export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Simulando verificação de autenticação (em app real, verificar token, etc.)
+  // Simulando verificação de autenticação
   useEffect(() => {
     const checkAuthStatus = async () => {
       // Aqui você verificaria se o usuário está logado
