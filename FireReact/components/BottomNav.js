@@ -1,43 +1,46 @@
 // components/BottomNav.js
 import React from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
-import SettingsIcon from './SettingsIcon';
 import HomeIcon from './HomeIcon';
 import UserIcon from './UserIcon';
+import PlusIcon from './PlusIcon';
 
 const BottomNav = ({ 
-  onConfigPress, 
   onHomePress, 
-  onUserPress 
+  onUserPress,
+  onNewOccurrencePress 
 }) => {
   return (
     <View style={styles.bottomNav}>
-      <TouchableOpacity 
-        style={styles.navItem} 
-        onPress={onConfigPress}
-      >
-        <View style={styles.iconWrapper}>
-          <SettingsIcon width={26} height={26} color="#f8f8f8" />
-        </View>
-        <Text style={styles.navText}>Configurações</Text>
-      </TouchableOpacity>
-      
+      {/* Botão Home - Lado Esquerdo */}
       <TouchableOpacity 
         style={styles.navItem} 
         onPress={onHomePress}
       >
         <View style={styles.iconWrapper}>
-          <HomeIcon size={26} color="#f8f8f8" />
+          <HomeIcon size={24} color="#f8f8f8" />
         </View>
         <Text style={styles.navText}>Início</Text>
       </TouchableOpacity>
       
+      {/* Botão Nova Ocorrência - Centro */}
+      <TouchableOpacity 
+        style={styles.navItem} 
+        onPress={onNewOccurrencePress}
+      >
+        <View style={styles.centralIconWrapper}>
+          <PlusIcon width={28} height={28} color="#f8f8f8" />
+        </View>
+        <Text style={styles.navText}>Nova Ocorrência</Text>
+      </TouchableOpacity>
+      
+      {/* Botão Usuário - Lado Direito */}
       <TouchableOpacity 
         style={styles.navItem} 
         onPress={onUserPress}
       >
         <View style={styles.iconWrapper}>
-          <UserIcon width={26} height={26} color="#f8f8f8" />
+          <UserIcon width={24} height={24} color="#f8f8f8" />
         </View>
         <Text style={styles.navText}>Usuário</Text>
       </TouchableOpacity>
@@ -50,23 +53,29 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    backgroundColor: '#BC010C',
-    paddingVertical: 15,
+    backgroundColor: '#bc010c',
+    paddingVertical: 12,
     paddingHorizontal: 10,
     borderTopWidth: 1,
-    borderTopColor: '#34495e',
+    borderTopColor: '#a0010a',
   },
   navItem: {
     alignItems: 'center',
-    paddingHorizontal: 16,
+    flex: 1,
+    paddingHorizontal: 5,
   },
   iconWrapper: {
     marginBottom: 4,
+  },
+  centralIconWrapper: {
+    marginBottom: 4,
+    // Removemos qualquer elevação especial
   },
   navText: {
     color: '#f8f8f8',
     fontSize: 12,
     fontWeight: '500',
+    textAlign: 'center',
   },
 });
 

@@ -1,21 +1,22 @@
 // screens/HomeScreen.js
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, StatusBar } from 'react-native';
-import BottomNav from '../components/BottomNav'; // Importe o BottomNav
+import BottomNav from '../components/BottomNav';
+import SettingsIcon from '../components/SettingsIcon';
 
 export default function HomeScreen({ navigation }) {
   // Funções para os botões da barra inferior
-  const handleConfiguracoes = () => {
-    navigation.navigate('Configuracoes');
-  };
-
   const handleInicio = () => {
-    // Já está na tela inicial, pode ser usado para recarregar ou scroll para topo
-    alert('Você já está na tela inicial');
+    // Já está na tela inicial
+    // Pode adicionar funcionalidade de scroll para topo se necessário
   };
 
   const handleUsuario = () => {
     navigation.navigate('Usuario', { email: 'email_do_usuario@exemplo.com' });
+  };
+
+  const handleNovaOcorrencia = () => {
+    navigation.navigate('NovaOcorrencia');
   };
 
   // Funções para os botões principais
@@ -31,6 +32,11 @@ export default function HomeScreen({ navigation }) {
     navigation.navigate('NovaOcorrencia');
   };
 
+  // Função para o botão de configurações no header
+  const handleConfiguracoes = () => {
+    navigation.navigate('Configuracoes');
+  };
+
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#bc010c" />
@@ -38,6 +44,12 @@ export default function HomeScreen({ navigation }) {
       {/* Header Vermelho */}
       <View style={styles.header}>
         <Text style={styles.fireTitle}>Início</Text>
+        <TouchableOpacity 
+          style={styles.settingsButton}
+          onPress={handleConfiguracoes}
+        >
+          <SettingsIcon width={24} height={24} color="#fff" />
+        </TouchableOpacity>
       </View>
 
       {/* Conteúdo Principal */}
@@ -67,11 +79,11 @@ export default function HomeScreen({ navigation }) {
         </TouchableOpacity>
       </View>
 
-      {/* Barra Inferior - Agora usando o componente BottomNav */}
+      {/* Barra Inferior */}
       <BottomNav
-        onConfigPress={handleConfiguracoes}
         onHomePress={handleInicio}
         onUserPress={handleUsuario}
+        onNewOccurrencePress={handleNovaOcorrencia}
       />
     </View>
   );
@@ -87,8 +99,10 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     paddingBottom: 30,
     paddingHorizontal: 20,
-    alignItems: 'center',
+    flexDirection: 'row',
     justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative', // Para posicionar o botão absolutamente
   },
   fireTitle: {
     fontSize: 48,
@@ -96,12 +110,18 @@ const styles = StyleSheet.create({
     color: '#fff',
     textAlign: 'center',
   },
+  settingsButton: {
+    position: 'absolute',
+    right: 20,
+    top: 60,
+    padding: 8,
+  },
   content: {
     flex: 1,
     paddingHorizontal: 30,
     paddingTop: 50,
     alignItems: 'center',
-    marginBottom: 70, // Adicione esta margem para evitar que o conteúdo fique atrás da BottomNav
+    marginBottom: 70,
   },
   sectionTitle: {
     fontSize: 22,
@@ -124,6 +144,6 @@ const styles = StyleSheet.create({
   menuButtonText: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#000000ff',
+    color: '#000000',
   },
 });
