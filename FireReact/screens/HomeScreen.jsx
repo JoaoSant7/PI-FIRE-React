@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#3E4095',
   },
   listar: {
-    backgroundColor: '#FFF112',
+    backgroundColor: '#E6A400',
   },
   registrar: {
     backgroundColor: '#BC010C',
