@@ -44,9 +44,9 @@ export default function LoginScreen({ navigation }) {
     >
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Image
-          source={require('../components/Fire.png')}
+          source={require('../components/Fire-noBG.png')}
           style={styles.logo}
-          resizeMode="contain"
+          resizeMode="cover"
         />
 
         {/* Cabeçalho com o nome FIRE */}
@@ -133,7 +133,6 @@ const styles = StyleSheet.create({
     width: 240,
     height: 240,
     alignSelf: 'center',
-    marginBottom: 8,
   },
 
   subtitle: {
