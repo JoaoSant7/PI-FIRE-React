@@ -1,34 +1,10 @@
 // screens/HomeScreen.js
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, StatusBar } from 'react-native';
-import * as Font from 'expo-font';
-import { MaterialIcons } from '@expo/vector-icons';
 import BottomNav from '../components/BottomNav';
 import SettingsIcon from '../components/SettingsIcon';
 
-// Vamos carregar as fontes manualmente para garantir
-const loadFonts = async () => {
-  await Font.loadAsync({
-    ...MaterialIcons.font,
-  });
-};
-
 export default function HomeScreen({ navigation }) {
-  const [fontsLoaded, setFontsLoaded] = useState(false);
-
-  useEffect(() => {
-    const prepare = async () => {
-      try {
-        await loadFonts();
-        setFontsLoaded(true);
-      } catch (e) {
-        console.warn(e);
-      }
-    };
-
-    prepare();
-  }, []);
-
   // Funções para os botões da barra inferior
   const handleInicio = () => {
     // Já está na tela inicial
@@ -60,8 +36,8 @@ export default function HomeScreen({ navigation }) {
     navigation.navigate('Configuracoes');
   };
 
-  // Componente para botões com ícones
-  const IconButton = ({ title, type, onPress, iconName }) => {
+  // Componente para botões sem ícones
+  const ModernButton = ({ title, type, onPress }) => {
     const getButtonStyle = () => {
       switch(type) {
         case 'dashboard':
@@ -75,53 +51,16 @@ export default function HomeScreen({ navigation }) {
       }
     };
 
-    const getIconColor = () => {
-      switch(type) {
-        case 'dashboard': return '#3498db';
-        case 'listar': return '#2ecc71';
-        case 'registrar': return '#e74c3c';
-        default: return '#3498db';
-      }
-    };
-
     return (
       <TouchableOpacity 
         style={getButtonStyle()} 
         onPress={onPress}
         activeOpacity={0.8}
       >
-        <View style={styles.buttonContent}>
-          {fontsLoaded && (
-            <MaterialIcons 
-              name={iconName} 
-              size={24} 
-              color={getIconColor()} 
-              style={styles.icon} 
-            />
-          )}
-          <Text style={styles.buttonText}>{title}</Text>
-        </View>
+        <Text style={styles.buttonText}>{title}</Text>
       </TouchableOpacity>
     );
   };
-
-  if (!fontsLoaded) {
-    return (
-      <View style={styles.container}>
-        <StatusBar barStyle="light-content" backgroundColor="#bc010c" />
-        <View style={styles.header}>
-          <View style={styles.headerContent}>
-            <View style={styles.titleContainer}>
-              <Text style={styles.fireTitle}>Início</Text>
-            </View>
-          </View>
-        </View>
-        <View style={styles.content}>
-          <Text>Carregando...</Text>
-        </View>
-      </View>
-    );
-  }
 
   return (
     <View style={styles.container}>
@@ -146,25 +85,22 @@ export default function HomeScreen({ navigation }) {
       <View style={styles.content}>
         <Text style={styles.sectionTitle}>O que você deseja acessar?</Text>
         
-        {/* Botões de Acesso com Ícones */}
-        <IconButton 
+        {/* Botões de Acesso */}
+        <ModernButton 
           title="Dashboard" 
           type="dashboard" 
-          iconName="dashboard" 
           onPress={handleDashboard} 
         />
         
-        <IconButton 
+        <ModernButton 
           title="Listar Ocorrências" 
           type="listar" 
-          iconName="list" 
           onPress={handleListarOcorrencias} 
         />
         
-        <IconButton 
+        <ModernButton 
           title="Registrar Nova Ocorrência" 
           type="registrar" 
-          iconName="add-alert" 
           onPress={handleRegistrarOcorrencia} 
         />
       </View>
@@ -229,7 +165,7 @@ const styles = StyleSheet.create({
     marginBottom: 50,
     textAlign: 'center',
   },
-  // Novos estilos para os botões com ícones
+  // Estilos para os botões modernos
   button: {
     paddingVertical: 18,
     paddingHorizontal: 20,
@@ -241,20 +177,17 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-  },
-  dashboard: {
-    backgroundColor: '#2c3e50',
-  },
-  listar: {
-    backgroundColor: '#27ae60',
-  },
-  registrar: {
-    backgroundColor: '#c0392b',
-  },
-  buttonContent: {
-    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  dashboard: {
+    backgroundColor: '#3E4095',
+  },
+  listar: {
+    backgroundColor: '#FFF112',
+  },
+  registrar: {
+    backgroundColor: '#BC010C',
   },
   buttonText: {
     color: 'white',
@@ -262,8 +195,5 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
-  },
-  icon: {
-    marginRight: 12,
   },
 });
