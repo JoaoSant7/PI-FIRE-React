@@ -1,14 +1,37 @@
 // screens/HomeScreen.js
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, StatusBar } from 'react-native';
+import * as Font from 'expo-font';
+import { MaterialIcons } from '@expo/vector-icons';
 import BottomNav from '../components/BottomNav';
 import SettingsIcon from '../components/SettingsIcon';
 
+// Vamos carregar as fontes manualmente para garantir
+const loadFonts = async () => {
+  await Font.loadAsync({
+    ...MaterialIcons.font,
+  });
+};
+
 export default function HomeScreen({ navigation }) {
+  const [fontsLoaded, setFontsLoaded] = useState(false);
+
+  useEffect(() => {
+    const prepare = async () => {
+      try {
+        await loadFonts();
+        setFontsLoaded(true);
+      } catch (e) {
+        console.warn(e);
+      }
+    };
+
+    prepare();
+  }, []);
+
   // Funções para os botões da barra inferior
   const handleInicio = () => {
     // Já está na tela inicial
-    // Pode adicionar funcionalidade de scroll para topo se necessário
   };
 
   const handleUsuario = () => {
@@ -37,6 +60,69 @@ export default function HomeScreen({ navigation }) {
     navigation.navigate('Configuracoes');
   };
 
+  // Componente para botões com ícones
+  const IconButton = ({ title, type, onPress, iconName }) => {
+    const getButtonStyle = () => {
+      switch(type) {
+        case 'dashboard':
+          return [styles.button, styles.dashboard];
+        case 'listar':
+          return [styles.button, styles.listar];
+        case 'registrar':
+          return [styles.button, styles.registrar];
+        default:
+          return [styles.button, styles.dashboard];
+      }
+    };
+
+    const getIconColor = () => {
+      switch(type) {
+        case 'dashboard': return '#3498db';
+        case 'listar': return '#2ecc71';
+        case 'registrar': return '#e74c3c';
+        default: return '#3498db';
+      }
+    };
+
+    return (
+      <TouchableOpacity 
+        style={getButtonStyle()} 
+        onPress={onPress}
+        activeOpacity={0.8}
+      >
+        <View style={styles.buttonContent}>
+          {fontsLoaded && (
+            <MaterialIcons 
+              name={iconName} 
+              size={24} 
+              color={getIconColor()} 
+              style={styles.icon} 
+            />
+          )}
+          <Text style={styles.buttonText}>{title}</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  if (!fontsLoaded) {
+    return (
+      <View style={styles.container}>
+        <StatusBar barStyle="light-content" backgroundColor="#bc010c" />
+        <View style={styles.header}>
+          <View style={styles.headerContent}>
+            <View style={styles.titleContainer}>
+              <Text style={styles.fireTitle}>Início</Text>
+            </View>
+          </View>
+        </View>
+        <View style={styles.content}>
+          <Text>Carregando...</Text>
+        </View>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#bc010c" />
@@ -60,27 +146,27 @@ export default function HomeScreen({ navigation }) {
       <View style={styles.content}>
         <Text style={styles.sectionTitle}>O que você deseja acessar?</Text>
         
-        {/* Botões de Acesso */}
-        <TouchableOpacity 
-          style={styles.menuButton}
-          onPress={handleDashboard}
-        >
-          <Text style={styles.menuButtonText}>Dashboard</Text>
-        </TouchableOpacity>
+        {/* Botões de Acesso com Ícones */}
+        <IconButton 
+          title="Dashboard" 
+          type="dashboard" 
+          iconName="dashboard" 
+          onPress={handleDashboard} 
+        />
         
-        <TouchableOpacity 
-          style={styles.menuButton}
-          onPress={handleListarOcorrencias}
-        >
-          <Text style={styles.menuButtonText}>Listar Ocorrências</Text>
-        </TouchableOpacity>
+        <IconButton 
+          title="Listar Ocorrências" 
+          type="listar" 
+          iconName="list" 
+          onPress={handleListarOcorrencias} 
+        />
         
-        <TouchableOpacity 
-          style={styles.menuButton}
-          onPress={handleRegistrarOcorrencia}
-        >
-          <Text style={styles.menuButtonText}>Registrar Nova Ocorrência</Text>
-        </TouchableOpacity>
+        <IconButton 
+          title="Registrar Nova Ocorrência" 
+          type="registrar" 
+          iconName="add-alert" 
+          onPress={handleRegistrarOcorrencia} 
+        />
       </View>
 
       {/* Barra Inferior */}
@@ -143,20 +229,41 @@ const styles = StyleSheet.create({
     marginBottom: 50,
     textAlign: 'center',
   },
-  menuButton: {
-    backgroundColor: '#f8f8f8',
-    borderWidth: 2,
-    borderColor: '#bc010c',
+  // Novos estilos para os botões com ícones
+  button: {
+    paddingVertical: 18,
+    paddingHorizontal: 20,
     borderRadius: 12,
-    paddingVertical: 20,
-    paddingHorizontal: 30,
-    marginBottom: 20,
+    marginBottom: 16,
     width: '100%',
-    alignItems: 'center',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
-  menuButtonText: {
-    fontSize: 18,
+  dashboard: {
+    backgroundColor: '#2c3e50',
+  },
+  listar: {
+    backgroundColor: '#27ae60',
+  },
+  registrar: {
+    backgroundColor: '#c0392b',
+  },
+  buttonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
     fontWeight: '600',
-    color: '#000000',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  icon: {
+    marginRight: 12,
   },
 });
