@@ -1,7 +1,7 @@
 // screens/NovaOcorrenciaScreen.js
-import React, { useState } from 'react';
-import { Picker } from '@react-native-picker/picker';
-import { REGIOES } from '../constants/pickerData';
+import React, { useState } from "react";
+import { Picker } from "@react-native-picker/picker";
+import { REGIOES } from "../constants/pickerData";
 import {
   View,
   ScrollView,
@@ -9,16 +9,16 @@ import {
   TouchableOpacity,
   Text,
   Alert,
-  Switch
-} from 'react-native';
+  Switch,
+} from "react-native";
 
 // Import dos componentes
-import Section from '../components/Section';
-import InputGroup from '../components/InputGroup';
-import TimeInput from '../components/TimeInput';
-import DatePickerInput from '../components/DatePickerInput';
-import PickerInput from '../components/PickerInput';
-import TextInput from '../components/TextInput';
+import Section from "../components/Section";
+import InputGroup from "../components/InputGroup";
+import TimeInput from "../components/TimeInput";
+import DatePickerInput from "../components/DatePickerInput";
+import PickerInput from "../components/PickerInput";
+import TextInput from "../components/TextInput";
 
 // Import dos dados dos pickers
 import {
@@ -31,61 +31,64 @@ import {
   CLASSIFICACOES,
   DESTINOS,
   ACIONAMENTOS,
-  TIPOS_LOGRADOURO
-} from '../constants/pickerData';
+  TIPOS_LOGRADOURO,
+} from "../constants/pickerData";
 
 // Constantes para os motivos de não atendimento/sem atuação
 const MOTIVOS_NAO_ATENDIMENTO = [
-  { label: 'Selecione o motivo de não atendimento', value: '' },
-  { label: 'Vítima Socorrida pelo Samu', value: 'Vítima Socorrida pelo Samu' },
-  { label: 'Vítima Socorrida pelos Populares', value: 'Vítima Socorrida pelos Populares' },
-  { label: 'Recusou Atendimento', value: 'Recusou Atendimento' },
-  { label: 'Outro', value: 'Outro' },
+  { label: "Selecione o motivo de não atendimento", value: "" },
+  { label: "Vítima Socorrida pelo Samu", value: "Vítima Socorrida pelo Samu" },
+  {
+    label: "Vítima Socorrida pelos Populares",
+    value: "Vítima Socorrida pelos Populares",
+  },
+  { label: "Recusou Atendimento", value: "Recusou Atendimento" },
+  { label: "Outro", value: "Outro" },
 ];
 
 const NovaOcorrenciaScreen = ({ navigation }) => {
   // Estado principal do formulário
   const [formData, setFormData] = useState({
     // Dados Internos
-    numeroAviso: '',
-    diretoria: 'DIM',
-    grupamento: '',
-    pontoBase: '',
-    
+    numeroAviso: "",
+    diretoria: "DIM",
+    grupamento: "",
+    pontoBase: "",
+
     // Ocorrência
-    natureza: '',
-    grupoOcorrencia: '',
-    subgrupoOcorrencia: '',
-    situacao: '',
-    horaSaidaQuartel: '',
-    horaLocal: '',
-    horaSaidaLocal: '',
-    motivoNaoAtendida: '',
-    motivoOutro: '', // Novo campo para o motivo "Outro"
+    natureza: "",
+    grupoOcorrencia: "",
+    subgrupoOcorrencia: "",
+    situacao: "",
+    horaSaidaQuartel: "",
+    horaLocal: "",
+    horaSaidaLocal: "",
+    motivoNaoAtendida: "",
+    motivoOutro: "", // Novo campo para o motivo "Outro"
     vitimaSamu: false,
-    
+
     // Vítima
     envolvida: false,
-    sexo: '',
-    idade: '',
-    classificacao: '',
-    destino: '',
-    
+    sexo: "",
+    idade: "",
+    classificacao: "",
+    destino: "",
+
     // Viatura
-    viatura: '',
-    numeroViatura: '',
-    acionamento: '',
-    localAcionamento: '',
-    
+    viatura: "",
+    numeroViatura: "",
+    acionamento: "",
+    localAcionamento: "",
+
     // Endereço
-    municipio: '',
-    regiao: '',
-    bairro: '',
-    tipoLogradouro: '',
-    ais: '',
-    logradouro: '',
-    latitude: '',
-    longitude: '',
+    municipio: "",
+    regiao: "",
+    bairro: "",
+    tipoLogradouro: "",
+    ais: "",
+    logradouro: "",
+    latitude: "",
+    longitude: "",
   });
 
   const [dataHora, setDataHora] = useState(new Date());
@@ -93,7 +96,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
 
   // Função para atualizar o formData
   const updateFormData = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   // Função para lidar com mudança de data
@@ -108,30 +111,33 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
   const validateForm = () => {
     // Validação do formato de hora (mantida)
     const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/;
-    
-    if (formData.horaSaidaQuartel && !timeRegex.test(formData.horaSaidaQuartel)) {
+
+    if (
+      formData.horaSaidaQuartel &&
+      !timeRegex.test(formData.horaSaidaQuartel)
+    ) {
       Alert.alert(
-        'Formato Inválido',
-        'O formato da hora de saída do quartel deve ser HH:MM:SS',
-        [{ text: 'OK' }]
+        "Formato Inválido",
+        "O formato da hora de saída do quartel deve ser HH:MM:SS",
+        [{ text: "OK" }]
       );
       return false;
     }
 
     if (formData.horaLocal && !timeRegex.test(formData.horaLocal)) {
       Alert.alert(
-        'Formato Inválido',
-        'O formato da hora de chegada no local deve ser HH:MM:SS',
-        [{ text: 'OK' }]
+        "Formato Inválido",
+        "O formato da hora de chegada no local deve ser HH:MM:SS",
+        [{ text: "OK" }]
       );
       return false;
     }
 
     if (formData.horaSaidaLocal && !timeRegex.test(formData.horaSaidaLocal)) {
       Alert.alert(
-        'Formato Inválido',
-        'O formato da hora de saída do local deve ser HH:MM:SS',
-        [{ text: 'OK' }]
+        "Formato Inválido",
+        "O formato da hora de saída do local deve ser HH:MM:SS",
+        [{ text: "OK" }]
       );
       return false;
     }
@@ -145,27 +151,27 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
 
     // Pop-up de confirmação
     Alert.alert(
-      'Confirmar Salvamento',
-      'Tem certeza que deseja salvar esta ocorrência?',
+      "Confirmar Salvamento",
+      "Tem certeza que deseja salvar esta ocorrência?",
       [
         {
-          text: 'Cancelar',
-          style: 'cancel'
+          text: "Cancelar",
+          style: "cancel",
         },
         {
-          text: 'Sim',
+          text: "Sim",
           onPress: () => {
             const ocorrenciaData = {
               ...formData,
               dataHora: dataHora.toISOString(),
             };
 
-            console.log('Dados da ocorrência:', ocorrenciaData);
-            
+            console.log("Dados da ocorrência:", ocorrenciaData);
+
             // CORREÇÃO: Navega diretamente para a tela de confirmação
-            navigation.navigate('OcorrenciaRegistrada');
-          }
-        }
+            navigation.navigate("OcorrenciaRegistrada");
+          },
+        },
       ]
     );
   };
@@ -173,61 +179,61 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
   // Função para limpar o formulário
   const handleClear = () => {
     Alert.alert(
-      'Limpar Formulário',
-      'Tem certeza que deseja limpar todos os campos?',
+      "Limpar Formulário",
+      "Tem certeza que deseja limpar todos os campos?",
       [
-        { text: 'Cancelar', style: 'cancel' },
-        { 
-          text: 'Limpar', 
-          style: 'destructive',
+        { text: "Cancelar", style: "cancel" },
+        {
+          text: "Limpar",
+          style: "destructive",
           onPress: () => {
             setFormData({
-              numeroAviso: '',
-              diretoria: 'DIM',
-              grupamento: '',
-              pontoBase: '',
-              natureza: '',
-              grupoOcorrencia: '',
-              subgrupoOcorrencia: '',
-              situacao: '',
-              horaSaidaQuartel: '',
-              horaLocal: '',
-              horaSaidaLocal: '',
-              motivoNaoAtendida: '',
-              motivoOutro: '',
+              numeroAviso: "",
+              diretoria: "DIM",
+              grupamento: "",
+              pontoBase: "",
+              natureza: "",
+              grupoOcorrencia: "",
+              subgrupoOcorrencia: "",
+              situacao: "",
+              horaSaidaQuartel: "",
+              horaLocal: "",
+              horaSaidaLocal: "",
+              motivoNaoAtendida: "",
+              motivoOutro: "",
               vitimaSamu: false,
               envolvida: false,
-              sexo: '',
-              idade: '',
-              classificacao: '',
-              destino: '',
-              viatura: '',
-              numeroViatura: '',
-              acionamento: '',
-              localAcionamento: '',
-              municipio: '',
-              regiao: '',
-              bairro: '',
-              tipoLogradouro: '',
-              ais: '',
-              logradouro: '',
-              latitude: '',
-              longitude: '',
+              sexo: "",
+              idade: "",
+              classificacao: "",
+              destino: "",
+              viatura: "",
+              numeroViatura: "",
+              acionamento: "",
+              localAcionamento: "",
+              municipio: "",
+              regiao: "",
+              bairro: "",
+              tipoLogradouro: "",
+              ais: "",
+              logradouro: "",
+              latitude: "",
+              longitude: "",
             });
             setDataHora(new Date());
-          }
-        }
+          },
+        },
       ]
     );
   };
 
   // Verifica se deve mostrar o campo de motivo
-  const shouldShowMotivo = formData.situacao === 'Não Atendida' || formData.situacao === 'Sem Atuação';
+  const shouldShowMotivo =
+    formData.situacao === "Não Atendida" || formData.situacao === "Sem Atuação";
 
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView}>
-        
         {/*Seção: Dados Internos */}
         <Section title="Dados Internos">
           <InputGroup label="Data e Hora">
@@ -243,7 +249,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
           <InputGroup label="Número do Aviso (I-NETOISPATCHER)">
             <TextInput
               value={formData.numeroAviso}
-              onChangeText={(value) => updateFormData('numeroAviso', value)}
+              onChangeText={(value) => updateFormData("numeroAviso", value)}
               placeholder="Digite o número do aviso"
             />
           </InputGroup>
@@ -251,7 +257,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
           <InputGroup label="Diretoria">
             <TextInput
               value={formData.diretoria}
-              onChangeText={(value) => updateFormData('diretoria', value)}
+              onChangeText={(value) => updateFormData("diretoria", value)}
               placeholder="Digite a diretoria"
             />
           </InputGroup>
@@ -259,7 +265,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
           <InputGroup label="Grupamento">
             <PickerInput
               selectedValue={formData.grupamento}
-              onValueChange={(value) => updateFormData('grupamento', value)}
+              onValueChange={(value) => updateFormData("grupamento", value)}
               items={GRUPAMENTOS}
               placeholder="Selecione o grupamento"
             />
@@ -268,7 +274,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
           <InputGroup label="Ponto Base">
             <TextInput
               value={formData.pontoBase}
-              onChangeText={(value) => updateFormData('pontoBase', value)}
+              onChangeText={(value) => updateFormData("pontoBase", value)}
               placeholder="Digite o ponto base"
             />
           </InputGroup>
@@ -279,7 +285,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
           <InputGroup label="Natureza da Ocorrência">
             <PickerInput
               selectedValue={formData.natureza}
-              onValueChange={(value) => updateFormData('natureza', value)}
+              onValueChange={(value) => updateFormData("natureza", value)}
               items={NATUREZAS}
               placeholder="Selecione a Natureza da Ocorrência"
             />
@@ -288,7 +294,9 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
           <InputGroup label="Grupo da Ocorrência">
             <PickerInput
               selectedValue={formData.grupoOcorrencia}
-              onValueChange={(value) => updateFormData('grupoOcorrencia', value)}
+              onValueChange={(value) =>
+                updateFormData("grupoOcorrencia", value)
+              }
               items={GRUPOS_OCORRENCIA}
               placeholder="Selecione o Grupo de Ocorrência"
             />
@@ -297,7 +305,9 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
           <InputGroup label="Subgrupo da Ocorrência">
             <PickerInput
               selectedValue={formData.subgrupoOcorrencia}
-              onValueChange={(value) => updateFormData('subgrupoOcorrencia', value)}
+              onValueChange={(value) =>
+                updateFormData("subgrupoOcorrencia", value)
+              }
               items={SUBGRUPOS_OCORRENCIA}
               placeholder="Selecione o Subgrupo da Ocorrência"
             />
@@ -306,7 +316,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
           <InputGroup label="Situação da Ocorrência">
             <PickerInput
               selectedValue={formData.situacao}
-              onValueChange={(value) => updateFormData('situacao', value)}
+              onValueChange={(value) => updateFormData("situacao", value)}
               items={SITUACOES}
               placeholder="Selecione a Situação da Ocorrência"
             />
@@ -317,16 +327,21 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
             <InputGroup label="Saída do Quartel" style={styles.flex1}>
               <TimeInput
                 value={formData.horaSaidaQuartel}
-                onChangeText={(value) => updateFormData('horaSaidaQuartel', value)}
+                onChangeText={(value) =>
+                  updateFormData("horaSaidaQuartel", value)
+                }
                 placeholder="HH:MM:SS"
                 showValidation={true}
               />
             </InputGroup>
-            
-            <InputGroup label="Chegada no Local" style={[styles.flex1, styles.marginLeft]}>
+
+            <InputGroup
+              label="Chegada no Local"
+              style={[styles.flex1, styles.marginLeft]}
+            >
               <TimeInput
                 value={formData.horaLocal}
-                onChangeText={(value) => updateFormData('horaLocal', value)}
+                onChangeText={(value) => updateFormData("horaLocal", value)}
                 placeholder="HH:MM:SS"
                 showValidation={true}
               />
@@ -340,14 +355,16 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
                 <View style={styles.pickerContainer}>
                   <Picker
                     selectedValue={formData.motivoNaoAtendida}
-                    onValueChange={(value) => updateFormData('motivoNaoAtendida', value)}
+                    onValueChange={(value) =>
+                      updateFormData("motivoNaoAtendida", value)
+                    }
                     style={styles.picker}
                   >
                     {MOTIVOS_NAO_ATENDIMENTO.map((item) => (
-                      <Picker.Item 
-                        key={item.value} 
-                        label={item.label} 
-                        value={item.value} 
+                      <Picker.Item
+                        key={item.value}
+                        label={item.label}
+                        value={item.value}
                       />
                     ))}
                   </Picker>
@@ -355,14 +372,14 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
               </InputGroup>
 
               {/* Campo para "Outro" motivo */}
-              {formData.motivoNaoAtendida === 'Outro' && (
+              {formData.motivoNaoAtendida === "Outro" && (
                 <InputGroup label="Descreva o motivo (máx. 100 caracteres)">
                   <TextInput
                     value={formData.motivoOutro}
                     onChangeText={(value) => {
                       // Limita a 100 caracteres
                       if (value.length <= 100) {
-                        updateFormData('motivoOutro', value);
+                        updateFormData("motivoOutro", value);
                       }
                     }}
                     placeholder="Digite o motivo..."
@@ -382,7 +399,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
           <InputGroup label="Saída do Local">
             <TimeInput
               value={formData.horaSaidaLocal}
-              onChangeText={(value) => updateFormData('horaSaidaLocal', value)}
+              onChangeText={(value) => updateFormData("horaSaidaLocal", value)}
               placeholder="HH:MM:SS"
               showValidation={true}
             />
@@ -394,9 +411,9 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
               <Text style={styles.switchLabel}>NÃO</Text>
               <Switch
                 value={formData.vitimaSamu}
-                onValueChange={(value) => updateFormData('vitimaSamu', value)}
-                trackColor={{ false: '#767577', true: '#40a02b' }}
-                thumbColor={formData.vitimaSamu ? '#f4f3f4' : '#f4f3f4'}
+                onValueChange={(value) => updateFormData("vitimaSamu", value)}
+                trackColor={{ false: "#767577", true: "#40a02b" }}
+                thumbColor={formData.vitimaSamu ? "#f4f3f4" : "#f4f3f4"}
                 ios_backgroundColor="#3e3e3e"
               />
               <Text style={styles.switchLabel}>SIM</Text>
@@ -412,9 +429,9 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
               <Text style={styles.switchLabel}>NÃO</Text>
               <Switch
                 value={formData.envolvida}
-                onValueChange={(value) => updateFormData('envolvida', value)}
-                trackColor={{ false: '#767577', true: '#40a02b' }}
-                thumbColor={formData.envolvida ? '#f4f3f4' : '#f4f3f4'}
+                onValueChange={(value) => updateFormData("envolvida", value)}
+                trackColor={{ false: "#767577", true: "#40a02b" }}
+                thumbColor={formData.envolvida ? "#f4f3f4" : "#f4f3f4"}
                 ios_backgroundColor="#3e3e3e"
               />
               <Text style={styles.switchLabel}>SIM</Text>
@@ -424,7 +441,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
           <InputGroup label="Sexo da Vítima">
             <PickerInput
               selectedValue={formData.sexo}
-              onValueChange={(value) => updateFormData('sexo', value)}
+              onValueChange={(value) => updateFormData("sexo", value)}
               items={SEXOS}
               placeholder="Selecione o sexo da vítima"
             />
@@ -433,48 +450,28 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
           <InputGroup label="Idade da Vítima">
             <TextInput
               value={formData.idade}
-              onChangeText={(value) => updateFormData('idade', value)}
+              onChangeText={(value) => updateFormData("idade", value)}
               placeholder="Digite a idade"
               keyboardType="numeric"
             />
           </InputGroup>
 
           <InputGroup label="Classificação da Vítima">
-            <View style={styles.pickerContainer}>
-              <Picker
-                selectedValue={formData.classificacao}
-                onValueChange={(value) => updateFormData('classificacao', value)}
-                style={styles.picker}
-              >
-                <Picker.Item label="Selecione a Classificação da Vítima" value="" />
-                {CLASSIFICACOES.map((item) => (
-                  <Picker.Item 
-                    key={item.value} 
-                    label={item.label} 
-                    value={item.value} 
-                  />
-                ))}
-              </Picker>
-            </View>
+            <PickerInput
+              selectedValue={formData.classificacao}
+              onValueChange={(value) => updateFormData("classificacao", value)}
+              items={CLASSIFICACOES}
+              placeholder="Selecione a Classificação da Vítima"
+            />
           </InputGroup>
 
           <InputGroup label="Destino da Vítima">
-            <View style={styles.pickerContainer}>
-              <Picker
-                selectedValue={formData.destino}
-                onValueChange={(value) => updateFormData('destino', value)}
-                style={styles.picker}
-              >
-                <Picker.Item label="Selecione o Destino da Vítima" value="" />
-                {DESTINOS.map((item) => (
-                  <Picker.Item
-                    key={item.value}
-                    label={item.label}
-                    value={item.value}
-                  />
-                ))}
-              </Picker>
-            </View>
+            <PickerInput
+              selectedValue={formData.destino}
+              onValueChange={(value) => updateFormData("destino", value)}
+              items={DESTINOS}
+              placeholder="Selecione o Destino da Vítima"
+            />
           </InputGroup>
         </Section>
 
@@ -483,7 +480,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
           <InputGroup label="Viatura Empregada">
             <TextInput
               value={formData.viatura}
-              onChangeText={(value) => updateFormData('viatura', value)}
+              onChangeText={(value) => updateFormData("viatura", value)}
               placeholder="Digite a viatura empregada"
             />
           </InputGroup>
@@ -491,34 +488,26 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
           <InputGroup label="Número da Viatura">
             <TextInput
               value={formData.numeroViatura}
-              onChangeText={(value) => updateFormData('numeroViatura', value)}
+              onChangeText={(value) => updateFormData("numeroViatura", value)}
               placeholder="Digite o número da viatura"
             />
           </InputGroup>
 
           <InputGroup label="Forma de Acionamento">
-            <View style={styles.pickerContainer}>
-              <Picker
-                selectedValue={formData.acionamento}
-                onValueChange={(value) => updateFormData('acionamento', value)}
-                style={styles.picker}
-              >
-                <Picker.Item label="Selecione a Forma de Acionamento" value="" />
-                {ACIONAMENTOS.map((item) => (
-                  <Picker.Item 
-                    key={item.value} 
-                    label={item.label} 
-                    value={item.value} 
-                  />
-                ))}
-              </Picker>
-            </View>
+            <PickerInput
+              selectedValue={formData.acionamento}
+              onValueChange={(value) => updateFormData("acionamento", value)}
+              items={ACIONAMENTOS}
+              placeholder="Selecione a Forma de Acionamento"
+            />
           </InputGroup>
 
           <InputGroup label="Local do Acionamento">
             <TextInput
               value={formData.localAcionamento}
-              onChangeText={(value) => updateFormData('localAcionamento', value)}
+              onChangeText={(value) =>
+                updateFormData("localAcionamento", value)
+              }
               placeholder="Digite o local do acionamento"
             />
           </InputGroup>
@@ -529,34 +518,24 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
           <InputGroup label="Município">
             <TextInput
               value={formData.municipio}
-              onChangeText={(value) => updateFormData('municipio', value)}
+              onChangeText={(value) => updateFormData("municipio", value)}
               placeholder="Digite o município"
             />
           </InputGroup>
 
           <InputGroup label="Região">
-            <View style={styles.pickerContainer}>
-              <Picker
-                selectedValue={formData.regiao}
-                onValueChange={(value) => updateFormData('regiao', value)}
-                style={styles.picker}
-              >
-                <Picker.Item label="Selecione a região" value="" />
-                {REGIOES.map((regiao) => (
-                  <Picker.Item 
-                    key={regiao.value} 
-                    label={regiao.label} 
-                    value={regiao.value} 
-                  />
-                ))}
-              </Picker>
-            </View>
+            <PickerInput
+              selectedValue={formData.regiao}
+              onValueChange={(value) => updateFormData("regiao", value)}
+              items={REGIOES}
+              placeholder="Selecione a região"
+            />
           </InputGroup>
 
           <InputGroup label="Bairro">
             <TextInput
               value={formData.bairro}
-              onChangeText={(value) => updateFormData('bairro', value)}
+              onChangeText={(value) => updateFormData("bairro", value)}
               placeholder="Digite o bairro"
             />
           </InputGroup>
@@ -564,7 +543,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
           <InputGroup label="Tipo de Logradouro">
             <PickerInput
               selectedValue={formData.tipoLogradouro}
-              onValueChange={(value) => updateFormData('tipoLogradouro', value)}
+              onValueChange={(value) => updateFormData("tipoLogradouro", value)}
               items={TIPOS_LOGRADOURO}
               placeholder="Selecione o Tipo de Logradouro"
             />
@@ -573,7 +552,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
           <InputGroup label="AIS">
             <TextInput
               value={formData.ais}
-              onChangeText={(value) => updateFormData('ais', value)}
+              onChangeText={(value) => updateFormData("ais", value)}
               placeholder="Digite o AIS"
               keyboardType="numeric"
             />
@@ -582,7 +561,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
           <InputGroup label="Logradouro">
             <TextInput
               value={formData.logradouro}
-              onChangeText={(value) => updateFormData('logradouro', value)}
+              onChangeText={(value) => updateFormData("logradouro", value)}
               placeholder="Digite o logradouro"
             />
           </InputGroup>
@@ -591,16 +570,19 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
             <InputGroup label="Latitude" style={styles.flex1}>
               <TextInput
                 value={formData.latitude}
-                onChangeText={(value) => updateFormData('latitude', value)}
+                onChangeText={(value) => updateFormData("latitude", value)}
                 placeholder="Digite a latitude"
                 keyboardType="numbers-and-punctuation"
               />
             </InputGroup>
-            
-            <InputGroup label="Longitude" style={[styles.flex1, styles.marginLeft]}>
+
+            <InputGroup
+              label="Longitude"
+              style={[styles.flex1, styles.marginLeft]}
+            >
               <TextInput
                 value={formData.longitude}
-                onChangeText={(value) => updateFormData('longitude', value)}
+                onChangeText={(value) => updateFormData("longitude", value)}
                 placeholder="Digite a longitude"
                 keyboardType="numbers-and-punctuation"
               />
@@ -610,15 +592,15 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
 
         {/* Botões de Ação */}
         <View style={styles.buttonContainer}>
-          <TouchableOpacity 
-            style={[styles.button, styles.clearButton]} 
+          <TouchableOpacity
+            style={[styles.button, styles.clearButton]}
             onPress={handleClear}
           >
             <Text style={styles.buttonText}>Limpar</Text>
           </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={[styles.button, styles.saveButton]} 
+
+          <TouchableOpacity
+            style={[styles.button, styles.saveButton]}
             onPress={handleSave}
           >
             <Text style={styles.buttonText}>Salvar Ocorrência</Text>
@@ -636,14 +618,14 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
   },
   scrollView: {
     flex: 1,
     padding: 16,
   },
   row: {
-    flexDirection: 'row',
+    flexDirection: "row",
   },
   flex1: {
     flex: 1,
@@ -656,27 +638,27 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    fontWeight: '500',
-    color: '#555',
+    fontWeight: "500",
+    color: "#555",
     marginBottom: 8,
   },
   switchWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
   },
   switchLabel: {
     marginHorizontal: 8,
     fontSize: 14,
-    color: '#333',
+    color: "#333",
   },
   textArea: {
     height: 80,
-    textAlignVertical: 'top',
+    textAlignVertical: "top",
   },
   buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginTop: 20,
     marginBottom: 10,
   },
@@ -684,47 +666,47 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 15,
     borderRadius: 8,
-    alignItems: 'center',
+    alignItems: "center",
     marginHorizontal: 6,
   },
   clearButton: {
-    backgroundColor: '#6c757d',
+    backgroundColor: "#6c757d",
   },
   saveButton: {
-    backgroundColor: '#bc010c',
+    backgroundColor: "#bc010c",
   },
   buttonText: {
-    color: 'white',
-    fontWeight: 'bold',
+    color: "white",
+    fontWeight: "bold",
     fontSize: 16,
   },
   requiredNote: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 20,
   },
   requiredText: {
-    color: '#666',
+    color: "#666",
     fontSize: 12,
-    fontStyle: 'italic',
+    fontStyle: "italic",
   },
   pickerContainer: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderRadius: 8,
-    backgroundColor: '#fff',
-    overflow: 'hidden',
+    backgroundColor: "#fff",
+    overflow: "hidden",
     marginTop: 4,
   },
   picker: {
     height: 56,
-    color: '#333',
+    color: "#333",
     fontSize: 16,
     paddingHorizontal: 8,
   },
   charCounter: {
     fontSize: 12,
-    color: '#666',
-    textAlign: 'right',
+    color: "#666",
+    textAlign: "right",
     marginTop: 4,
   },
 });
