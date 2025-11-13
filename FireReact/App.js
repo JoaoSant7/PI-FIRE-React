@@ -1,5 +1,5 @@
 // App.js
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { View, Text, StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -12,7 +12,10 @@ import ConfiguracoesScreen from './screens/ConfiguracoesScreen';
 import DashboardScreen from './screens/DashboardScreen';
 import ListarOcorrenciasScreen from './screens/ListarOcorrenciasScreen';
 import NovaOcorrenciaScreen from './screens/NovaOcorrenciaScreen';
-import OcorrenciaRegistradaScreen from './screens/OcorrenciaRegistradaScreen'; // Nova tela adicionada
+import OcorrenciaRegistradaScreen from './screens/OcorrenciaRegistradaScreen';
+
+// Import the AuthProvider
+import { AuthProvider, AuthContext } from './contexts/AuthContext';
 
 // Configurações do tema
 const THEME_COLORS = {
@@ -92,51 +95,21 @@ const MainStack = () => (
         title: 'Nova Ocorrência'
       }}
     />
-    {/* Nova tela de confirmação adicionada */}
     <Stack.Screen 
       name="OcorrenciaRegistrada" 
       component={OcorrenciaRegistradaScreen}
       options={{ 
         ...headerOptions,
         title: 'Ocorrência Registrada',
-        headerLeft: null // Remove o botão de voltar para evitar que o usuário volte para a tela de nova ocorrência
+        headerLeft: null
       }}
     />
   </Stack.Navigator>
 );
 
-// Criando Context para gerenciar autenticação
-export const AuthContext = React.createContext();
-
-// Componente Principal
-export default function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-
-  // Simulando verificação de autenticação
-  useEffect(() => {
-    const checkAuthStatus = async () => {
-      // Aqui você verificaria se o usuário está logado
-      // Por exemplo: verificar AsyncStorage, token JWT, etc.
-      // const token = await AsyncStorage.getItem('userToken');
-      // setIsAuthenticated(!!token);
-      
-      // Por enquanto, vamos simular um delay de carregamento
-      setTimeout(() => {
-        setIsLoading(false);
-        // setIsAuthenticated(!!token); // Descomente quando implementar a lógica real
-      }, 1000);
-    };
-
-    checkAuthStatus();
-  }, []);
-
-  const authContextValue = {
-    isAuthenticated,
-    setIsAuthenticated,
-    login: () => setIsAuthenticated(true),
-    logout: () => setIsAuthenticated(false),
-  };
+// Componente que usa o contexto para decidir qual stack mostrar
+const AppContent = () => {
+  const { isAuthenticated, isLoading } = React.useContext(AuthContext);
 
   // Tela de carregamento enquanto verifica autenticação
   if (isLoading) {
@@ -148,14 +121,21 @@ export default function App() {
   }
 
   return (
-    <AuthContext.Provider value={authContextValue}>
-      <NavigationContainer>
-        <StatusBar 
-          backgroundColor={THEME_COLORS.primary} 
-          barStyle="light-content" 
-        />
-        {isAuthenticated ? <MainStack /> : <AuthStack />}
-      </NavigationContainer>
-    </AuthContext.Provider>
+    <NavigationContainer>
+      <StatusBar 
+        backgroundColor={THEME_COLORS.primary} 
+        barStyle="light-content" 
+      />
+      {isAuthenticated ? <MainStack /> : <AuthStack />}
+    </NavigationContainer>
+  );
+};
+
+// Componente Principal
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
