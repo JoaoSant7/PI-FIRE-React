@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import BottomNav from "../components/BottomNav";
-import SettingsIcon from "../components/SettingsIcon";
+import CustomHeader from "../components/CustomHeader"; // Importe o CustomHeader
 
 export default function HomeScreen({ navigation }) {
   // Funções para os botões da barra inferior
@@ -36,11 +36,6 @@ export default function HomeScreen({ navigation }) {
 
   const handleRegistrarOcorrencia = () => {
     navigation.navigate("NovaOcorrencia");
-  };
-
-  // Função para o botão de configurações no header
-  const handleConfiguracoes = () => {
-    navigation.navigate("Configuracoes");
   };
 
   // Componente para botões modernos com ícones
@@ -76,20 +71,8 @@ export default function HomeScreen({ navigation }) {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#bc010c" />
 
-      {/* Header Vermelho */}
-      <View style={styles.header}>
-        <View style={styles.headerContent}>
-          <View style={styles.titleContainer}>
-            <Text style={styles.fireTitle}>Início</Text>
-          </View>
-          <TouchableOpacity
-            style={styles.settingsButton}
-            onPress={handleConfiguracoes}
-          >
-            <SettingsIcon width={24} height={24} color="#fff" />
-          </TouchableOpacity>
-        </View>
-      </View>
+      {/* Novo Custom Header */}
+      <CustomHeader title="INÍCIO" />
 
       {/* Conteúdo Principal */}
       <View style={styles.content}>
@@ -135,41 +118,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
   },
-  header: {
-    backgroundColor: "#bc010c",
-    paddingTop: 60,
-    paddingBottom: 30,
-  },
-  headerContent: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 20,
-    position: "relative",
-    height: 50,
-  },
-  titleContainer: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  fireTitle: {
-    fontSize: 48,
-    fontWeight: "bold",
-    color: "#fff",
-    textAlign: "center",
-  },
-  settingsButton: {
-    position: "absolute",
-    right: 20,
-    padding: 8,
-  },
   content: {
     flex: 1,
     paddingHorizontal: 20,
-    paddingTop: 40,
+    paddingTop: 20, // Reduzido para compensar o header
     alignItems: "center",
     marginBottom: 70,
   },
