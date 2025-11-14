@@ -4,20 +4,20 @@ import { View, Text, StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
-// Import de Screens
-import LoginScreen from './screens/LoginScreen';
-import HomeScreen from './screens/HomeScreen';
-import UsuarioScreen from './screens/UsuarioScreen';
-import ConfiguracoesScreen from './screens/ConfiguracoesScreen';
-import DashboardScreen from './screens/DashboardScreen';
-import ListarOcorrenciasScreen from './screens/ListarOcorrenciasScreen';
-import NovaOcorrenciaScreen from './screens/NovaOcorrenciaScreen';
-import OcorrenciaRegistradaScreen from './screens/OcorrenciaRegistradaScreen';
-import DetalhesOcorrenciaScreen from './screens/DetalhesOcorrenciaScreen'; // Nova tela
+// Import de Screens - CORRIGIDO: caminhos relativos corretos
+import LoginScreen from './screens/LoginScreen.jsx';
+import HomeScreen from './screens/HomeScreen.jsx';
+import UsuarioScreen from './screens/UsuarioScreen.jsx';
+import ConfiguracoesScreen from './screens/ConfiguracoesScreen.jsx';
+import DashboardScreen from './screens/DashboardScreen.jsx';
+import ListarOcorrenciasScreen from './screens/ListarOcorrenciasScreen.jsx';
+import NovaOcorrenciaScreen from './screens/NovaOcorrenciaScreen.jsx';
+import OcorrenciaRegistradaScreen from './screens/OcorrenciaRegistradaScreen.jsx';
+import DetalhesOcorrenciaScreen from './screens/DetalhesOcorrenciaScreen.jsx';
 
 // Import de Contexts
 import { AuthProvider, AuthContext } from './contexts/AuthContext';
-import { OcorrenciasProvider } from './contexts/OcorrenciasContext'; // Ajuste o caminho se necessário
+import { OcorrenciasProvider } from './contexts/OcorrenciasContext';
 
 // Configurações do tema
 const THEME_COLORS = {
@@ -33,6 +33,7 @@ const headerOptions = {
   headerTintColor: THEME_COLORS.textLight,
   headerTitleStyle: {
     fontWeight: 'bold',
+    textTransform: 'uppercase',
   },
 };
 
@@ -51,58 +52,56 @@ const AuthStack = () => (
 
 // Stack Principal da Aplicação
 const MainStack = () => (
-  <Stack.Navigator>
+  <Stack.Navigator
+    screenOptions={headerOptions}
+  >
     <Stack.Screen 
       name="Home" 
       component={HomeScreen}
-      options={{ headerShown: false }}
+      options={{ 
+        title: 'INÍCIO'
+      }}
     />
     <Stack.Screen 
       name="Usuario" 
       component={UsuarioScreen}
       options={{ 
-        ...headerOptions,
-        title: 'Perfil do Usuário'
+        title: 'PERFIL DO USUÁRIO'
       }}
     />
     <Stack.Screen 
       name="Configuracoes" 
       component={ConfiguracoesScreen}
       options={{ 
-        ...headerOptions,
-        title: 'Configurações'
+        title: 'CONFIGURAÇÕES'
       }}
     />
     <Stack.Screen 
       name="Dashboard" 
       component={DashboardScreen}
       options={{ 
-        ...headerOptions,
-        title: 'Dashboard Operacional'
+        title: 'DASHBOARD OPERACIONAL'
       }}
     />
     <Stack.Screen 
       name="ListarOcorrencias" 
       component={ListarOcorrenciasScreen}
       options={{ 
-        ...headerOptions,
-        title: 'Lista de Ocorrências'
+        title: 'LISTA DE OCORRÊNCIAS'
       }}
     />
     <Stack.Screen 
       name="NovaOcorrencia" 
       component={NovaOcorrenciaScreen}
       options={{ 
-        ...headerOptions,
-        title: 'Nova Ocorrência'
+        title: 'NOVA OCORRÊNCIA'
       }}
     />
     <Stack.Screen 
       name="OcorrenciaRegistrada" 
       component={OcorrenciaRegistradaScreen}
       options={{ 
-        ...headerOptions,
-        title: 'Ocorrência Registrada',
+        title: 'OCORRÊNCIA REGISTRADA',
         headerLeft: null
       }}
     />
@@ -110,8 +109,7 @@ const MainStack = () => (
       name="DetalhesOcorrencia" 
       component={DetalhesOcorrenciaScreen}
       options={{ 
-        ...headerOptions,
-        title: 'Detalhes da Ocorrência'
+        title: 'DETALHES DA OCORRÊNCIA'
       }}
     />
   </Stack.Navigator>

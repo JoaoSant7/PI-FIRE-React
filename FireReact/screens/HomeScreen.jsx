@@ -1,12 +1,7 @@
-// screens/HomeScreen.js
+// screens/HomeScreen.jsx
 import React from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  StatusBar,
-} from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import BottomNav from "../components/BottomNav";
 
@@ -67,14 +62,7 @@ export default function HomeScreen({ navigation }) {
   };
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#bc010c" />
-
-      {/* Header Nativo */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>INÍCIO</Text>
-      </View>
-
+    <SafeAreaView style={styles.container}>
       {/* Conteúdo Principal */}
       <View style={styles.content}>
         <Text style={styles.sectionTitle}>O que você deseja acessar?</Text>
@@ -110,7 +98,7 @@ export default function HomeScreen({ navigation }) {
         onUserPress={handleUsuario}
         onNewOccurrencePress={handleNovaOcorrencia}
       />
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -119,29 +107,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
   },
-  header: {
-    backgroundColor: "#bc010c",
-    height: 60,
-    justifyContent: "center",
-    alignItems: "center",
-    elevation: 4,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
-  },
-  headerTitle: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "bold",
-    textTransform: "uppercase",
-  },
   content: {
     flex: 1,
     paddingHorizontal: 20,
     paddingTop: 20,
     alignItems: "center",
-    marginBottom: 70,
   },
   sectionTitle: {
     fontSize: 22,
