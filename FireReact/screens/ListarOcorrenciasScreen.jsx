@@ -8,13 +8,15 @@ import {
   StatusBar,
   ScrollView,
   TextInput,
+  RefreshControl,
 } from "react-native";
 import { MaterialIcons as Icon } from "@expo/vector-icons";
 import BottomNav from "../components/BottomNav";
-import { useOcorrencias } from "../contexts/OcorrenciasContext";
+import { useOcorrenciasContext } from "../contexts/OcorrenciasContext";
 
 export default function ListarOcorrenciasScreen({ navigation }) {
-  const { ocorrencias } = useOcorrencias();
+  const { ocorrencias, loading, refreshing, atualizarDados } =
+    useOcorrenciasContext();
 
   // Filtro por data (formato: 'YYYY-MM-DD')
   const [dataFiltro, setDataFiltro] = useState("");
@@ -28,9 +30,9 @@ export default function ListarOcorrenciasScreen({ navigation }) {
       return ocorrencia.dataHora.startsWith(dataFiltro);
     }
 
-    // Se não tiver dataHora, usa dataRegistro como fallback
-    if (ocorrencia.dataRegistro) {
-      return ocorrencia.dataRegistro.startsWith(dataFiltro);
+    // Se não tiver dataHora, usa dataCriacao como fallback
+    if (ocorrencia.dataCriacao) {
+      return ocorrencia.dataCriacao.startsWith(dataFiltro);
     }
 
     return false;
@@ -49,18 +51,27 @@ export default function ListarOcorrenciasScreen({ navigation }) {
     navigation.navigate("Usuario", { email: "email_do_usuario@exemplo.com" });
   };
 
+  const handleDashboard = () => {
+    navigation.navigate("Dashboard");
+  };
+
   const getStatusColor = (status) => {
-    switch (status) {
-      case "Em Andamento":
+    switch (status?.toLowerCase()) {
+      case "em andamento":
       case "aberta":
+      case "pendente":
+      case "em_andamento":
         return "#FF9800";
-      case "Finalizada":
       case "finalizada":
+      case "atendida":
+      case "concluída":
         return "#4CAF50";
       case "registrada":
+      case "nova":
         return "#2196F3";
-      case "Não Atendida":
-      case "Sem Atuação":
+      case "não atendida":
+      case "sem atuação":
+      case "cancelada":
         return "#F44336";
       default:
         return "#757575";
@@ -109,6 +120,7 @@ export default function ListarOcorrenciasScreen({ navigation }) {
 
   // Função para obter o tipo/natureza da ocorrência
   const getTipoOcorrencia = (ocorrencia) => {
+    if (ocorrencia.tipo) return ocorrencia.tipo;
     if (ocorrencia.natureza) return ocorrencia.natureza;
     if (ocorrencia.grupoOcorrencia) return ocorrencia.grupoOcorrencia;
     return "Ocorrência";
@@ -116,6 +128,7 @@ export default function ListarOcorrenciasScreen({ navigation }) {
 
   // Função para obter o local
   const getLocalOcorrencia = (ocorrencia) => {
+    if (ocorrencia.localizacao) return ocorrencia.localizacao;
     if (ocorrencia.logradouro) {
       return `${ocorrencia.tipoLogradouro || ""} ${
         ocorrencia.logradouro
@@ -126,11 +139,26 @@ export default function ListarOcorrenciasScreen({ navigation }) {
     return "Local não informado";
   };
 
+  // Função para obter a prioridade
+  const getPrioridade = (ocorrencia) => {
+    if (ocorrencia.prioridade) return ocorrencia.prioridade;
+    return "media";
+  };
+
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#bc010c" />
 
-      <ScrollView style={styles.content}>
+      <ScrollView
+        style={styles.content}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={atualizarDados}
+            colors={["#bc010c"]}
+          />
+        }
+      >
         <View style={styles.placeholderSection}>
           <Icon name="list" size={80} color="#bc010c" />
           <Text style={styles.placeholderTitle}>Ocorrências</Text>
@@ -161,6 +189,15 @@ export default function ListarOcorrenciasScreen({ navigation }) {
             </TouchableOpacity>
           ) : null}
         </View>
+
+        {/* Botão para Dashboard */}
+        <TouchableOpacity
+          style={styles.dashboardButton}
+          onPress={handleDashboard}
+        >
+          <Icon name="dashboard" size={20} color="#fff" />
+          <Text style={styles.dashboardButtonText}>Ver Dashboard</Text>
+        </TouchableOpacity>
 
         {/* Lista de ocorrências */}
         {ocorrenciasFiltradas.length === 0 ? (
@@ -193,9 +230,28 @@ export default function ListarOcorrenciasScreen({ navigation }) {
               }}
             >
               <View style={styles.ocorrenciaHeader}>
-                <Text style={styles.ocorrenciaTipo}>
-                  {getTipoOcorrencia(ocorrencia)}
-                </Text>
+                <View style={styles.ocorrenciaTipoContainer}>
+                  <Text style={styles.ocorrenciaTipo}>
+                    {getTipoOcorrencia(ocorrencia)}
+                  </Text>
+                  <View
+                    style={[
+                      styles.prioridadeBadge,
+                      {
+                        backgroundColor:
+                          getPrioridade(ocorrencia) === "alta"
+                            ? "#ff4444"
+                            : getPrioridade(ocorrencia) === "media"
+                            ? "#ffaa00"
+                            : "#44ff44",
+                      },
+                    ]}
+                  >
+                    <Text style={styles.prioridadeText}>
+                      {getPrioridade(ocorrencia).toUpperCase()}
+                    </Text>
+                  </View>
+                </View>
                 <View
                   style={[
                     styles.statusBadge,
@@ -212,6 +268,12 @@ export default function ListarOcorrenciasScreen({ navigation }) {
                 </View>
               </View>
 
+              {ocorrencia.descricao && (
+                <Text style={styles.ocorrenciaDescricao} numberOfLines={2}>
+                  {ocorrencia.descricao}
+                </Text>
+              )}
+
               <View style={styles.ocorrenciaInfo}>
                 <Icon name="location-on" size={16} color="#666" />
                 <Text style={styles.ocorrenciaLocal}>
@@ -222,16 +284,22 @@ export default function ListarOcorrenciasScreen({ navigation }) {
               <View style={styles.ocorrenciaInfo}>
                 <Icon name="access-time" size={16} color="#666" />
                 <Text style={styles.ocorrenciaHora}>
-                  {extrairHora(ocorrencia.dataHora || ocorrencia.dataRegistro)}
+                  {extrairHora(ocorrencia.dataHora || ocorrencia.dataCriacao)}
                 </Text>
               </View>
 
               {/* Informações adicionais */}
-              {(ocorrencia.numeroAviso || ocorrencia.grupamento) && (
+              {(ocorrencia.regiao ||
+                ocorrencia.numeroAviso ||
+                ocorrencia.grupamento) && (
                 <View style={styles.ocorrenciaInfo}>
                   <Icon name="info" size={16} color="#666" />
                   <Text style={styles.ocorrenciaDetalhes}>
-                    {[ocorrencia.numeroAviso, ocorrencia.grupamento]
+                    {[
+                      ocorrencia.regiao,
+                      ocorrencia.numeroAviso,
+                      ocorrencia.grupamento,
+                    ]
                       .filter(Boolean)
                       .join(" • ")}
                   </Text>
@@ -243,7 +311,7 @@ export default function ListarOcorrenciasScreen({ navigation }) {
                 <Icon name="date-range" size={16} color="#666" />
                 <Text style={styles.ocorrenciaData}>
                   {formatarDataHora(
-                    ocorrencia.dataHora || ocorrencia.dataRegistro
+                    ocorrencia.dataHora || ocorrencia.dataCriacao
                   )}
                 </Text>
               </View>
@@ -318,6 +386,21 @@ const styles = StyleSheet.create({
   limparFiltro: {
     padding: 4,
   },
+  dashboardButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#bc010c",
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 16,
+  },
+  dashboardButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+    marginLeft: 8,
+  },
   ocorrenciaCard: {
     backgroundColor: "#f8f8f8",
     padding: 15,
@@ -332,12 +415,26 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     marginBottom: 10,
   },
+  ocorrenciaTipoContainer: {
+    flex: 1,
+    marginRight: 10,
+  },
   ocorrenciaTipo: {
     fontSize: 18,
     fontWeight: "bold",
     color: "#333",
-    flex: 1,
-    marginRight: 10,
+    marginBottom: 4,
+  },
+  prioridadeBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 4,
+    alignSelf: "flex-start",
+  },
+  prioridadeText: {
+    color: "#fff",
+    fontSize: 10,
+    fontWeight: "bold",
   },
   statusBadge: {
     paddingHorizontal: 10,
@@ -351,6 +448,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "bold",
     textAlign: "center",
+  },
+  ocorrenciaDescricao: {
+    fontSize: 14,
+    color: "#666",
+    marginBottom: 8,
+    lineHeight: 18,
   },
   ocorrenciaInfo: {
     flexDirection: "row",

@@ -1,23 +1,23 @@
-// context/OcorrenciasContext.js
-import React, { createContext, useState, useContext } from 'react';
+// contexts/OcorrenciasContext.js
+import React, { createContext, useContext, useState } from 'react';
+import { useOcorrencias } from '../hooks/useOcorrencias';
 
 const OcorrenciasContext = createContext();
 
-export function OcorrenciasProvider({ children }) {
-  const [ocorrencias, setOcorrencias] = useState([]); // Inicialmente vazio
-
-  // Função para adicionar uma ocorrência
-  const adicionarOcorrencia = (ocorrencia) => {
-    setOcorrencias((prev) => [...prev, ocorrencia]);
-  };
+export const OcorrenciasProvider = ({ children }) => {
+  const ocorrenciasData = useOcorrencias();
 
   return (
-    <OcorrenciasContext.Provider value={{ ocorrencias, adicionarOcorrencia }}>
+    <OcorrenciasContext.Provider value={ocorrenciasData}>
       {children}
     </OcorrenciasContext.Provider>
   );
-}
+};
 
-export function useOcorrencias() {
-  return useContext(OcorrenciasContext);
-}
+export const useOcorrenciasContext = () => {
+  const context = useContext(OcorrenciasContext);
+  if (!context) {
+    throw new Error('useOcorrenciasContext deve ser usado dentro de OcorrenciasProvider');
+  }
+  return context;
+};

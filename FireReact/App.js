@@ -4,7 +4,7 @@ import { View, Text, StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
-// Import de Screens - CORRIGIDO: caminhos relativos corretos
+// Import de Screens
 import LoginScreen from './screens/LoginScreen.jsx';
 import HomeScreen from './screens/HomeScreen.jsx';
 import UsuarioScreen from './screens/UsuarioScreen.jsx';

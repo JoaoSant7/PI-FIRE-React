@@ -20,8 +20,8 @@ import DatePickerInput from "../components/DatePickerInput";
 import PickerInput from "../components/PickerInput";
 import TextInput from "../components/TextInput";
 
-// Import do contexto
-import { useOcorrencias } from "../contexts/OcorrenciasContext";
+// Import do contexto CORRIGIDO
+import { useOcorrenciasContext } from "../contexts/OcorrenciasContext";
 
 // Import dos dados dos pickers
 import {
@@ -50,8 +50,8 @@ const MOTIVOS_NAO_ATENDIMENTO = [
 ];
 
 const NovaOcorrenciaScreen = ({ navigation }) => {
-  // Hook do contexto
-  const { adicionarOcorrencia } = useOcorrencias();
+  // Hook do contexto CORRIGIDO
+  const { adicionarOcorrencia } = useOcorrenciasContext();
 
   // Estado principal do formulário
   const [formData, setFormData] = useState({
@@ -70,7 +70,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
     horaLocal: "",
     horaSaidaLocal: "",
     motivoNaoAtendida: "",
-    motivoOutro: "", // Novo campo para o motivo "Outro"
+    motivoOutro: "",
     vitimaSamu: false,
 
     // Vítima
@@ -114,9 +114,9 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
     }
   };
 
-  // Validação do formulário (apenas validações não-obrigatórias)
+  // Validação do formulário
   const validateForm = () => {
-    // Validação do formato de hora (mantida)
+    // Validação do formato de hora
     const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/;
 
     if (
@@ -149,10 +149,29 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
       return false;
     }
 
+    // Validação de campos obrigatórios para o Dashboard
+    if (!formData.natureza) {
+      Alert.alert(
+        "Campo Obrigatório",
+        "A natureza da ocorrência é obrigatória para o Dashboard",
+        [{ text: "OK" }]
+      );
+      return false;
+    }
+
+    if (!formData.regiao) {
+      Alert.alert(
+        "Campo Obrigatório",
+        "A região é obrigatória para o Dashboard",
+        [{ text: "OK" }]
+      );
+      return false;
+    }
+
     return true;
   };
 
-  // Função para salvar a ocorrência - MODIFICADA
+  // Função para salvar a ocorrência - ATUALIZADA
   const handleSave = async () => {
     if (!validateForm()) return;
     if (enviando) return;
@@ -172,19 +191,82 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
             try {
               setEnviando(true);
 
-              // Monta objeto completo da ocorrência
-              const ocorrenciaData = {
-                ...formData,
-                id: `ocorrencia_${Date.now()}`,
-                dataHora: dataHora.toISOString(),
-                dataRegistro: new Date().toISOString(),
-                status: "registrada",
+              // Calcular tempo de resposta se houver horários
+              let tempoResposta = 0;
+              if (formData.horaSaidaQuartel && formData.horaLocal) {
+                const [hSaidaH, hSaidaM, hSaidaS] = formData.horaSaidaQuartel
+                  .split(":")
+                  .map(Number);
+                const [hLocalH, hLocalM, hLocalS] = formData.horaLocal
+                  .split(":")
+                  .map(Number);
+
+                const saidaSegundos = hSaidaH * 3600 + hSaidaM * 60 + hSaidaS;
+                const localSegundos = hLocalH * 3600 + hLocalM * 60 + hLocalS;
+
+                tempoResposta = Math.max(0, localSegundos - saidaSegundos) / 60; // Em minutos
+              }
+
+              // Mapear situação para status do Dashboard
+              const mapStatus = (situacao) => {
+                switch (situacao?.toLowerCase()) {
+                  case "finalizada":
+                  case "atendida":
+                    return "finalizada";
+                  case "em andamento":
+                  case "aberta":
+                    return "em_andamento";
+                  case "não atendida":
+                  case "sem atuação":
+                    return "nao_atendida";
+                  default:
+                    return "registrada";
+                }
               };
 
-              console.log("Dados da ocorrência:", ocorrenciaData);
+              // Monta objeto completo da ocorrência para o Dashboard
+              const ocorrenciaData = {
+                // Dados básicos para Dashboard
+                id: `ocorrencia_${Date.now()}_${Math.random()
+                  .toString(36)
+                  .substr(2, 9)}`,
+                tipo: formData.natureza,
+                descricao: `${formData.natureza} - ${
+                  formData.grupoOcorrencia || ""
+                }`.trim(),
+                localizacao:
+                  formData.logradouro ||
+                  formData.bairro ||
+                  formData.municipio ||
+                  "Local não informado",
+                regiao: formData.regiao,
+                status: mapStatus(formData.situacao),
+                prioridade:
+                  formData.classificacao === "Emergência"
+                    ? "alta"
+                    : formData.classificacao === "Urgência"
+                    ? "media"
+                    : "baixa",
+                dataHora: dataHora.toISOString(),
+                dataCriacao: new Date().toISOString(),
+                tempoResposta: Math.round(tempoResposta),
 
-              // SALVA NO CONTEXTO
-              adicionarOcorrencia(ocorrenciaData);
+                // Mantém todos os dados originais para detalhes
+                ...formData,
+
+                // Campos adicionais para compatibilidade
+                numeroAviso: formData.numeroAviso,
+                grupamento: formData.grupamento,
+                situacao: formData.situacao,
+                natureza: formData.natureza,
+                grupoOcorrencia: formData.grupoOcorrencia,
+                subgrupoOcorrencia: formData.subgrupoOcorrencia,
+              };
+
+              console.log("Salvando ocorrência:", ocorrenciaData);
+
+              // SALVA NO CONTEXTO - CORRIGIDO
+              await adicionarOcorrencia(ocorrenciaData);
 
               // Feedback de sucesso
               Alert.alert("Sucesso!", "Ocorrência registrada com sucesso", [
@@ -198,7 +280,10 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
               ]);
             } catch (error) {
               console.error("Erro ao salvar ocorrência:", error);
-              Alert.alert("Erro", "Não foi possível salvar a ocorrência");
+              Alert.alert(
+                "Erro",
+                "Não foi possível salvar a ocorrência: " + error.message
+              );
             } finally {
               setEnviando(false);
             }
@@ -314,7 +399,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
 
         {/* Seção: Ocorrência */}
         <Section title="Ocorrência">
-          <InputGroup label="Natureza da Ocorrência">
+          <InputGroup label="Natureza da Ocorrência*">
             <PickerInput
               selectedValue={formData.natureza}
               onValueChange={(value) => updateFormData("natureza", value)}
@@ -555,7 +640,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
             />
           </InputGroup>
 
-          <InputGroup label="Região">
+          <InputGroup label="Região*">
             <PickerInput
               selectedValue={formData.regiao}
               onValueChange={(value) => updateFormData("regiao", value)}
@@ -647,6 +732,9 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
         </View>
 
         <View style={styles.requiredNote}>
+          <Text style={styles.requiredText}>
+            * Campos obrigatórios para o Dashboard
+          </Text>
           <Text style={styles.requiredText}>FIRE ALPHA</Text>
         </View>
       </ScrollView>
@@ -730,6 +818,7 @@ const styles = StyleSheet.create({
     color: "#666",
     fontSize: 12,
     fontStyle: "italic",
+    marginBottom: 4,
   },
   pickerContainer: {
     borderWidth: 1,
