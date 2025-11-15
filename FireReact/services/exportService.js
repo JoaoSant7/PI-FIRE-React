@@ -6,32 +6,7 @@ import * as Print from 'expo-print';
 
 // Função auxiliar para obter informações formatadas conforme Detalhes da Ocorrência
 const getOcorrenciaInfo = (ocorrencia) => {
-  // Função melhorada para formatar hora
-  const formatarHora = (horaString) => {
-    if (!horaString) return "Não informado";
-    
-    // Se já for uma string de hora no formato HH:MM
-    if (typeof horaString === 'string' && horaString.match(/^\d{1,2}:\d{2}$/)) {
-      return horaString;
-    }
-    
-    // Se for uma data ISO ou timestamp
-    try {
-      const data = new Date(horaString);
-      if (isNaN(data.getTime())) {
-        return "Não informado";
-      }
-      return data.toLocaleTimeString("pt-BR", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false
-      });
-    } catch (error) {
-      return "Não informado";
-    }
-  };
-
-  // Função para formatar data e hora completa
+  // Formatar data e hora
   const formatarDataHora = (dataHoraString) => {
     if (!dataHoraString) return "Não informado";
     try {
@@ -52,7 +27,26 @@ const getOcorrenciaInfo = (ocorrencia) => {
     }
   };
 
-  // Mapeamento mais flexível dos campos
+  // Função para formatar hora (aceita tanto string quanto Date)
+  const formatarHora = (hora) => {
+    if (!hora) return "Não informado";
+    
+    // Se já for uma string no formato HH:MM:SS
+    if (typeof hora === 'string' && hora.match(/^\d{1,2}:\d{2}:\d{2}$/)) {
+      return hora;
+    }
+    
+    // Se for um objeto Date
+    if (hora instanceof Date) {
+      const hours = String(hora.getHours()).padStart(2, '0');
+      const minutes = String(hora.getMinutes()).padStart(2, '0');
+      const seconds = String(hora.getSeconds()).padStart(2, '0');
+      return `${hours}:${minutes}:${seconds}`;
+    }
+    
+    return "Não informado";
+  };
+
   return {
     // Dados Internos
     dataHora: formatarDataHora(ocorrencia.dataHora || ocorrencia.data || ocorrencia.dataCriacao),
@@ -61,14 +55,14 @@ const getOcorrenciaInfo = (ocorrencia) => {
     grupamento: ocorrencia.grupamento || ocorrencia.unidade || ocorrencia.equipe || "Não informado",
     pontoBase: ocorrencia.pontoBase || ocorrencia.base || "Não informado",
 
-    // Ocorrência
+    // Ocorrência - HORÁRIOS CORRIGIDOS
     natureza: ocorrencia.natureza || ocorrencia.tipo || "Não informado",
     grupoOcorrencia: ocorrencia.grupoOcorrencia || ocorrencia.grupo || "Não informado",
     subgrupoOcorrencia: ocorrencia.subgrupoOcorrencia || ocorrencia.subgrupo || "Não informado",
     situacao: ocorrencia.situacao || ocorrencia.status || "Não informado",
-    horaSaidaQuartel: formatarHora(ocorrencia.horaSaidaQuartel || ocorrencia.saidaQuartel || ocorrencia.horaSaida),
-    horaChegadaLocal: formatarHora(ocorrencia.horaChegadaLocal || ocorrencia.chegadaLocal || ocorrencia.horaChegada),
-    horaSaidaLocal: formatarHora(ocorrencia.horaSaidaLocal || ocorrencia.saidaLocal || ocorrencia.horaFinalizacao),
+    horaSaidaQuartel: formatarHora(ocorrencia.horaSaidaQuartel),
+    horaChegadaLocal: formatarHora(ocorrencia.horaChegadaLocal || ocorrencia.horaLocal),
+    horaSaidaLocal: formatarHora(ocorrencia.horaSaidaLocal),
     vitimaSocorridaSamu: ocorrencia.vitimaSocorridaSamu || ocorrencia.samu || ocorrencia.vitimaSamu || "Não",
 
     // Informações da Vítima
@@ -135,10 +129,10 @@ export const exportToCSV = async (occurrences) => {
   }
 };
 
-// Serviço para exportar PDF
+// Serviço para exportar PDF - LAYOUT SIMPLIFICADO
 export const exportToPDF = async (occurrences) => {
   try {
-    // HTML para o PDF seguindo a estrutura de Detalhes da Ocorrência
+    // HTML para o PDF - LAYOUT SIMPLIFICADO
     const html = `
       <html>
         <head>
@@ -148,91 +142,90 @@ export const exportToPDF = async (occurrences) => {
               font-family: Arial, sans-serif; 
               margin: 15px; 
               line-height: 1.4;
-              color: #333;
-              font-size: 12px;
+              color: #000;
+              font-size: 10px;
             }
             .header { 
               text-align: center; 
-              margin-bottom: 20px;
-              border-bottom: 2px solid #bc010c;
-              padding-bottom: 10px;
+              margin-bottom: 15px;
+              border-bottom: 1px solid #000;
+              padding-bottom: 8px;
             }
             .header h1 { 
-              color: #bc010c; 
+              color: #000; 
               margin: 0;
-              font-size: 16px;
+              font-size: 14px;
+              font-weight: bold;
             }
             .header .subtitle {
-              color: #666;
-              font-size: 11px;
-              margin-top: 3px;
+              color: #333;
+              font-size: 9px;
+              margin-top: 2px;
             }
             .occurrence { 
-              margin: 15px 0;
+              margin: 10px 0;
               page-break-inside: avoid;
             }
             .occurrence-header {
-              background-color: #bc010c;
-              color: white;
-              padding: 8px 12px;
+              background-color: #f0f0f0;
+              padding: 6px 8px;
               font-weight: bold;
-              border-radius: 4px 4px 0 0;
-              font-size: 13px;
+              border: 1px solid #ccc;
+              font-size: 11px;
+              margin-bottom: 8px;
             }
             .section {
-              margin: 12px 0;
-              border: 1px solid #ddd;
-              border-radius: 4px;
+              margin: 8px 0;
+              border: 1px solid #ccc;
             }
             .section-title {
-              background-color: #f5f5f5;
-              padding: 8px 12px;
+              background-color: #f8f8f8;
+              padding: 5px 8px;
               font-weight: bold;
-              border-bottom: 1px solid #ddd;
-              font-size: 13px;
+              border-bottom: 1px solid #ccc;
+              font-size: 10px;
             }
             .section-content {
-              padding: 10px 12px;
+              padding: 6px 8px;
             }
             .info-grid {
               display: grid;
               grid-template-columns: 1fr 1fr;
-              gap: 8px;
+              gap: 4px;
             }
             .info-item {
-              margin: 4px 0;
+              margin: 2px 0;
+              display: flex;
             }
             .info-label {
               font-weight: bold;
-              color: #555;
-              font-size: 11px;
+              color: #333;
+              font-size: 9px;
+              min-width: 120px;
             }
             .info-value {
-              color: #333;
-              font-size: 11px;
+              color: #000;
+              font-size: 9px;
+              flex: 1;
             }
             .full-width {
               grid-column: 1 / -1;
             }
             .description-box {
               background-color: #f9f9f9;
-              padding: 8px;
-              border-radius: 4px;
-              border-left: 3px solid #bc010c;
-              margin: 8px 0;
-              font-size: 11px;
+              padding: 6px;
+              border: 1px solid #ddd;
+              margin: 4px 0;
+              font-size: 9px;
               white-space: pre-line;
             }
             .footer {
               text-align: center;
-              margin-top: 20px;
+              margin-top: 15px;
               color: #666;
-              font-size: 10px;
+              font-size: 8px;
               border-top: 1px solid #ddd;
-              padding-top: 10px;
-            }
-            .page-break {
-              page-break-before: always;
+              padding-top: 8px;
             }
             @media print {
               body { margin: 10px; }
@@ -432,9 +425,8 @@ export const exportToPDF = async (occurrences) => {
                     </div>
                   </div>
                 </div>
-
-                ${index < occurrences.length - 1 ? '<div class="page-break"></div>' : ''}
               </div>
+              ${index < occurrences.length - 1 ? '<div style="height: 10px;"></div>' : ''}
             `;
           }).join('')}
 
