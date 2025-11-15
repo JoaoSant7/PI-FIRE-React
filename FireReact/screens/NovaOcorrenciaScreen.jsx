@@ -39,6 +39,9 @@ import {
   TIPOS_LOGRADOURO,
 } from "../constants/pickerData";
 
+//Import dos Municípios
+import { MUNICIPIOS_PERNAMBUCO } from "../constants/pickerData";
+
 // Constantes para os motivos de não atendimento/sem atuação
 const MOTIVOS_NAO_ATENDIMENTO = [
   { label: "Selecione o motivo de não atendimento", value: "" },
@@ -832,10 +835,11 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
         {/* Seção: Endereço */}
         <Section title="Endereço da Ocorrência">
           <InputGroup label="Município" required>
-            <TextInput
-              value={formData.municipio}
-              onChangeText={(value) => updateFormData("municipio", value)}
-              placeholder="Digite o município"
+            <SearchablePicker
+              selectedValue={formData.municipio}
+              onValueChange={(value) => updateFormData("municipio", value)}
+              items={MUNICIPIOS_PERNAMBUCO}
+              placeholder="Selecione o município"
             />
           </InputGroup>
 
