@@ -12,12 +12,12 @@ import {
   ScrollView,
   Image,
 } from "react-native";
-import { AuthContext } from "../contexts/AuthContext"; // Updated import path
+import { AuthContext } from "../contexts/AuthContext";
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { login } = useContext(AuthContext); // Use o contexto
+  const { login } = useContext(AuthContext);
 
   const handleLogin = () => {
     console.log("Email:", email);
@@ -41,39 +41,48 @@ export default function LoginScreen({ navigation }) {
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Image
-          source={require("../components/Fire-noBG.png")}
-          style={styles.logo}
-          resizeMode="cover"
-        />
-
-        <Text style={styles.fireTitle}>FIRE</Text>
-        <Text style={styles.subtitle}>
-          Ferramenta Integrada de Resposta a Emergências
-        </Text>
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={styles.header}>
+          <Image
+            source={require("../components/Fire-noBG.png")}
+            style={styles.logo}
+            resizeMode="contain"
+          />
+          <Text style={styles.fireTitle}>FIRE</Text>
+          <Text style={styles.subtitle}>
+            Ferramenta Integrada de Resposta a Emergências
+          </Text>
+        </View>
 
         <View style={styles.formContainer}>
-          <Text style={styles.label}>E-MAIL</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="seu@email.com"
-            placeholderTextColor="#999"
-            keyboardType="email-address"
-            autoCapitalize="none"
-            value={email}
-            onChangeText={setEmail}
-          />
+          <View style={styles.inputWrapper}>
+            <Text style={styles.label}>E-MAIL</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="seu@email.com"
+              placeholderTextColor="#999"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              value={email}
+              onChangeText={setEmail}
+            />
+          </View>
 
-          <Text style={styles.label}>SENHA</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Sua senha"
-            placeholderTextColor="#999"
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-          />
+          <View style={styles.inputWrapper}>
+            <Text style={styles.label}>SENHA</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Sua senha"
+              placeholderTextColor="#999"
+              secureTextEntry
+              value={password}
+              onChangeText={setPassword}
+            />
+          </View>
 
           <TouchableOpacity
             style={styles.forgotPasswordButton}
@@ -94,19 +103,12 @@ export default function LoginScreen({ navigation }) {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>
-            <Text style={styles.signUpText}></Text>
-          </Text>
-        </View>
-
         <StatusBar style="auto" />
       </ScrollView>
     </KeyboardAvoidingView>
   );
 }
 
-// Keep the same styles...
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -116,84 +118,99 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: "center",
     paddingHorizontal: 30,
+    paddingTop: 40,
+    paddingBottom: 40,
+    minHeight: "100%",
+  },
+  header: {
+    alignItems: "center",
+    marginBottom: 50,
   },
   fireTitle: {
     fontSize: 48,
-    fontWeight: "bold",
+    fontWeight: "800",
     color: "#bc010c",
     textAlign: "center",
     marginBottom: 10,
+    textShadowColor: "rgba(188, 1, 12, 0.1)",
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 4,
   },
   logo: {
-    width: 240,
-    height: 240,
-    alignSelf: "center",
+    width: 160,
+    height: 160,
+    marginBottom: 10,
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: 14,
     color: "#666",
     textAlign: "center",
-    marginBottom: 50,
+    lineHeight: 20,
+    paddingHorizontal: 10,
   },
   formContainer: {
     width: "100%",
   },
+  inputWrapper: {
+    marginBottom: 20,
+  },
   label: {
     fontSize: 12,
-    fontWeight: "600",
+    fontWeight: "700",
     color: "#333",
     marginBottom: 8,
     textTransform: "uppercase",
+    letterSpacing: 0.5,
   },
   input: {
     backgroundColor: "#f8f8f8",
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: "#e1e1e1",
-    borderRadius: 10,
-    paddingHorizontal: 15,
-    paddingVertical: 15,
+    borderRadius: 12,
+    paddingHorizontal: 18,
+    paddingVertical: 16,
     fontSize: 16,
-    marginBottom: 20,
     color: "#333",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1,
   },
   forgotPasswordButton: {
     alignSelf: "flex-end",
     marginBottom: 30,
+    paddingVertical: 5,
   },
   forgotPasswordText: {
     color: "#bc010c",
     fontSize: 14,
-    fontWeight: "500",
-    fontStyle: "bold",
+    fontWeight: "600",
     textDecorationLine: "underline",
   },
   loginButton: {
     backgroundColor: "#bc010c",
-    paddingVertical: 16,
-    borderRadius: 10,
+    paddingVertical: 18,
+    borderRadius: 12,
     alignItems: "center",
     shadowColor: "#bc010c",
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
+    shadowRadius: 10,
+    elevation: 8,
+    borderWidth: 1,
+    borderColor: "#a0010a",
   },
   loginButtonDisabled: {
-    backgroundColor: "#ccc",
-    shadowColor: "#ccc",
+    backgroundColor: "#cccccc",
+    shadowColor: "#cccccc",
+    borderColor: "#bbbbbb",
   },
   loginButtonText: {
     color: "white",
     fontSize: 16,
     fontWeight: "bold",
     textTransform: "uppercase",
-  },
-  footer: {
-    marginTop: 40,
-    alignItems: "center",
-  },
-  footerText: {
-    color: "#666",
-    fontSize: 14,
+    letterSpacing: 1,
   },
 });
