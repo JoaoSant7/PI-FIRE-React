@@ -1,39 +1,52 @@
+// components/InputGroup.js
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
+import SearchablePicker from "./SearchablePicker";
 
-const InputGroup = ({ label, children, style, required = false }) => {
+const InputGroup = ({
+  label,
+  required,
+  children,
+  style,
+  searchable,
+  // Props específicas do SearchablePicker
+  selectedValue,
+  onValueChange,
+  items,
+  placeholder,
+}) => {
   return (
-    <View style={[styles.inputGroup, style]}>
+    <View style={[styles.container, style]}>
       <Text style={styles.label}>
-        {label}
-        {required && <Text style={styles.requiredAsterisk}>*</Text>}
+        {label} {required && <Text style={styles.required}>*</Text>}
       </Text>
-      {children}
-      {required && <Text style={styles.requiredText}></Text>}
+
+      {searchable ? (
+        <SearchablePicker
+          selectedValue={selectedValue}
+          onValueChange={onValueChange}
+          items={items}
+          placeholder={placeholder}
+        />
+      ) : (
+        children
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  inputGroup: {
-    marginBottom: 16,
+  container: {
+    marginVertical: 8,
   },
   label: {
     fontSize: 14,
     fontWeight: "500",
-    marginBottom: 6,
-    color: "#333",
+    color: "#555",
+    marginBottom: 8,
   },
-  requiredAsterisk: {
-    color: "#bc010c",
-    fontWeight: "bold",
-    marginLeft: 2,
-  },
-  requiredText: {
-    fontSize: 11,
-    color: "#bc010c",
-    fontStyle: "italic",
-    marginTop: 2,
+  required: {
+    color: "red",
   },
 });
 

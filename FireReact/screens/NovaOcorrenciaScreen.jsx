@@ -20,6 +20,7 @@ import TimeInput from "../components/TimeInput";
 import DatePickerInput from "../components/DatePickerInput";
 import PickerInput from "../components/PickerInput";
 import TextInput from "../components/TextInput";
+import SearchablePicker from "../components/SearchablePicker"; // Import do SearchablePicker
 
 // Import do contexto CORRIGIDO
 import { useOcorrenciasContext } from "../contexts/OcorrenciasContext";
@@ -601,8 +602,9 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
             />
           </InputGroup>
 
+          {/* Grupo da Ocorrência com SearchablePicker */}
           <InputGroup label="Grupo da Ocorrência" required>
-            <PickerInput
+            <SearchablePicker
               selectedValue={formData.grupoOcorrencia}
               onValueChange={(value) =>
                 updateFormData("grupoOcorrencia", value)
@@ -612,8 +614,9 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
             />
           </InputGroup>
 
+          {/* Subgrupo da Ocorrência com SearchablePicker */}
           <InputGroup label="Subgrupo da Ocorrência" required>
-            <PickerInput
+            <SearchablePicker
               selectedValue={formData.subgrupoOcorrencia}
               onValueChange={(value) =>
                 updateFormData("subgrupoOcorrencia", value)
