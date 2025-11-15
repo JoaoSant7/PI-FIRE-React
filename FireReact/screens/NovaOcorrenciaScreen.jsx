@@ -20,7 +20,7 @@ import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 // Import dos componentes
 import Section from "../components/Section";
 import InputGroup from "../components/InputGroup";
-import TimeInput from "../components/TimeInput";
+import DateTimePickerInput from "../components/DateTimePickerInput"; // NOVO IMPORT
 import DatePickerInput from "../components/DatePickerInput";
 import PickerInput from "../components/PickerInput";
 import TextInput from "../components/TextInput";
@@ -77,8 +77,14 @@ const gerarNumeroAviso = () => {
   return `${ano}${mes}${dia}${horas}${minutos}${segundos}${sufixo}`;
 };
 
-// Função de validação separada para melhor organização
-const validateRequiredFields = (formData, dataHora) => {
+// Função de validação separada para melhor organização - ATUALIZADA
+const validateRequiredFields = (
+  formData,
+  dataHora,
+  horaSaidaQuartel,
+  horaLocal,
+  horaSaidaLocal
+) => {
   const camposObrigatorios = [
     { campo: "Data e Hora", preenchido: dataHora !== null, valor: dataHora },
     {
@@ -118,18 +124,18 @@ const validateRequiredFields = (formData, dataHora) => {
     },
     {
       campo: "Saída do Quartel",
-      preenchido: !!formData.horaSaidaQuartel?.trim(),
-      valor: formData.horaSaidaQuartel,
+      preenchido: horaSaidaQuartel !== null,
+      valor: horaSaidaQuartel,
     },
     {
       campo: "Chegada no Local",
-      preenchido: !!formData.horaLocal?.trim(),
-      valor: formData.horaLocal,
+      preenchido: horaLocal !== null,
+      valor: horaLocal,
     },
     {
       campo: "Saída do Local",
-      preenchido: !!formData.horaSaidaLocal?.trim(),
-      valor: formData.horaSaidaLocal,
+      preenchido: horaSaidaLocal !== null,
+      valor: horaSaidaLocal,
     },
     {
       campo: "Município",
@@ -160,7 +166,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
   // Hook do contexto CORRIGIDO
   const { adicionarOcorrencia } = useOcorrenciasContext();
 
-  // Estado principal do formulário
+  // Estado principal do formulário - REMOVIDOS OS CAMPOS DE HORÁRIO DO formData
   const [formData, setFormData] = useState({
     // Dados Internos - númeroAviso será gerado automaticamente
     numeroAviso: gerarNumeroAviso(), // GERA AUTOMATICAMENTE AO INICIAR
@@ -173,9 +179,6 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
     grupoOcorrencia: "",
     subgrupoOcorrencia: "",
     situacao: "",
-    horaSaidaQuartel: "",
-    horaLocal: "",
-    horaSaidaLocal: "",
     motivoNaoAtendida: "",
     motivoOutro: "",
     vitimaSamu: false,
@@ -204,7 +207,12 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
     longitude: "",
   });
 
+  // ESTADOS SEPARADOS PARA DATAS E HORÁRIOS
   const [dataHora, setDataHora] = useState(new Date());
+  const [horaSaidaQuartel, setHoraSaidaQuartel] = useState(null);
+  const [horaLocal, setHoraLocal] = useState(null);
+  const [horaSaidaLocal, setHoraSaidaLocal] = useState(null);
+
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [enviando, setEnviando] = useState(false);
   const [fotoOcorrencia, setFotoOcorrencia] = useState(null);
@@ -443,7 +451,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
     updateFormData("idade", idade.toString());
   };
 
-  // Função para validar e formatar o AIS - CORRIGIDA
+  // Função para validar e formatar o AIS
   const handleAISChange = (value) => {
     // Remove caracteres não numéricos
     const numericValue = value.replace(/[^0-9]/g, "");
@@ -481,43 +489,27 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
     }
   };
 
-  // Validação do formulário - ATUALIZADA
-  const validateForm = () => {
-    // Validação do formato de hora
-    const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/;
+  // Função para converter Date para string HH:MM:SS
+  const formatHoraToString = (date) => {
+    if (!date) return "";
+    return date.toLocaleTimeString("pt-BR", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+    });
+  };
 
-    if (
-      formData.horaSaidaQuartel &&
-      !timeRegex.test(formData.horaSaidaQuartel)
-    ) {
-      Alert.alert(
-        "Formato Inválido",
-        "O formato da hora de saída do quartel deve ser HH:MM:SS",
-        [{ text: "OK" }]
-      );
-      return false;
-    }
-
-    if (formData.horaLocal && !timeRegex.test(formData.horaLocal)) {
-      Alert.alert(
-        "Formato Inválido",
-        "O formato da hora de chegada no local deve ser HH:MM:SS",
-        [{ text: "OK" }]
-      );
-      return false;
-    }
-
-    if (formData.horaSaidaLocal && !timeRegex.test(formData.horaSaidaLocal)) {
-      Alert.alert(
-        "Formato Inválido",
-        "O formato da hora de saída do local deve ser HH:MM:SS",
-        [{ text: "OK" }]
-      );
-      return false;
-    }
-
+  // Função para salvar a ocorrência - ATUALIZADA
+  const handleSave = async () => {
     // Validação dos campos obrigatórios
-    const camposVazios = validateRequiredFields(formData, dataHora);
+    const camposVazios = validateRequiredFields(
+      formData,
+      dataHora,
+      horaSaidaQuartel,
+      horaLocal,
+      horaSaidaLocal
+    );
 
     if (camposVazios.length > 0) {
       const camposLista = camposVazios
@@ -528,15 +520,9 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
         `Os seguintes campos são obrigatórios:\n\n${camposLista}`,
         [{ text: "OK" }]
       );
-      return false;
+      return;
     }
 
-    return true;
-  };
-
-  // Função para salvar a ocorrência - ATUALIZADA
-  const handleSave = async () => {
-    if (!validateForm()) return;
     if (enviando) return;
 
     // Pop-up de confirmação
@@ -558,17 +544,15 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
 
               // Calcular tempo de resposta se houver horários
               let tempoResposta = 0;
-              if (formData.horaSaidaQuartel && formData.horaLocal) {
-                const [hSaidaH, hSaidaM, hSaidaS] = formData.horaSaidaQuartel
-                  .split(":")
-                  .map(Number);
-                const [hLocalH, hLocalM, hLocalS] = formData.horaLocal
-                  .split(":")
-                  .map(Number);
-
-                const saidaSegundos = hSaidaH * 3600 + hSaidaM * 60 + hSaidaS;
-                const localSegundos = hLocalH * 3600 + hLocalM * 60 + hLocalS;
-
+              if (horaSaidaQuartel && horaLocal) {
+                const saidaSegundos =
+                  horaSaidaQuartel.getHours() * 3600 +
+                  horaSaidaQuartel.getMinutes() * 60 +
+                  horaSaidaQuartel.getSeconds();
+                const localSegundos =
+                  horaLocal.getHours() * 3600 +
+                  horaLocal.getMinutes() * 60 +
+                  horaLocal.getSeconds();
                 tempoResposta = Math.max(0, localSegundos - saidaSegundos) / 60; // Em minutos
               }
 
@@ -625,6 +609,11 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
                 dataHora: dataHora.toISOString(),
                 dataCriacao: new Date().toISOString(),
                 tempoResposta: Math.round(tempoResposta),
+
+                // Horários formatados como strings
+                horaSaidaQuartel: formatHoraToString(horaSaidaQuartel),
+                horaChegadaLocal: formatHoraToString(horaLocal),
+                horaSaidaLocal: formatHoraToString(horaSaidaLocal),
 
                 // Adiciona a foto ao registro
                 foto: fotoOcorrencia
@@ -685,7 +674,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
     );
   };
 
-  // Função para limpar o formulário
+  // Função para limpar o formulário - ATUALIZADA
   const handleClear = () => {
     Alert.alert(
       "Limpar Formulário",
@@ -705,9 +694,6 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
               grupoOcorrencia: "",
               subgrupoOcorrencia: "",
               situacao: "",
-              horaSaidaQuartel: "",
-              horaLocal: "",
-              horaSaidaLocal: "",
               motivoNaoAtendida: "",
               motivoOutro: "",
               vitimaSamu: false,
@@ -730,6 +716,9 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
               longitude: "",
             });
             setDataHora(new Date());
+            setHoraSaidaQuartel(null);
+            setHoraLocal(null);
+            setHoraSaidaLocal(null);
             setFotoOcorrencia(null);
           },
         },
@@ -853,16 +842,14 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
             />
           </InputGroup>
 
-          {/* Horários */}
+          {/* Horários COM DATETIMEPICKER */}
           <View style={styles.row}>
             <InputGroup label="Saída do Quartel" required style={styles.flex1}>
-              <TimeInput
-                value={formData.horaSaidaQuartel}
-                onChangeText={(value) =>
-                  updateFormData("horaSaidaQuartel", value)
-                }
-                placeholder="HH:MM:SS"
-                showValidation={true}
+              <DateTimePickerInput
+                value={horaSaidaQuartel}
+                onDateTimeChange={setHoraSaidaQuartel}
+                placeholder="Selecione a hora"
+                mode="time"
               />
             </InputGroup>
 
@@ -871,11 +858,11 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
               required
               style={[styles.flex1, styles.marginLeft]}
             >
-              <TimeInput
-                value={formData.horaLocal}
-                onChangeText={(value) => updateFormData("horaLocal", value)}
-                placeholder="HH:MM:SS"
-                showValidation={true}
+              <DateTimePickerInput
+                value={horaLocal}
+                onDateTimeChange={setHoraLocal}
+                placeholder="Selecione a hora"
+                mode="time"
               />
             </InputGroup>
           </View>
@@ -929,11 +916,11 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
           )}
 
           <InputGroup label="Saída do Local" required>
-            <TimeInput
-              value={formData.horaSaidaLocal}
-              onChangeText={(value) => updateFormData("horaSaidaLocal", value)}
-              placeholder="HH:MM:SS"
-              showValidation={true}
+            <DateTimePickerInput
+              value={horaSaidaLocal}
+              onDateTimeChange={setHoraSaidaLocal}
+              placeholder="Selecione a hora"
+              mode="time"
             />
           </InputGroup>
 

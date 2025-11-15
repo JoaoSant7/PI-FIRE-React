@@ -22,12 +22,10 @@ export default function ListarOcorrenciasScreen({ navigation }) {
   const { ocorrencias, loading, refreshing, atualizarDados } =
     useOcorrenciasContext();
 
-  // Filtro por data (formato: 'YYYY-MM-DD')
   const [dataFiltro, setDataFiltro] = useState("");
   const [selectedOccurrences, setSelectedOccurrences] = useState([]);
   const [exportModalVisible, setExportModalVisible] = useState(false);
 
-  // Adicionar botão de exportação no header
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -41,43 +39,27 @@ export default function ListarOcorrenciasScreen({ navigation }) {
     });
   }, [navigation]);
 
-  // Função para filtrar por data
   const ocorrenciasFiltradas = ocorrencias.filter((ocorrencia) => {
     if (!dataFiltro) return true;
-
-    // Verifica se a ocorrência tem dataHora e filtra
     if (ocorrencia.dataHora) {
       return ocorrencia.dataHora.startsWith(dataFiltro);
     }
-
-    // Se não tiver dataHora, usa dataCriacao como fallback
     if (ocorrencia.dataCriacao) {
       return ocorrencia.dataCriacao.startsWith(dataFiltro);
     }
-
     return false;
   });
 
-  // Funções para a barra inferior
-  const handleConfiguracoes = () => {
-    navigation.navigate("Configuracoes");
-  };
-
-  const handleInicio = () => {
-    navigation.navigate("Home");
-  };
-
-  const handleUsuario = () => {
+  // Funções da barra inferior
+  const handleConfiguracoes = () => navigation.navigate("Configuracoes");
+  const handleInicio = () => navigation.navigate("Home");
+  const handleUsuario = () =>
     navigation.navigate("Usuario", { email: "email_do_usuario@exemplo.com" });
-  };
+  const handleDashboard = () => navigation.navigate("Dashboard");
 
-  const handleDashboard = () => {
-    navigation.navigate("Dashboard");
-  };
-
-  // Funções de seleção para exportação (apenas toque longo)
+  // Funções de seleção
   const handleLongPress = (id) => {
-    Vibration.vibrate(50); // Feedback tátil
+    Vibration.vibrate(50);
     toggleOccurrenceSelection(id);
   };
 
@@ -99,7 +81,7 @@ export default function ListarOcorrenciasScreen({ navigation }) {
     }
   };
 
-  // Funções de exportação
+  // Funções de exportação - USANDO DADOS COMPLETOS
   const handleExportCSV = async () => {
     const selectedData =
       selectedOccurrences.length > 0
@@ -116,49 +98,8 @@ export default function ListarOcorrenciasScreen({ navigation }) {
     }
 
     try {
-      // Usar TODOS os dados detalhados da ocorrência para exportação
-      const formattedData = selectedData.map((occ) => ({
-        // Informações básicas
-        id: occ.id || `ocorrencia-${ocorrenciasFiltradas.indexOf(occ)}`,
-        data: occ.dataHora
-          ? occ.dataHora.split("T")[0]
-          : occ.dataCriacao
-          ? occ.dataCriacao.split("T")[0]
-          : "N/A",
-        hora: occ.dataHora
-          ? occ.dataHora.split("T")[1]?.substring(0, 5)
-          : occ.dataCriacao
-          ? occ.dataCriacao.split("T")[1]?.substring(0, 5)
-          : "N/A",
-        tipo: getTipoOcorrencia(occ),
-        endereco: getLocalOcorrencia(occ),
-        status: getStatusText(occ),
-        prioridade: getPrioridade(occ),
-
-        // Descrição detalhada
-        descricao: occ.descricao || "Sem descrição",
-
-        // Localização completa
-        logradouro: occ.logradouro || "",
-        tipoLogradouro: occ.tipoLogradouro || "",
-        numero: occ.numero || "",
-        bairro: occ.bairro || "",
-        municipio: occ.municipio || "",
-        regiao: occ.regiao || "",
-
-        // Informações operacionais
-        numeroAviso: occ.numeroAviso || "",
-        grupamento: occ.grupamento || "",
-        situacao: occ.situacao || "",
-        natureza: occ.natureza || "",
-        grupoOcorrencia: occ.grupoOcorrencia || "",
-
-        // Metadados
-        dataCriacao: occ.dataCriacao || "",
-        dataAtualizacao: occ.dataAtualizacao || "",
-      }));
-
-      await exportToCSV(formattedData);
+      // Usar os dados COMPLETOS da ocorrência (igual aos detalhes)
+      await exportToCSV(selectedData);
       setExportModalVisible(false);
       setSelectedOccurrences([]);
       Alert.alert("Sucesso", "CSV exportado com sucesso!");
@@ -184,49 +125,8 @@ export default function ListarOcorrenciasScreen({ navigation }) {
     }
 
     try {
-      // Usar TODOS os dados detalhados da ocorrência para exportação
-      const formattedData = selectedData.map((occ) => ({
-        // Informações básicas
-        id: occ.id || `ocorrencia-${ocorrenciasFiltradas.indexOf(occ)}`,
-        data: occ.dataHora
-          ? occ.dataHora.split("T")[0]
-          : occ.dataCriacao
-          ? occ.dataCriacao.split("T")[0]
-          : "N/A",
-        hora: occ.dataHora
-          ? occ.dataHora.split("T")[1]?.substring(0, 5)
-          : occ.dataCriacao
-          ? occ.dataCriacao.split("T")[1]?.substring(0, 5)
-          : "N/A",
-        tipo: getTipoOcorrencia(occ),
-        endereco: getLocalOcorrencia(occ),
-        status: getStatusText(occ),
-        prioridade: getPrioridade(occ),
-
-        // Descrição detalhada
-        descricao: occ.descricao || "Sem descrição",
-
-        // Localização completa
-        logradouro: occ.logradouro || "",
-        tipoLogradouro: occ.tipoLogradouro || "",
-        numero: occ.numero || "",
-        bairro: occ.bairro || "",
-        municipio: occ.municipio || "",
-        regiao: occ.regiao || "",
-
-        // Informações operacionais
-        numeroAviso: occ.numeroAviso || "",
-        grupamento: occ.grupamento || "",
-        situacao: occ.situacao || "",
-        natureza: occ.natureza || "",
-        grupoOcorrencia: occ.grupoOcorrencia || "",
-
-        // Metadados
-        dataCriacao: occ.dataCriacao || "",
-        dataAtualizacao: occ.dataAtualizacao || "",
-      }));
-
-      await exportToPDF(formattedData);
+      // Usar os dados COMPLETOS da ocorrência (igual aos detalhes)
+      await exportToPDF(selectedData);
       setExportModalVisible(false);
       setSelectedOccurrences([]);
       Alert.alert("Sucesso", "PDF exportado com sucesso!");
@@ -236,6 +136,7 @@ export default function ListarOcorrenciasScreen({ navigation }) {
     }
   };
 
+  // Funções auxiliares para exibição
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
       case "em andamento":
@@ -259,10 +160,8 @@ export default function ListarOcorrenciasScreen({ navigation }) {
     }
   };
 
-  // Função para formatar a data/hora para exibição
   const formatarDataHora = (dataHoraString) => {
     if (!dataHoraString) return "Data não informada";
-
     try {
       const data = new Date(dataHoraString);
       return data.toLocaleString("pt-BR", {
@@ -277,10 +176,8 @@ export default function ListarOcorrenciasScreen({ navigation }) {
     }
   };
 
-  // Função para extrair apenas a hora
   const extrairHora = (dataHoraString) => {
     if (!dataHoraString) return "";
-
     try {
       const data = new Date(dataHoraString);
       return data.toLocaleTimeString("pt-BR", {
@@ -292,14 +189,12 @@ export default function ListarOcorrenciasScreen({ navigation }) {
     }
   };
 
-  // Função para obter texto do status
   const getStatusText = (ocorrencia) => {
     if (ocorrencia.status) return ocorrencia.status;
     if (ocorrencia.situacao) return ocorrencia.situacao;
     return "Registrada";
   };
 
-  // Função para obter o tipo/natureza da ocorrência
   const getTipoOcorrencia = (ocorrencia) => {
     if (ocorrencia.tipo) return ocorrencia.tipo;
     if (ocorrencia.natureza) return ocorrencia.natureza;
@@ -307,7 +202,6 @@ export default function ListarOcorrenciasScreen({ navigation }) {
     return "Ocorrência";
   };
 
-  // Função para obter o local
   const getLocalOcorrencia = (ocorrencia) => {
     if (ocorrencia.localizacao) return ocorrencia.localizacao;
     if (ocorrencia.logradouro) {
@@ -320,7 +214,6 @@ export default function ListarOcorrenciasScreen({ navigation }) {
     return "Local não informado";
   };
 
-  // Função para obter a prioridade
   const getPrioridade = (ocorrencia) => {
     if (ocorrencia.prioridade) return ocorrencia.prioridade;
     return "media";
@@ -330,12 +223,11 @@ export default function ListarOcorrenciasScreen({ navigation }) {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#bc010c" />
 
-      {/* Header de seleção - Só aparece quando há ocorrências selecionadas */}
+      {/* Header de seleção */}
       {selectedOccurrences.length > 0 && (
         <View style={styles.selectionHeader}>
           <Text style={styles.selectionText}>
-            {selectedOccurrences.length} ocorrência(s) selecionada(s) para
-            exportação
+            {selectedOccurrences.length} ocorrência(s) selecionada(s)
           </Text>
           <View style={styles.selectionActions}>
             <TouchableOpacity
@@ -380,7 +272,6 @@ export default function ListarOcorrenciasScreen({ navigation }) {
               ` • ${selectedOccurrences.length} selecionadas`}
           </Text>
 
-          {/* Instrução para exportação */}
           {selectedOccurrences.length === 0 && (
             <Text style={styles.exportHint}>
               Toque longo em uma ocorrência para selecionar para exportação
@@ -388,7 +279,7 @@ export default function ListarOcorrenciasScreen({ navigation }) {
           )}
         </View>
 
-        {/* Campo de filtro por data */}
+        {/* Filtro por data */}
         <View style={styles.filtroContainer}>
           <Icon name="calendar-today" size={20} color="#bc010c" />
           <TextInput
@@ -408,7 +299,7 @@ export default function ListarOcorrenciasScreen({ navigation }) {
           ) : null}
         </View>
 
-        {/* Botão para Dashboard */}
+        {/* Botão Dashboard */}
         <TouchableOpacity
           style={styles.dashboardButton}
           onPress={handleDashboard}
@@ -450,16 +341,12 @@ export default function ListarOcorrenciasScreen({ navigation }) {
                   isSelected && styles.selectedOccurrenceCard,
                 ]}
                 onPress={() => {
-                  // Toque simples: navega para detalhes (comportamento original)
                   navigation.navigate("DetalhesOcorrencia", { ocorrencia });
                 }}
-                onLongPress={() => {
-                  // Toque longo: seleciona para exportação
-                  handleLongPress(occurrenceId);
-                }}
-                delayLongPress={500} // Delay de 500ms para toque longo
+                onLongPress={() => handleLongPress(occurrenceId)}
+                delayLongPress={500}
               >
-                {/* Indicador de seleção (apenas visual) */}
+                {/* Indicador de seleção - POSICIONADO CORRETAMENTE */}
                 {isSelected && (
                   <View style={styles.selectionIndicator}>
                     <Icon name="check-circle" size={20} color="#bc010c" />
@@ -528,7 +415,6 @@ export default function ListarOcorrenciasScreen({ navigation }) {
                     </Text>
                   </View>
 
-                  {/* Informações adicionais */}
                   {(ocorrencia.regiao ||
                     ocorrencia.numeroAviso ||
                     ocorrencia.grupamento) && (
@@ -546,7 +432,6 @@ export default function ListarOcorrenciasScreen({ navigation }) {
                     </View>
                   )}
 
-                  {/* Data completa */}
                   <View style={styles.ocorrenciaInfo}>
                     <Icon name="date-range" size={16} color="#666" />
                     <Text style={styles.ocorrenciaData}>
@@ -572,15 +457,13 @@ export default function ListarOcorrenciasScreen({ navigation }) {
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Exportar Ocorrências</Text>
-
             <Text style={styles.modalSubtitle}>
               {selectedOccurrences.length > 0
                 ? `Exportar ${selectedOccurrences.length} ocorrência(s) selecionada(s)`
                 : "Exportar todas as ocorrências visíveis"}
             </Text>
-
             <Text style={styles.modalInfo}>
-              A exportação incluirá todos os dados detalhados das ocorrências
+              A exportação incluirá TODOS os dados detalhados das ocorrências
             </Text>
 
             <View style={styles.modalButtons}>
@@ -611,7 +494,6 @@ export default function ListarOcorrenciasScreen({ navigation }) {
         </View>
       </Modal>
 
-      {/* Barra Inferior */}
       <BottomNav
         onConfigPress={handleConfiguracoes}
         onHomePress={handleInicio}
@@ -736,21 +618,23 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     borderWidth: 1,
     borderColor: "#e1e1e1",
-    position: "relative", // Para o indicador de seleção
+    position: "relative",
   },
   selectedOccurrenceCard: {
     backgroundColor: "#e3f2fd",
     borderColor: "#2196f3",
     borderWidth: 2,
   },
+  // AJUSTE: Indicador de seleção mais para a esquerda
   selectionIndicator: {
     position: "absolute",
     top: 10,
-    right: 10,
+    left: 10, // Alterado de right para left
     zIndex: 1,
   },
   ocorrenciaContent: {
     flex: 1,
+    marginLeft: 8, // Adicionado espaço para o indicador
   },
   ocorrenciaHeader: {
     flexDirection: "row",
@@ -849,7 +733,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
-  // Estilos do Modal
   modalContainer: {
     flex: 1,
     justifyContent: "center",
