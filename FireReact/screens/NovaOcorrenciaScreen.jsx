@@ -49,6 +49,85 @@ const MOTIVOS_NAO_ATENDIMENTO = [
   { label: "Outro", value: "Outro" },
 ];
 
+// Função de validação separada para melhor organização
+const validateRequiredFields = (formData, dataHora) => {
+  const camposObrigatorios = [
+    { campo: "Data e Hora", preenchido: dataHora !== null, valor: dataHora },
+    {
+      campo: "Diretoria",
+      preenchido: !!formData.diretoria?.trim(),
+      valor: formData.diretoria,
+    },
+    {
+      campo: "Grupamento",
+      preenchido: !!formData.grupamento?.trim(),
+      valor: formData.grupamento,
+    },
+    {
+      campo: "Ponto Base",
+      preenchido: !!formData.pontoBase?.trim(),
+      valor: formData.pontoBase,
+    },
+    {
+      campo: "Natureza da Ocorrência",
+      preenchido: !!formData.natureza?.trim(),
+      valor: formData.natureza,
+    },
+    {
+      campo: "Grupo da Ocorrência",
+      preenchido: !!formData.grupoOcorrencia?.trim(),
+      valor: formData.grupoOcorrencia,
+    },
+    {
+      campo: "Subgrupo da Ocorrência",
+      preenchido: !!formData.subgrupoOcorrencia?.trim(),
+      valor: formData.subgrupoOcorrencia,
+    },
+    {
+      campo: "Situação da Ocorrência",
+      preenchido: !!formData.situacao?.trim(),
+      valor: formData.situacao,
+    },
+    {
+      campo: "Saída do Quartel",
+      preenchido: !!formData.horaSaidaQuartel?.trim(),
+      valor: formData.horaSaidaQuartel,
+    },
+    {
+      campo: "Chegada no Local",
+      preenchido: !!formData.horaLocal?.trim(),
+      valor: formData.horaLocal,
+    },
+    {
+      campo: "Saída do Local",
+      preenchido: !!formData.horaSaidaLocal?.trim(),
+      valor: formData.horaSaidaLocal,
+    },
+    {
+      campo: "Município",
+      preenchido: !!formData.municipio?.trim(),
+      valor: formData.municipio,
+    },
+    {
+      campo: "Região",
+      preenchido: !!formData.regiao?.trim(),
+      valor: formData.regiao,
+    },
+    {
+      campo: "Tipo de Logradouro",
+      preenchido: !!formData.tipoLogradouro?.trim(),
+      valor: formData.tipoLogradouro,
+    },
+    {
+      campo: "Logradouro",
+      preenchido: !!formData.logradouro?.trim(),
+      valor: formData.logradouro,
+    },
+  ];
+
+  return camposObrigatorios.filter((campo) => !campo.preenchido);
+};
+
 const NovaOcorrenciaScreen = ({ navigation }) => {
   // Hook do contexto CORRIGIDO
   const { adicionarOcorrencia } = useOcorrenciasContext();
@@ -114,7 +193,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
     }
   };
 
-  // Validação do formulário
+  // Validação do formulário - ATUALIZADA
   const validateForm = () => {
     // Validação do formato de hora
     const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/;
@@ -149,20 +228,16 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
       return false;
     }
 
-    // Validação de campos obrigatórios para o Dashboard
-    if (!formData.natureza) {
-      Alert.alert(
-        "Campo Obrigatório",
-        "A natureza da ocorrência é obrigatória para o Dashboard",
-        [{ text: "OK" }]
-      );
-      return false;
-    }
+    // Validação dos campos obrigatórios
+    const camposVazios = validateRequiredFields(formData, dataHora);
 
-    if (!formData.regiao) {
+    if (camposVazios.length > 0) {
+      const camposLista = camposVazios
+        .map((campo) => `• ${campo.campo}`)
+        .join("\n");
       Alert.alert(
-        "Campo Obrigatório",
-        "A região é obrigatória para o Dashboard",
+        "Campos Obrigatórios",
+        `Os seguintes campos são obrigatórios:\n\n${camposLista}`,
         [{ text: "OK" }]
       );
       return false;
@@ -353,7 +428,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
       <ScrollView style={styles.scrollView}>
         {/*Seção: Dados Internos */}
         <Section title="Dados Internos">
-          <InputGroup label="Data e Hora">
+          <InputGroup label="Data e Hora" required>
             <DatePickerInput
               value={dataHora}
               onDateChange={onDateChange}
@@ -371,7 +446,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
             />
           </InputGroup>
 
-          <InputGroup label="Diretoria">
+          <InputGroup label="Diretoria" required>
             <TextInput
               value={formData.diretoria}
               onChangeText={(value) => updateFormData("diretoria", value)}
@@ -379,7 +454,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
             />
           </InputGroup>
 
-          <InputGroup label="Grupamento">
+          <InputGroup label="Grupamento" required>
             <PickerInput
               selectedValue={formData.grupamento}
               onValueChange={(value) => updateFormData("grupamento", value)}
@@ -388,7 +463,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
             />
           </InputGroup>
 
-          <InputGroup label="Ponto Base">
+          <InputGroup label="Ponto Base" required>
             <TextInput
               value={formData.pontoBase}
               onChangeText={(value) => updateFormData("pontoBase", value)}
@@ -399,7 +474,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
 
         {/* Seção: Ocorrência */}
         <Section title="Ocorrência">
-          <InputGroup label="Natureza da Ocorrência*">
+          <InputGroup label="Natureza da Ocorrência" required>
             <PickerInput
               selectedValue={formData.natureza}
               onValueChange={(value) => updateFormData("natureza", value)}
@@ -408,7 +483,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
             />
           </InputGroup>
 
-          <InputGroup label="Grupo da Ocorrência">
+          <InputGroup label="Grupo da Ocorrência" required>
             <PickerInput
               selectedValue={formData.grupoOcorrencia}
               onValueChange={(value) =>
@@ -419,7 +494,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
             />
           </InputGroup>
 
-          <InputGroup label="Subgrupo da Ocorrência">
+          <InputGroup label="Subgrupo da Ocorrência" required>
             <PickerInput
               selectedValue={formData.subgrupoOcorrencia}
               onValueChange={(value) =>
@@ -430,7 +505,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
             />
           </InputGroup>
 
-          <InputGroup label="Situação da Ocorrência">
+          <InputGroup label="Situação da Ocorrência" required>
             <PickerInput
               selectedValue={formData.situacao}
               onValueChange={(value) => updateFormData("situacao", value)}
@@ -441,7 +516,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
 
           {/* Horários */}
           <View style={styles.row}>
-            <InputGroup label="Saída do Quartel" style={styles.flex1}>
+            <InputGroup label="Saída do Quartel" required style={styles.flex1}>
               <TimeInput
                 value={formData.horaSaidaQuartel}
                 onChangeText={(value) =>
@@ -454,6 +529,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
 
             <InputGroup
               label="Chegada no Local"
+              required
               style={[styles.flex1, styles.marginLeft]}
             >
               <TimeInput
@@ -513,7 +589,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
             </>
           )}
 
-          <InputGroup label="Saída do Local">
+          <InputGroup label="Saída do Local" required>
             <TimeInput
               value={formData.horaSaidaLocal}
               onChangeText={(value) => updateFormData("horaSaidaLocal", value)}
@@ -632,7 +708,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
 
         {/* Seção: Endereço */}
         <Section title="Endereço da Ocorrência">
-          <InputGroup label="Município">
+          <InputGroup label="Município" required>
             <TextInput
               value={formData.municipio}
               onChangeText={(value) => updateFormData("municipio", value)}
@@ -640,7 +716,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
             />
           </InputGroup>
 
-          <InputGroup label="Região*">
+          <InputGroup label="Região" required>
             <PickerInput
               selectedValue={formData.regiao}
               onValueChange={(value) => updateFormData("regiao", value)}
@@ -657,7 +733,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
             />
           </InputGroup>
 
-          <InputGroup label="Tipo de Logradouro">
+          <InputGroup label="Tipo de Logradouro" required>
             <PickerInput
               selectedValue={formData.tipoLogradouro}
               onValueChange={(value) => updateFormData("tipoLogradouro", value)}
@@ -675,7 +751,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
             />
           </InputGroup>
 
-          <InputGroup label="Logradouro">
+          <InputGroup label="Logradouro" required>
             <TextInput
               value={formData.logradouro}
               onChangeText={(value) => updateFormData("logradouro", value)}
@@ -732,9 +808,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
         </View>
 
         <View style={styles.requiredNote}>
-          <Text style={styles.requiredText}>
-            * Campos obrigatórios para o Dashboard
-          </Text>
+          <Text style={styles.requiredText}>* Campos obrigatórios</Text>
           <Text style={styles.requiredText}>FIRE ALPHA</Text>
         </View>
       </ScrollView>
