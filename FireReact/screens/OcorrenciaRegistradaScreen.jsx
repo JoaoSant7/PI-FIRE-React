@@ -8,8 +8,11 @@ import {
   ScrollView,
   Alert,
 } from "react-native";
+import { useTheme } from "../contexts/ThemeContext";
 
 const OcorrenciaRegistradaScreen = ({ navigation }) => {
+  const { colors } = useTheme();
+  
   const handleInicio = () => {
     navigation.navigate("Home");
   };
@@ -28,47 +31,47 @@ const OcorrenciaRegistradaScreen = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.content}>
           {/* Ícone de sucesso */}
-          <View style={styles.successIcon}>
+          <View style={[styles.successIcon, { backgroundColor: colors.success }]}>
             <Text style={styles.checkmark}>✓</Text>
           </View>
 
           {/* Mensagem de sucesso */}
-          <Text style={styles.successTitle}>
+          <Text style={[styles.successTitle, { color: colors.success }]}>
             Ocorrência Registrada com Sucesso!
           </Text>
-          <Text style={styles.successMessage}>
+          <Text style={[styles.successMessage, { color: colors.textSecondary }]}>
             A ocorrência foi salva no sistema e está disponível para consulta.
           </Text>
 
           {/* Botões de ação */}
           <View style={styles.buttonContainer}>
             <TouchableOpacity
-              style={[styles.button, styles.primaryButton]}
+              style={[styles.button, styles.primaryButton, { backgroundColor: colors.textSecondary }]}
               onPress={handleInicio}
             >
               <Text style={styles.buttonText}>Início</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.button, styles.secondaryButton]}
+              style={[styles.button, styles.secondaryButton, { backgroundColor: colors.warning }]}
               onPress={handleListarOcorrencias}
             >
               <Text style={styles.buttonText}>Listar Ocorrências</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.button, styles.accentButton]}
+              style={[styles.button, styles.accentButton, { backgroundColor: colors.primary }]}
               onPress={handleNovaOcorrencia}
             >
               <Text style={styles.buttonText}>Registrar Nova Ocorrência</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.button, styles.pdfButton]}
+              style={[styles.button, styles.pdfButton, { backgroundColor: colors.success }]}
               onPress={handleExportarPDF}
             >
               <Text style={styles.buttonText}>Exportar Ocorrência em PDF</Text>
@@ -83,7 +86,6 @@ const OcorrenciaRegistradaScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f8f9fa",
   },
   scrollContent: {
     flexGrow: 1,
@@ -98,7 +100,6 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: "#28a745",
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 20,
@@ -111,13 +112,11 @@ const styles = StyleSheet.create({
   successTitle: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#28a745",
     textAlign: "center",
     marginBottom: 10,
   },
   successMessage: {
     fontSize: 16,
-    color: "#6c757d",
     textAlign: "center",
     marginBottom: 40,
     lineHeight: 22,
@@ -141,18 +140,10 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 3,
   },
-  primaryButton: {
-    backgroundColor: "#6c757d", // Vermelho bombeiros
-  },
-  secondaryButton: {
-    backgroundColor: "#E6A400",
-  },
-  accentButton: {
-    backgroundColor: "#BC010C", // Laranja bombeiros
-  },
-  pdfButton: {
-    backgroundColor: "#28a745",
-  },
+  primaryButton: {},
+  secondaryButton: {},
+  accentButton: {},
+  pdfButton: {},
   buttonText: {
     color: "white",
     fontSize: 16,

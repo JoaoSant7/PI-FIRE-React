@@ -16,11 +16,13 @@ import {
 import { MaterialIcons as Icon } from "@expo/vector-icons";
 import BottomNav from "../components/BottomNav";
 import { useOcorrenciasContext } from "../contexts/OcorrenciasContext";
+import { useTheme } from "../contexts/ThemeContext";
 import { exportToCSV, exportToPDF } from "../services/exportService";
 
 export default function ListarOcorrenciasScreen({ navigation }) {
   const { ocorrencias, loading, refreshing, atualizarDados } =
     useOcorrenciasContext();
+  const { colors } = useTheme();
 
   const [dataFiltro, setDataFiltro] = useState("");
   const [selectedOccurrences, setSelectedOccurrences] = useState([]);

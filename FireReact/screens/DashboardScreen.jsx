@@ -14,6 +14,7 @@ import {
 import { PieChart, BarChart, LineChart } from "react-native-chart-kit";
 import { Ionicons } from "@expo/vector-icons";
 import { useOcorrencias } from "../hooks/useOcorrencias";
+import { useTheme } from "../contexts/ThemeContext";
 
 const DashboardScreen = () => {
   const ScreenWidth = Dimensions.get("window").width;
@@ -26,6 +27,7 @@ const DashboardScreen = () => {
     atualizarDados,
     recarregarDados,
   } = useOcorrencias();
+  const { colors } = useTheme();
 
   // Processar dados para os gráficos baseado nas ocorrências reais
   const processarDadosDashboard = () => {

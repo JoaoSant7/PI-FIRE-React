@@ -9,9 +9,11 @@ import {
 } from "react-native";
 import { MaterialIcons as Icon } from "@expo/vector-icons";
 import BottomNav from "../components/BottomNav";
+import { useTheme } from "../contexts/ThemeContext";
 
 export default function DetalhesOcorrenciaScreen({ route, navigation }) {
   const { ocorrencia } = route.params;
+  const { colors } = useTheme();
 
   // Função para obter a cor do status
   const getStatusColor = (status) => {
