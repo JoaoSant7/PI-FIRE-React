@@ -51,3 +51,6 @@
 	<false/>
 </dict>
 </plist>
+
+<key>NSCameraUsageDescription</key>
+<string>Precisamos acessar sua câmera para registrar imagens de ocorrências</string>
