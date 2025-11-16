@@ -11,7 +11,6 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
-import { useTheme } from "../contexts/ThemeContext";
 
 const SearchablePicker = ({
   selectedValue,
@@ -20,7 +19,6 @@ const SearchablePicker = ({
   placeholder = "Selecione uma opção",
   style,
 }) => {
-  const { colors } = useTheme();
   const [modalVisible, setModalVisible] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [filteredItems, setFilteredItems] = useState(items);
@@ -55,28 +53,15 @@ const SearchablePicker = ({
   return (
     <View>
       <TouchableOpacity
-        style={[
-          styles.trigger, 
-          {
-            borderColor: colors.inputBorder,
-            backgroundColor: colors.inputBackground,
-          },
-          style
-        ]}
+        style={[styles.trigger, style]}
         onPress={() => setModalVisible(true)}
       >
         <Text
-          style={[
-            styles.triggerText, 
-            !selectedValue && styles.placeholderText,
-            {
-              color: selectedValue ? colors.inputText : colors.textSecondary,
-            }
-          ]}
+          style={[styles.triggerText, !selectedValue && styles.placeholderText]}
         >
           {displayText}
         </Text>
-        <Text style={[styles.arrow, { color: colors.textSecondary }]}>▼</Text>
+        <Text style={styles.arrow}>▼</Text>
       </TouchableOpacity>
 
       <Modal
@@ -86,24 +71,16 @@ const SearchablePicker = ({
         onRequestClose={handleClose}
       >
         <TouchableWithoutFeedback onPress={handleClose}>
-          <View style={[styles.modalOverlay, { backgroundColor: colors.backdrop }]}>
+          <View style={styles.modalOverlay}>
             <TouchableWithoutFeedback>
-              <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
-                <Text style={[styles.modalTitle, { color: colors.text }]}>Selecione uma opção</Text>
+              <View style={styles.modalContent}>
+                <Text style={styles.modalTitle}>Selecione uma opção</Text>
 
                 {/* Campo de busca */}
                 <View style={styles.searchContainer}>
                   <TextInput
-                    style={[
-                      styles.searchInput,
-                      {
-                        borderColor: colors.inputBorder,
-                        backgroundColor: colors.surface,
-                        color: colors.inputText,
-                      }
-                    ]}
+                    style={styles.searchInput}
                     placeholder="Digite para buscar..."
-                    placeholderTextColor={colors.inputPlaceholder}
                     value={searchText}
                     onChangeText={setSearchText}
                     autoFocus={true}
@@ -113,7 +90,7 @@ const SearchablePicker = ({
                       style={styles.clearButton}
                       onPress={() => setSearchText("")}
                     >
-                      <Text style={[styles.clearText, { color: colors.textSecondary }]}>×</Text>
+                      <Text style={styles.clearText}>×</Text>
                     </TouchableOpacity>
                   ) : null}
                 </View>
@@ -128,18 +105,14 @@ const SearchablePicker = ({
                       style={[
                         styles.item,
                         selectedValue === item.value && styles.selectedItem,
-                        selectedValue === item.value && { backgroundColor: colors.surface },
-                        { borderBottomColor: colors.divider }
                       ]}
                       onPress={() => handleSelect(item.value)}
                     >
                       <Text
                         style={[
                           styles.itemText,
-                          selectedValue === item.value && styles.selectedItemText,
-                          {
-                            color: selectedValue === item.value ? colors.primary : colors.inputText,
-                          }
+                          selectedValue === item.value &&
+                            styles.selectedItemText,
                         ]}
                       >
                         {item.label}
@@ -147,7 +120,7 @@ const SearchablePicker = ({
                     </TouchableOpacity>
                   )}
                   ListEmptyComponent={
-                    <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
+                    <Text style={styles.emptyText}>
                       Nenhum resultado encontrado
                     </Text>
                   }
@@ -155,10 +128,10 @@ const SearchablePicker = ({
 
                 {/* Botão fechar */}
                 <TouchableOpacity
-                  style={[styles.closeButton, { backgroundColor: colors.surface }]}
+                  style={styles.closeButton}
                   onPress={handleClose}
                 >
-                  <Text style={[styles.closeButtonText, { color: colors.text }]}>Fechar</Text>
+                  <Text style={styles.closeButtonText}>Fechar</Text>
                 </TouchableOpacity>
               </View>
             </TouchableWithoutFeedback>
@@ -175,24 +148,32 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     borderWidth: 1,
+    borderColor: "#ccc",
     borderRadius: 8,
     padding: 12,
+    backgroundColor: "#fff",
     minHeight: 56,
   },
   triggerText: {
     fontSize: 16,
+    color: "#333",
     flex: 1,
   },
-  placeholderText: {},
+  placeholderText: {
+    color: "#9e9e9e",
+  },
   arrow: {
     fontSize: 12,
+    color: "#666",
     marginLeft: 8,
   },
   modalOverlay: {
     flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
     justifyContent: "flex-end",
   },
   modalContent: {
+    backgroundColor: "white",
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     maxHeight: "80%",
@@ -203,6 +184,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 16,
     textAlign: "center",
+    color: "#333",
   },
   searchContainer: {
     flexDirection: "row",
@@ -212,9 +194,11 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     borderWidth: 1,
+    borderColor: "#ddd",
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
+    backgroundColor: "#f9f9f9",
   },
   clearButton: {
     position: "absolute",
@@ -223,6 +207,7 @@ const styles = StyleSheet.create({
   },
   clearText: {
     fontSize: 20,
+    color: "#666",
   },
   list: {
     maxHeight: 300,
@@ -231,26 +216,34 @@ const styles = StyleSheet.create({
   item: {
     padding: 16,
     borderBottomWidth: 1,
+    borderBottomColor: "#f0f0f0",
   },
-  selectedItem: {},
+  selectedItem: {
+    backgroundColor: "#e3f2fd",
+  },
   itemText: {
     fontSize: 16,
+    color: "#333",
   },
   selectedItemText: {
+    color: "#1976d2",
     fontWeight: "500",
   },
   emptyText: {
     textAlign: "center",
+    color: "#666",
     fontStyle: "italic",
     padding: 20,
   },
   closeButton: {
+    backgroundColor: "#f5f5f5",
     padding: 16,
     borderRadius: 8,
     alignItems: "center",
   },
   closeButtonText: {
     fontSize: 16,
+    color: "#333",
     fontWeight: "500",
   },
 });

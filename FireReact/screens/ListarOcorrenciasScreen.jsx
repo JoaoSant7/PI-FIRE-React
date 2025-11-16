@@ -16,13 +16,11 @@ import {
 import { MaterialIcons as Icon } from "@expo/vector-icons";
 import BottomNav from "../components/BottomNav";
 import { useOcorrenciasContext } from "../contexts/OcorrenciasContext";
-import { useTheme } from "../contexts/ThemeContext";
 import { exportToCSV, exportToPDF } from "../services/exportService";
 
 export default function ListarOcorrenciasScreen({ navigation }) {
   const { ocorrencias, loading, refreshing, atualizarDados } =
     useOcorrenciasContext();
-  const { colors, isDark } = useTheme();
 
   const [dataFiltro, setDataFiltro] = useState("");
   const [selectedOccurrences, setSelectedOccurrences] = useState([]);
@@ -35,7 +33,7 @@ export default function ListarOcorrenciasScreen({ navigation }) {
           onPress={() => setExportModalVisible(true)}
           style={{ marginRight: 15 }}
         >
-          <Icon name="file-download" size={24} color={colors.textOnPrimary} />
+          <Icon name="file-download" size={24} color="#fff" />
         </TouchableOpacity>
       ),
     });
@@ -128,7 +126,7 @@ export default function ListarOcorrenciasScreen({ navigation }) {
 
     try {
       // Usar os dados COMPLETOS da ocorrência (igual aos detalhes)
-      await exportToPDF(selectedData, colors);
+      await exportToPDF(selectedData);
       setExportModalVisible(false);
       setSelectedOccurrences([]);
       Alert.alert("Sucesso", "PDF exportado com sucesso!");
@@ -145,20 +143,20 @@ export default function ListarOcorrenciasScreen({ navigation }) {
       case "aberta":
       case "pendente":
       case "em_andamento":
-        return colors.warning;
+        return "#FF9800";
       case "finalizada":
       case "atendida":
       case "concluída":
-        return colors.success;
+        return "#4CAF50";
       case "registrada":
       case "nova":
-        return colors.info;
+        return "#2196F3";
       case "não atendida":
       case "sem atuação":
       case "cancelada":
-        return colors.error;
+        return "#F44336";
       default:
-        return colors.textSecondary;
+        return "#757575";
     }
   };
 
@@ -222,13 +220,13 @@ export default function ListarOcorrenciasScreen({ navigation }) {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}> 
-      <StatusBar barStyle={isDark ? "light-content" : "dark-content"} backgroundColor={colors.primary} />
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#bc010c" />
 
       {/* Header de seleção */}
       {selectedOccurrences.length > 0 && (
-        <View style={[styles.selectionHeader, { backgroundColor: colors.surface, borderBottomColor: colors.primary }]}> 
-          <Text style={[styles.selectionText, { color: colors.primary }]}> 
+        <View style={styles.selectionHeader}>
+          <Text style={styles.selectionText}>
             {selectedOccurrences.length} ocorrência(s) selecionada(s)
           </Text>
           <View style={styles.selectionActions}>
@@ -236,13 +234,17 @@ export default function ListarOcorrenciasScreen({ navigation }) {
               onPress={toggleSelectAll}
               style={styles.selectionButton}
             >
-              <Text style={[styles.selectAllText, { color: colors.primary }]}> {selectedOccurrences.length === ocorrenciasFiltradas.length ? "Desmarcar todas" : "Selecionar todas"}</Text>
+              <Text style={styles.selectAllText}>
+                {selectedOccurrences.length === ocorrenciasFiltradas.length
+                  ? "Desmarcar todas"
+                  : "Selecionar todas"}
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => setSelectedOccurrences([])}
               style={styles.selectionButton}
             >
-              <Text style={[styles.cancelSelectionText, { color: colors.error }]}>Cancelar</Text>
+              <Text style={styles.cancelSelectionText}>Cancelar</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -251,72 +253,78 @@ export default function ListarOcorrenciasScreen({ navigation }) {
       <ScrollView
         style={styles.content}
         refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={atualizarDados}
-              colors={[colors.primary]}
-            />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={atualizarDados}
+            colors={["#bc010c"]}
+          />
         }
       >
-        <View style={[styles.placeholderSection, { backgroundColor: colors.surface }] }>
-          <Icon name="list" size={80} color={colors.primary} />
-          <Text style={[styles.placeholderTitle, { color: colors.text }]}>Ocorrências</Text>
-          <Text style={[styles.placeholderText, { color: colors.textSecondary }]}>Lista de todas as ocorrências registradas no sistema</Text>
-          <Text style={[styles.contador, { color: colors.primary }]}>
+        <View style={styles.placeholderSection}>
+          <Icon name="list" size={80} color="#bc010c" />
+          <Text style={styles.placeholderTitle}>Ocorrências</Text>
+          <Text style={styles.placeholderText}>
+            Lista de todas as ocorrências registradas no sistema
+          </Text>
+          <Text style={styles.contador}>
             {ocorrenciasFiltradas.length} de {ocorrencias.length} ocorrências
             {selectedOccurrences.length > 0 &&
               ` • ${selectedOccurrences.length} selecionadas`}
           </Text>
 
           {selectedOccurrences.length === 0 && (
-            <Text style={[styles.exportHint, { color: colors.textSecondary }]}>Toque longo em uma ocorrência para selecionar para exportação</Text>
+            <Text style={styles.exportHint}>
+              Toque longo em uma ocorrência para selecionar para exportação
+            </Text>
           )}
         </View>
 
         {/* Filtro por data */}
-        <View style={[styles.filtroContainer, { backgroundColor: colors.inputBackground, borderColor: colors.border }] }>
-          <Icon name="calendar-today" size={20} color={colors.primary} />
+        <View style={styles.filtroContainer}>
+          <Icon name="calendar-today" size={20} color="#bc010c" />
           <TextInput
-            style={[styles.filtroInput, { color: colors.inputText }]}
+            style={styles.filtroInput}
             placeholder="Filtrar por data (AAAA-MM-DD)"
             value={dataFiltro}
             onChangeText={setDataFiltro}
-            placeholderTextColor={colors.inputPlaceholder}
+            placeholderTextColor="#999"
           />
           {dataFiltro ? (
             <TouchableOpacity
               onPress={() => setDataFiltro("")}
               style={styles.limparFiltro}
             >
-              <Icon name="clear" size={20} color={colors.inputPlaceholder} />
+              <Icon name="clear" size={20} color="#999" />
             </TouchableOpacity>
           ) : null}
         </View>
 
         {/* Botão Dashboard */}
         <TouchableOpacity
-          style={[styles.dashboardButton, { backgroundColor: colors.primary } ]}
+          style={styles.dashboardButton}
           onPress={handleDashboard}
         >
-          <Icon name="dashboard" size={20} color={colors.textOnPrimary} />
-          <Text style={[styles.dashboardButtonText, { color: colors.textOnPrimary }]}>Ver Dashboard</Text>
+          <Icon name="dashboard" size={20} color="#fff" />
+          <Text style={styles.dashboardButtonText}>Ver Dashboard</Text>
         </TouchableOpacity>
 
         {/* Lista de ocorrências */}
         {ocorrenciasFiltradas.length === 0 ? (
           <View style={styles.semResultados}>
-            <Icon name="search-off" size={60} color={colors.divider} />
-            <Text style={[styles.semResultadosText, { color: colors.textSecondary }]}> 
+            <Icon name="search-off" size={60} color="#ccc" />
+            <Text style={styles.semResultadosText}>
               {dataFiltro
                 ? `Nenhuma ocorrência encontrada para ${dataFiltro}`
                 : "Nenhuma ocorrência registrada"}
             </Text>
             {ocorrencias.length === 0 && (
               <TouchableOpacity
-                style={[styles.novaOcorrenciaButton, { backgroundColor: colors.primary }]}
+                style={styles.novaOcorrenciaButton}
                 onPress={() => navigation.navigate("NovaOcorrencia")}
               >
-                <Text style={[styles.novaOcorrenciaButtonText, { color: colors.textOnPrimary }]}>Registrar Primeira Ocorrência</Text>
+                <Text style={styles.novaOcorrenciaButtonText}>
+                  Registrar Primeira Ocorrência
+                </Text>
               </TouchableOpacity>
             )}
           </View>
@@ -330,7 +338,7 @@ export default function ListarOcorrenciasScreen({ navigation }) {
                 key={occurrenceId}
                 style={[
                   styles.ocorrenciaCard,
-                  isSelected && { backgroundColor: colors.surface, borderColor: colors.primary, borderWidth: 2 },
+                  isSelected && styles.selectedOccurrenceCard,
                 ]}
                 onPress={() => {
                   navigation.navigate("DetalhesOcorrencia", { ocorrencia });
@@ -341,7 +349,7 @@ export default function ListarOcorrenciasScreen({ navigation }) {
                 {/* Indicador de seleção - POSICIONADO CORRETAMENTE */}
                 {isSelected && (
                   <View style={styles.selectionIndicator}>
-                    <Icon name="check-circle" size={20} color={colors.primary} />
+                    <Icon name="check-circle" size={20} color="#bc010c" />
                   </View>
                 )}
 
@@ -357,14 +365,14 @@ export default function ListarOcorrenciasScreen({ navigation }) {
                           {
                             backgroundColor:
                               getPrioridade(ocorrencia) === "alta"
-                                ? colors.error
+                                ? "#ff4444"
                                 : getPrioridade(ocorrencia) === "media"
-                                ? colors.warning
-                                : colors.success,
+                                ? "#ffaa00"
+                                : "#44ff44",
                           },
                         ]}
                       >
-                        <Text style={[styles.prioridadeText, { color: colors.textOnPrimary }]}>
+                        <Text style={styles.prioridadeText}>
                           {getPrioridade(ocorrencia).toUpperCase()}
                         </Text>
                       </View>
@@ -379,28 +387,28 @@ export default function ListarOcorrenciasScreen({ navigation }) {
                         },
                       ]}
                     >
-                      <Text style={[styles.statusText, { color: colors.textOnPrimary }]}>
+                      <Text style={styles.statusText}>
                         {getStatusText(ocorrencia)}
                       </Text>
                     </View>
                   </View>
 
                   {ocorrencia.descricao && (
-                    <Text style={[styles.ocorrenciaDescricao, { color: colors.textSecondary }]} numberOfLines={2}>
+                    <Text style={styles.ocorrenciaDescricao} numberOfLines={2}>
                       {ocorrencia.descricao}
                     </Text>
                   )}
 
                   <View style={styles.ocorrenciaInfo}>
-                    <Icon name="location-on" size={16} color={colors.textSecondary} />
-                    <Text style={[styles.ocorrenciaLocal, { color: colors.textSecondary }]}>
+                    <Icon name="location-on" size={16} color="#666" />
+                    <Text style={styles.ocorrenciaLocal}>
                       {getLocalOcorrencia(ocorrencia)}
                     </Text>
                   </View>
 
                   <View style={styles.ocorrenciaInfo}>
-                    <Icon name="access-time" size={16} color={colors.textSecondary} />
-                    <Text style={[styles.ocorrenciaHora, { color: colors.textSecondary }]}>
+                    <Icon name="access-time" size={16} color="#666" />
+                    <Text style={styles.ocorrenciaHora}>
                       {extrairHora(
                         ocorrencia.dataHora || ocorrencia.dataCriacao
                       )}
@@ -411,14 +419,26 @@ export default function ListarOcorrenciasScreen({ navigation }) {
                     ocorrencia.numeroAviso ||
                     ocorrencia.grupamento) && (
                     <View style={styles.ocorrenciaInfo}>
-                      <Icon name="info" size={16} color={colors.textSecondary} />
-                      <Text style={[styles.ocorrenciaDetalhes, { color: colors.textSecondary }]}> {[ocorrencia.regiao, ocorrencia.numeroAviso, ocorrencia.grupamento].filter(Boolean).join(" • ")}</Text>
+                      <Icon name="info" size={16} color="#666" />
+                      <Text style={styles.ocorrenciaDetalhes}>
+                        {[
+                          ocorrencia.regiao,
+                          ocorrencia.numeroAviso,
+                          ocorrencia.grupamento,
+                        ]
+                          .filter(Boolean)
+                          .join(" • ")}
+                      </Text>
                     </View>
                   )}
 
                   <View style={styles.ocorrenciaInfo}>
-                    <Icon name="date-range" size={16} color={colors.textSecondary} />
-                    <Text style={[styles.ocorrenciaData, { color: colors.textSecondary }]}> {formatarDataHora(ocorrencia.dataHora || ocorrencia.dataCriacao)}</Text>
+                    <Icon name="date-range" size={16} color="#666" />
+                    <Text style={styles.ocorrenciaData}>
+                      {formatarDataHora(
+                        ocorrencia.dataHora || ocorrencia.dataCriacao
+                      )}
+                    </Text>
                   </View>
                 </View>
               </TouchableOpacity>
@@ -434,27 +454,33 @@ export default function ListarOcorrenciasScreen({ navigation }) {
         visible={exportModalVisible}
         onRequestClose={() => setExportModalVisible(false)}
       >
-        <View style={[styles.modalContainer, { backgroundColor: colors.backdrop }] }>
-          <View style={[styles.modalContent, { backgroundColor: colors.card }] }>
-            <Text style={[styles.modalTitle, { color: colors.text }]}>Exportar Ocorrências</Text>
-            <Text style={[styles.modalSubtitle, { color: colors.textSecondary }]}> {selectedOccurrences.length > 0 ? `Exportar ${selectedOccurrences.length} ocorrência(s) selecionada(s)` : "Exportar todas as ocorrências visíveis"}</Text>
-            <Text style={[styles.modalInfo, { color: colors.textSecondary }]}>A exportação incluirá TODOS os dados detalhados das ocorrências</Text>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Exportar Ocorrências</Text>
+            <Text style={styles.modalSubtitle}>
+              {selectedOccurrences.length > 0
+                ? `Exportar ${selectedOccurrences.length} ocorrência(s) selecionada(s)`
+                : "Exportar todas as ocorrências visíveis"}
+            </Text>
+            <Text style={styles.modalInfo}>
+              A exportação incluirá TODOS os dados detalhados das ocorrências
+            </Text>
 
             <View style={styles.modalButtons}>
               <TouchableOpacity
-                style={[styles.modalButton, { backgroundColor: colors.success }]}
+                style={[styles.modalButton, styles.csvButton]}
                 onPress={handleExportCSV}
               >
-                <Icon name="table-chart" size={24} color={colors.textOnPrimary} />
-                <Text style={[styles.modalButtonText, { color: colors.textOnPrimary }]}>Exportar CSV</Text>
+                <Icon name="table-chart" size={24} color="#fff" />
+                <Text style={styles.modalButtonText}>Exportar CSV</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={[styles.modalButton, { backgroundColor: colors.error }]}
+                style={[styles.modalButton, styles.pdfButton]}
                 onPress={handleExportPDF}
               >
-                <Icon name="picture-as-pdf" size={24} color={colors.textOnPrimary} />
-                <Text style={[styles.modalButtonText, { color: colors.textOnPrimary }]}>Exportar PDF</Text>
+                <Icon name="picture-as-pdf" size={24} color="#fff" />
+                <Text style={styles.modalButtonText}>Exportar PDF</Text>
               </TouchableOpacity>
             </View>
 
@@ -462,7 +488,7 @@ export default function ListarOcorrenciasScreen({ navigation }) {
               style={styles.cancelButton}
               onPress={() => setExportModalVisible(false)}
             >
-              <Text style={[styles.cancelButtonText, { color: colors.textSecondary }]}>Cancelar</Text>
+              <Text style={styles.cancelButtonText}>Cancelar</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -480,6 +506,7 @@ export default function ListarOcorrenciasScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#fff",
   },
   content: {
     flex: 1,
@@ -487,13 +514,15 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   selectionHeader: {
+    backgroundColor: "#e3f2fd",
     padding: 12,
     borderBottomWidth: 1,
+    borderBottomColor: "#2196f3",
     flexDirection: "column",
   },
   selectionText: {
     fontSize: 14,
-    
+    color: "#1976d2",
     fontWeight: "bold",
     marginBottom: 8,
   },
@@ -505,42 +534,44 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   selectAllText: {
-    
+    color: "#1976d2",
     fontWeight: "bold",
     fontSize: 14,
   },
   cancelSelectionText: {
-    
+    color: "#f44336",
     fontWeight: "bold",
     fontSize: 14,
   },
   placeholderSection: {
     alignItems: "center",
     paddingVertical: 30,
+    backgroundColor: "#f8f8f8",
     borderRadius: 12,
     marginBottom: 20,
   },
   placeholderTitle: {
     fontSize: 24,
     fontWeight: "bold",
+    color: "#333",
     marginTop: 15,
     marginBottom: 10,
   },
   placeholderText: {
     fontSize: 16,
-    
+    color: "#666",
     textAlign: "center",
     paddingHorizontal: 20,
   },
   contador: {
     fontSize: 14,
-    
+    color: "#bc010c",
     fontWeight: "600",
     marginTop: 8,
   },
   exportHint: {
     fontSize: 12,
-    
+    color: "#666",
     fontStyle: "italic",
     marginTop: 8,
     textAlign: "center",
@@ -549,15 +580,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 16,
+    backgroundColor: "#f1f1f1",
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderWidth: 1,
+    borderColor: "#ddd",
   },
   filtroInput: {
     flex: 1,
     marginLeft: 8,
     fontSize: 16,
+    color: "#333",
   },
   limparFiltro: {
     padding: 4,
@@ -566,25 +600,30 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: "#bc010c",
     padding: 12,
     borderRadius: 8,
     marginBottom: 16,
   },
   dashboardButtonText: {
-    
+    color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
     marginLeft: 8,
   },
   ocorrenciaCard: {
+    backgroundColor: "#f8f8f8",
     padding: 15,
     borderRadius: 12,
     marginBottom: 12,
     borderWidth: 1,
+    borderColor: "#e1e1e1",
     position: "relative",
   },
   selectedOccurrenceCard: {
-    
+    backgroundColor: "#e3f2fd",
+    borderColor: "#2196f3",
+    borderWidth: 2,
   },
   // AJUSTE: Indicador de seleção mais para a esquerda
   selectionIndicator: {
@@ -610,6 +649,7 @@ const styles = StyleSheet.create({
   ocorrenciaTipo: {
     fontSize: 18,
     fontWeight: "bold",
+    color: "#333",
     marginBottom: 4,
   },
   prioridadeBadge: {
@@ -619,7 +659,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
   },
   prioridadeText: {
-    
+    color: "#fff",
     fontSize: 10,
     fontWeight: "bold",
   },
@@ -631,12 +671,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   statusText: {
+    color: "#fff",
     fontSize: 12,
     fontWeight: "bold",
     textAlign: "center",
   },
   ocorrenciaDescricao: {
     fontSize: 14,
+    color: "#666",
     marginBottom: 8,
     lineHeight: 18,
   },
@@ -647,21 +689,25 @@ const styles = StyleSheet.create({
   },
   ocorrenciaLocal: {
     fontSize: 14,
+    color: "#666",
     marginLeft: 6,
     flex: 1,
   },
   ocorrenciaHora: {
     fontSize: 14,
+    color: "#666",
     marginLeft: 6,
   },
   ocorrenciaDetalhes: {
     fontSize: 13,
+    color: "#888",
     marginLeft: 6,
     fontStyle: "italic",
     flex: 1,
   },
   ocorrenciaData: {
     fontSize: 12,
+    color: "#999",
     marginLeft: 6,
   },
   semResultados: {
@@ -671,17 +717,19 @@ const styles = StyleSheet.create({
   },
   semResultadosText: {
     fontSize: 16,
+    color: "#888",
     textAlign: "center",
     marginTop: 10,
     marginBottom: 20,
   },
   novaOcorrenciaButton: {
+    backgroundColor: "#bc010c",
     paddingHorizontal: 20,
     paddingVertical: 12,
     borderRadius: 8,
   },
   novaOcorrenciaButtonText: {
-    
+    color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
   },
@@ -689,10 +737,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "transparent",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    
+    backgroundColor: "white",
     borderRadius: 16,
     padding: 24,
     width: "80%",
@@ -702,14 +750,17 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 8,
+    color: "#333",
   },
   modalSubtitle: {
     fontSize: 14,
+    color: "#666",
     marginBottom: 8,
     textAlign: "center",
   },
   modalInfo: {
     fontSize: 12,
+    color: "#888",
     marginBottom: 24,
     textAlign: "center",
     fontStyle: "italic",
@@ -730,13 +781,13 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
   csvButton: {
-    
+    backgroundColor: "#4CAF50",
   },
   pdfButton: {
-    
+    backgroundColor: "#f44336",
   },
   modalButtonText: {
-    
+    color: "white",
     fontWeight: "bold",
     marginLeft: 8,
   },
@@ -744,7 +795,7 @@ const styles = StyleSheet.create({
     padding: 12,
   },
   cancelButtonText: {
-    
+    color: "#666",
     fontSize: 16,
   },
 });

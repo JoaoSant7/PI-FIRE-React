@@ -13,13 +13,11 @@ import {
   Image,
 } from "react-native";
 import { AuthContext } from "../contexts/AuthContext";
-import { useTheme } from "../contexts/ThemeContext";
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { login } = useContext(AuthContext);
-  const { colors } = useTheme();
 
   const handleLogin = () => {
     console.log("Email:", email);
@@ -40,7 +38,7 @@ export default function LoginScreen({ navigation }) {
 
   return (
     <KeyboardAvoidingView
-      style={[styles.container, { backgroundColor: colors.background }]}
+      style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView
@@ -54,26 +52,19 @@ export default function LoginScreen({ navigation }) {
             style={styles.logo}
             resizeMode="contain"
           />
-          <Text style={[styles.fireTitle, { color: colors.primary }]}>FIRE</Text>
-          <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
+          <Text style={styles.fireTitle}>FIRE</Text>
+          <Text style={styles.subtitle}>
             Ferramenta Integrada de Resposta a Emergências
           </Text>
         </View>
 
         <View style={styles.formContainer}>
           <View style={styles.inputWrapper}>
-            <Text style={[styles.label, { color: colors.text }]}>E-MAIL</Text>
+            <Text style={styles.label}>E-MAIL</Text>
             <TextInput
-              style={[
-                styles.input,
-                {
-                  backgroundColor: colors.inputBackground,
-                  borderColor: colors.inputBorder,
-                  color: colors.inputText,
-                }
-              ]}
+              style={styles.input}
               placeholder="seu@email.com"
-              placeholderTextColor={colors.inputPlaceholder}
+              placeholderTextColor="#999"
               keyboardType="email-address"
               autoCapitalize="none"
               value={email}
@@ -82,18 +73,11 @@ export default function LoginScreen({ navigation }) {
           </View>
 
           <View style={styles.inputWrapper}>
-            <Text style={[styles.label, { color: colors.text }]}>SENHA</Text>
+            <Text style={styles.label}>SENHA</Text>
             <TextInput
-              style={[
-                styles.input,
-                {
-                  backgroundColor: colors.inputBackground,
-                  borderColor: colors.inputBorder,
-                  color: colors.inputText,
-                }
-              ]}
+              style={styles.input}
               placeholder="Sua senha"
-              placeholderTextColor={colors.inputPlaceholder}
+              placeholderTextColor="#999"
               secureTextEntry
               value={password}
               onChangeText={setPassword}
@@ -104,19 +88,18 @@ export default function LoginScreen({ navigation }) {
             style={styles.forgotPasswordButton}
             onPress={handleForgotPassword}
           >
-            <Text style={[styles.forgotPasswordText, { color: colors.primary }]}>Esqueci minha senha</Text>
+            <Text style={styles.forgotPasswordText}>Esqueci minha senha</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={[
               styles.loginButton,
-              { backgroundColor: colors.primary, shadowColor: colors.shadowColor, borderColor: colors.border },
-              (!email || !password) && { backgroundColor: colors.divider, shadowColor: colors.shadowColor, borderColor: colors.border },
+              (!email || !password) && styles.loginButtonDisabled,
             ]}
             onPress={handleLogin}
             disabled={!email || !password}
           >
-            <Text style={[styles.loginButtonText, { color: colors.textOnPrimary }]}>ENTRAR</Text>
+            <Text style={styles.loginButtonText}>ENTRAR</Text>
           </TouchableOpacity>
         </View>
 
@@ -129,6 +112,7 @@ export default function LoginScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#fff",
   },
   scrollContainer: {
     flexGrow: 1,
@@ -145,8 +129,10 @@ const styles = StyleSheet.create({
   fireTitle: {
     fontSize: 48,
     fontWeight: "800",
+    color: "#bc010c",
     textAlign: "center",
     marginBottom: 10,
+    textShadowColor: "rgba(188, 1, 12, 0.1)",
     textShadowOffset: { width: 2, height: 2 },
     textShadowRadius: 4,
   },
@@ -157,6 +143,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 14,
+    color: "#666",
     textAlign: "center",
     lineHeight: 20,
     paddingHorizontal: 10,
@@ -170,16 +157,21 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 12,
     fontWeight: "700",
+    color: "#333",
     marginBottom: 8,
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },
   input: {
+    backgroundColor: "#f8f8f8",
     borderWidth: 1.5,
+    borderColor: "#e1e1e1",
     borderRadius: 12,
     paddingHorizontal: 18,
     paddingVertical: 16,
     fontSize: 16,
+    color: "#333",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
@@ -191,21 +183,31 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
   },
   forgotPasswordText: {
+    color: "#bc010c",
     fontSize: 14,
     fontWeight: "600",
     textDecorationLine: "underline",
   },
   loginButton: {
+    backgroundColor: "#bc010c",
     paddingVertical: 18,
     borderRadius: 12,
     alignItems: "center",
+    shadowColor: "#bc010c",
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.3,
     shadowRadius: 10,
     elevation: 8,
     borderWidth: 1,
+    borderColor: "#a0010a",
+  },
+  loginButtonDisabled: {
+    backgroundColor: "#cccccc",
+    shadowColor: "#cccccc",
+    borderColor: "#bbbbbb",
   },
   loginButtonText: {
+    color: "white",
     fontSize: 16,
     fontWeight: "bold",
     textTransform: "uppercase",

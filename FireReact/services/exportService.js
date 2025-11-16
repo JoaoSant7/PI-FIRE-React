@@ -129,25 +129,8 @@ export const exportToCSV = async (occurrences) => {
   }
 };
 
-// Cores de fallback (tema claro) usadas quando nenhum tema é informado
-const DEFAULT_EXPORT_COLORS = {
-  primary: '#D32F2F',
-  background: '#FFFFFF',
-  surface: '#F5F5F5',
-  card: '#FFFFFF',
-  text: '#212121',
-  textSecondary: '#757575',
-  textOnPrimary: '#FFFFFF',
-  border: '#E0E0E0',
-  divider: '#EEEEEE',
-  success: '#4CAF50',
-  warning: '#FF9800',
-  error: '#F44336',
-  info: '#2196F3',
-};
-
-// Serviço para exportar PDF - LAYOUT SIMPLIFICADO (aceita `colors`)
-export const exportToPDF = async (occurrences, colors = DEFAULT_EXPORT_COLORS) => {
+// Serviço para exportar PDF - LAYOUT SIMPLIFICADO
+export const exportToPDF = async (occurrences) => {
   try {
     // HTML para o PDF - LAYOUT SIMPLIFICADO
     const html = `
@@ -159,24 +142,23 @@ export const exportToPDF = async (occurrences, colors = DEFAULT_EXPORT_COLORS) =
               font-family: Arial, sans-serif; 
               margin: 15px; 
               line-height: 1.4;
-              color: ${colors.text};
-              background-color: ${colors.background};
+              color: #000;
               font-size: 10px;
             }
             .header { 
               text-align: center; 
               margin-bottom: 15px;
-              border-bottom: 1px solid ${colors.border};
+              border-bottom: 1px solid #000;
               padding-bottom: 8px;
             }
             .header h1 { 
-              color: ${colors.text}; 
+              color: #000; 
               margin: 0;
               font-size: 14px;
               font-weight: bold;
             }
             .header .subtitle {
-              color: ${colors.textSecondary};
+              color: #333;
               font-size: 9px;
               margin-top: 2px;
             }
@@ -185,24 +167,22 @@ export const exportToPDF = async (occurrences, colors = DEFAULT_EXPORT_COLORS) =
               page-break-inside: avoid;
             }
             .occurrence-header {
-              background-color: ${colors.surface};
+              background-color: #f0f0f0;
               padding: 6px 8px;
               font-weight: bold;
-              border: 1px solid ${colors.border};
-              color: ${colors.text};
+              border: 1px solid #ccc;
               font-size: 11px;
               margin-bottom: 8px;
             }
             .section {
               margin: 8px 0;
-              border: 1px solid ${colors.border};
+              border: 1px solid #ccc;
             }
             .section-title {
-              background-color: ${colors.surface};
+              background-color: #f8f8f8;
               padding: 5px 8px;
               font-weight: bold;
-              border-bottom: 1px solid ${colors.border};
-              color: ${colors.text};
+              border-bottom: 1px solid #ccc;
               font-size: 10px;
             }
             .section-content {
@@ -219,12 +199,12 @@ export const exportToPDF = async (occurrences, colors = DEFAULT_EXPORT_COLORS) =
             }
             .info-label {
               font-weight: bold;
-              color: ${colors.textSecondary};
+              color: #333;
               font-size: 9px;
               min-width: 120px;
             }
             .info-value {
-              color: ${colors.text};
+              color: #000;
               font-size: 9px;
               flex: 1;
             }
@@ -232,20 +212,19 @@ export const exportToPDF = async (occurrences, colors = DEFAULT_EXPORT_COLORS) =
               grid-column: 1 / -1;
             }
             .description-box {
-              background-color: ${colors.card};
+              background-color: #f9f9f9;
               padding: 6px;
-              border: 1px solid ${colors.border};
+              border: 1px solid #ddd;
               margin: 4px 0;
               font-size: 9px;
               white-space: pre-line;
-              color: ${colors.text};
             }
             .footer {
               text-align: center;
               margin-top: 15px;
-              color: ${colors.textSecondary};
+              color: #666;
               font-size: 8px;
-              border-top: 1px solid ${colors.border};
+              border-top: 1px solid #ddd;
               padding-top: 8px;
             }
             @media print {

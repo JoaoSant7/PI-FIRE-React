@@ -2,7 +2,6 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import SearchablePicker from "./SearchablePicker";
-import { useTheme } from "../contexts/ThemeContext";
 
 const InputGroup = ({
   label,
@@ -16,12 +15,10 @@ const InputGroup = ({
   items,
   placeholder,
 }) => {
-  const { colors } = useTheme();
-
   return (
     <View style={[styles.container, style]}>
-      <Text style={[styles.label, { color: colors.text }]}>
-        {label} {required && <Text style={[styles.required, { color: colors.error }]}>*</Text>}
+      <Text style={styles.label}>
+        {label} {required && <Text style={styles.required}>*</Text>}
       </Text>
 
       {searchable ? (
@@ -45,9 +42,12 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: "500",
+    color: "#555",
     marginBottom: 8,
   },
-  required: {},
+  required: {
+    color: "red",
+  },
 });
 
 export default InputGroup;

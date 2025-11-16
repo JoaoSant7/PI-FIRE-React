@@ -8,11 +8,8 @@ import {
   ScrollView,
   Alert,
 } from "react-native";
-import { useTheme } from "../contexts/ThemeContext";
 
 const OcorrenciaRegistradaScreen = ({ navigation }) => {
-  const { colors } = useTheme();
-  
   const handleInicio = () => {
     navigation.navigate("Home");
   };
@@ -31,50 +28,50 @@ const OcorrenciaRegistradaScreen = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.content}>
           {/* Ícone de sucesso */}
-          <View style={[styles.successIcon, { backgroundColor: colors.success }]}>
-            <Text style={[styles.checkmark, { color: colors.textOnPrimary }]}>✓</Text>
+          <View style={styles.successIcon}>
+            <Text style={styles.checkmark}>✓</Text>
           </View>
 
           {/* Mensagem de sucesso */}
-          <Text style={[styles.successTitle, { color: colors.success }]}>
+          <Text style={styles.successTitle}>
             Ocorrência Registrada com Sucesso!
           </Text>
-          <Text style={[styles.successMessage, { color: colors.textSecondary }]}>
+          <Text style={styles.successMessage}>
             A ocorrência foi salva no sistema e está disponível para consulta.
           </Text>
 
           {/* Botões de ação */}
           <View style={styles.buttonContainer}>
             <TouchableOpacity
-              style={[styles.button, styles.primaryButton, { backgroundColor: colors.textSecondary, shadowColor: colors.shadowColor }]}
+              style={[styles.button, styles.primaryButton]}
               onPress={handleInicio}
             >
-              <Text style={[styles.buttonText, { color: colors.textOnPrimary }]}>Início</Text>
+              <Text style={styles.buttonText}>Início</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.button, styles.secondaryButton, { backgroundColor: colors.warning, shadowColor: colors.shadowColor }]}
+              style={[styles.button, styles.secondaryButton]}
               onPress={handleListarOcorrencias}
             >
-              <Text style={[styles.buttonText, { color: colors.textOnPrimary }]}>Listar Ocorrências</Text>
+              <Text style={styles.buttonText}>Listar Ocorrências</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.button, styles.accentButton, { backgroundColor: colors.primary, shadowColor: colors.shadowColor }]}
+              style={[styles.button, styles.accentButton]}
               onPress={handleNovaOcorrencia}
             >
-              <Text style={[styles.buttonText, { color: colors.textOnPrimary }]}>Registrar Nova Ocorrência</Text>
+              <Text style={styles.buttonText}>Registrar Nova Ocorrência</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.button, styles.pdfButton, { backgroundColor: colors.success, shadowColor: colors.shadowColor }]}
+              style={[styles.button, styles.pdfButton]}
               onPress={handleExportarPDF}
             >
-              <Text style={[styles.buttonText, { color: colors.textOnPrimary }]}>Exportar Ocorrência em PDF</Text>
+              <Text style={styles.buttonText}>Exportar Ocorrência em PDF</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -86,6 +83,7 @@ const OcorrenciaRegistradaScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#f8f9fa",
   },
   scrollContent: {
     flexGrow: 1,
@@ -100,6 +98,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
+    backgroundColor: "#28a745",
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 20,
@@ -112,11 +111,13 @@ const styles = StyleSheet.create({
   successTitle: {
     fontSize: 24,
     fontWeight: "bold",
+    color: "#28a745",
     textAlign: "center",
     marginBottom: 10,
   },
   successMessage: {
     fontSize: 16,
+    color: "#6c757d",
     textAlign: "center",
     marginBottom: 40,
     lineHeight: 22,
@@ -131,6 +132,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -139,10 +141,18 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 3,
   },
-  primaryButton: {},
-  secondaryButton: {},
-  accentButton: {},
-  pdfButton: {},
+  primaryButton: {
+    backgroundColor: "#6c757d", // Vermelho bombeiros
+  },
+  secondaryButton: {
+    backgroundColor: "#E6A400",
+  },
+  accentButton: {
+    backgroundColor: "#BC010C", // Laranja bombeiros
+  },
+  pdfButton: {
+    backgroundColor: "#28a745",
+  },
   buttonText: {
     color: "white",
     fontSize: 16,

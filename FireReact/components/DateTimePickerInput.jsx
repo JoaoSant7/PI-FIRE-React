@@ -1,7 +1,6 @@
 // components/DateTimePickerInput.js
 import React, { useState } from "react";
 import { View, TouchableOpacity, Text, Platform } from "react-native";
-import { useTheme } from "../contexts/ThemeContext";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
 const DateTimePickerInput = ({
@@ -48,18 +47,16 @@ const DateTimePickerInput = ({
     setShowPicker(true);
   };
 
-  const { colors } = useTheme();
-
   return (
     <View>
       <TouchableOpacity
         style={[
           {
             borderWidth: 1,
-            borderColor: colors.border,
+            borderColor: "#ccc",
             borderRadius: 8,
             padding: 12,
-            backgroundColor: colors.inputBackground,
+            backgroundColor: "#fff",
             minHeight: 50,
             justifyContent: "center",
           },
@@ -69,7 +66,7 @@ const DateTimePickerInput = ({
       >
         <Text
           style={{
-            color: value ? colors.inputText : colors.inputPlaceholder,
+            color: value ? "#333" : "#999",
             fontSize: 16,
             textAlign: "left",
           }}

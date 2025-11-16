@@ -19,7 +19,6 @@ import DetalhesOcorrenciaScreen from './screens/DetalhesOcorrenciaScreen.jsx';
 import { AuthProvider, AuthContext } from './contexts/AuthContext';
 import { OcorrenciasProvider } from './contexts/OcorrenciasContext';
 import { SettingsProvider } from './contexts/SettingsContext';
-import { ThemeProvider } from './contexts/ThemeContext';
 
 // Configurações do tema
 const THEME_COLORS = {
@@ -145,13 +144,11 @@ const AppContent = () => {
 export default function App() {
   return (
     <SettingsProvider>
-      <ThemeProvider>
       <AuthProvider>
         <OcorrenciasProvider>
           <AppContent />
         </OcorrenciasProvider>
       </AuthProvider>
-      </ThemeProvider>
     </SettingsProvider>
   );
 } 

@@ -1,10 +1,8 @@
 // components/TimeInput.js (versão avançada)
 import React, { useState } from 'react';
 import { TextInput, StyleSheet, View, Text } from 'react-native';
-import { useTheme } from '../contexts/ThemeContext';
 
 const TimeInput = ({ value, onChangeText, placeholder, showValidation = true, ...props }) => {
-  const { colors } = useTheme();
   const [internalValue, setInternalValue] = useState(value || '');
   const [isValid, setIsValid] = useState(true);
 
@@ -104,23 +102,17 @@ const TimeInput = ({ value, onChangeText, placeholder, showValidation = true, ..
       <TextInput
         style={[
           styles.input,
-          !isValid && styles.inputError,
-          {
-            backgroundColor: colors.inputBackground,
-            borderColor: !isValid ? colors.error : colors.inputBorder,
-            color: colors.inputText,
-          }
+          !isValid && styles.inputError
         ]}
         value={internalValue}
         onChangeText={handleChange}
         placeholder={placeholder || "00:00:00"}
-        placeholderTextColor={colors.inputPlaceholder}
         keyboardType="numeric"
         maxLength={8} // HH:MM:SS
         {...props}
       />
       {showValidation && !isValid && internalValue && (
-        <Text style={[styles.errorText, { color: colors.error }]}>Horário inválido</Text>
+        <Text style={styles.errorText}>Horário inválido</Text>
       )}
     </View>
   );
@@ -128,17 +120,22 @@ const TimeInput = ({ value, onChangeText, placeholder, showValidation = true, ..
 
 const styles = StyleSheet.create({
   input: {
+    backgroundColor: '#f8f8f8',
     borderWidth: 1,
+    borderColor: '#e1e1e1',
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 10,
     fontSize: 16,
+    color: '#333',
     minHeight: 44,
   },
   inputError: {
-    backgroundColor: 'rgba(244, 67, 54, 0.1)',
+    borderColor: '#ff0000',
+    backgroundColor: '#fff0f0',
   },
   errorText: {
+    color: '#ff0000',
     fontSize: 12,
     marginTop: 4,
   },

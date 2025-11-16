@@ -2,9 +2,9 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export const SettingsContext = createContext();
+const SettingsContext = createContext();
 
-export function SettingsProvider({ children }) {
+export const SettingsProvider = ({ children }) => {
   const [settings, setSettings] = useState(null); // null enquanto carrega
   const [loading, setLoading] = useState(true);
 
@@ -16,6 +16,7 @@ export function SettingsProvider({ children }) {
         if (saved) {
           setSettings(JSON.parse(saved));
         } else {
+          // Valores padrão
           setSettings({
             notifications: true,
             darkMode: false,
@@ -48,6 +49,6 @@ export function SettingsProvider({ children }) {
       {children}
     </SettingsContext.Provider>
   );
-}
+};
 
 export const useSettings = () => useContext(SettingsContext);
