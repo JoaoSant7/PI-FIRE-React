@@ -3,7 +3,6 @@ import React from "react";
 import {
   View,
   Text,
-  StyleSheet,
   ScrollView,
   SafeAreaView,
   Dimensions,
@@ -14,6 +13,9 @@ import {
 import { PieChart, BarChart, LineChart } from "react-native-chart-kit";
 import { Ionicons } from "@expo/vector-icons";
 import { useOcorrencias } from "../hooks/useOcorrencias";
+
+// Import dos estilos
+import styles from "../styles/DashboardStyles";
 
 const DashboardScreen = () => {
   const ScreenWidth = Dimensions.get("window").width;
