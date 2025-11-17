@@ -4,17 +4,17 @@ import {
   View,
   Text,
   ScrollView,
-  SafeAreaView,
   Dimensions,
   ActivityIndicator,
   RefreshControl,
   TouchableOpacity,
 } from "react-native";
-import { PieChart, BarChart, LineChart } from "react-native-chart-kit";
+
+import { SafeAreaView } from "react-native-safe-area-context";
+import { PieChart, BarChart } from "react-native-chart-kit";
 import { Ionicons } from "@expo/vector-icons";
 import { useOcorrencias } from "../hooks/useOcorrencias";
 
-// Import dos estilos
 import styles from "../styles/DashboardStyles";
 
 const DashboardScreen = () => {
@@ -29,13 +29,13 @@ const DashboardScreen = () => {
     recarregarDados,
   } = useOcorrencias();
 
-  // Processar dados para os gráficos baseado nas ocorrências reais
   const processarDadosDashboard = () => {
     if (!ocorrencias || ocorrencias.length === 0) {
       return {
         totalOcorrencias: "0",
         emAndamento: "0",
         ocorrenciasAtendidas: "0",
+        naoAtendidas: "0",
         tempoMedioResposta: "0min",
       };
     }
@@ -44,177 +44,219 @@ const DashboardScreen = () => {
     const emAndamento = ocorrencias.filter(
       (oc) => oc.status === "em_andamento" || oc.status === "pendente"
     ).length;
-    const ocorrenciasAtendidas = ocorrencias.filter(
+    const atendidas = ocorrencias.filter(
       (oc) => oc.status === "finalizada" || oc.status === "atendida"
     ).length;
+    const naoAtendidas = totalOcorrencias - atendidas;
 
-    // Calcular tempo médio de resposta
-    const temposResposta = ocorrencias
-      .filter((oc) => oc.tempoResposta && oc.tempoResposta > 0)
-      .map((oc) => oc.tempoResposta);
-
+    const tempos = ocorrencias
+      .filter((o) => o.tempoResposta)
+      .map((o) => o.tempoResposta);
     const tempoMedio =
-      temposResposta.length > 0
-        ? Math.round(
-            temposResposta.reduce((a, b) => a + b, 0) / temposResposta.length
-          )
+      tempos.length > 0
+        ? Math.round(tempos.reduce((a, b) => a + b, 0) / tempos.length)
         : 0;
 
     return {
       totalOcorrencias: totalOcorrencias.toString(),
       emAndamento: emAndamento.toString(),
-      ocorrenciasAtendidas: ocorrenciasAtendidas.toString(),
+      ocorrenciasAtendidas: atendidas.toString(),
+      naoAtendidas: naoAtendidas.toString(),
       tempoMedioResposta: `${tempoMedio}min`,
     };
   };
 
-  // Processar dados para gráfico de pizza (por tipo/natureza)
   const processarDadosPizza = () => {
     if (!ocorrencias || ocorrencias.length === 0) {
       return [
         {
           name: "Sem dados",
           population: 1,
-          color: "#CCCCCC",
-          legendFontColor: "#7F7F7F",
+          color: "#9e9e9e",
+          legendFontColor: "#777",
         },
       ];
     }
 
     const tiposCount = {};
-    ocorrencias.forEach((ocorrencia) => {
-      const tipo = ocorrencia.tipo || ocorrencia.natureza || "Outros";
+    ocorrencias.forEach((oc) => {
+      const tipo = oc.tipo || oc.natureza || "Outros";
       tiposCount[tipo] = (tiposCount[tipo] || 0) + 1;
     });
 
+    const total = ocorrencias.length;
     const cores = [
-      "#FF6384",
-      "#36A2EB",
-      "#FFCE56",
-      "#4BC0C0",
-      "#9966FF",
-      "#FF9F40",
+      "#1e88e5",
+      "#43a047",
+      "#fb8c00",
+      "#8e24aa",
+      "#3949ab",
+      "#00897b",
+      "#f4511e",
+      "#6d4c41",
     ];
 
-    return Object.entries(tiposCount).map(([name, population], index) => ({
-      name: name.length > 15 ? name.substring(0, 12) + "..." : name,
-      population,
-      color: cores[index % cores.length],
-      legendFontColor: "#7F7F7F",
-    }));
+    return Object.entries(tiposCount).map(([name, population], index) => {
+      const pct = ((population / total) * 100).toFixed(1);
+      return {
+        name: `${name} (${pct}%)`,
+        population,
+        color: cores[index % cores.length],
+        legendFontColor: "#555",
+      };
+    });
   };
 
-  // Processar dados para gráfico de barras (por região)
   const processarDadosBarras = () => {
+    const regioes = {};
     if (!ocorrencias || ocorrencias.length === 0) {
       return {
         labels: ["Sem dados"],
         datasets: [{ data: [1] }],
+        colors: ["#9e9e9e"],
       };
     }
 
-    const regioesCount = {};
-    ocorrencias.forEach((ocorrencia) => {
-      const regiao = ocorrencia.regiao || ocorrencia.bairro || "Não informada";
-      regioesCount[regiao] = (regioesCount[regiao] || 0) + 1;
+    ocorrencias.forEach((oc) => {
+      const regiao = oc.regiao || oc.bairro || "Não informada";
+      regioes[regiao] = (regioes[regiao] || 0) + 1;
     });
 
-    const labels = Object.keys(regioesCount).map((regiao) =>
-      regiao.length > 8 ? regiao.substring(0, 6) + "..." : regiao
-    );
-    const data = Object.values(regioesCount);
+    const labels = Object.keys(regioes);
+    const data = Object.values(regioes);
+
+    const coresRegioes = [
+      "#1e88e5",
+      "#43a047",
+      "#fb8c00",
+      "#8e24aa",
+      "#3949ab",
+      "#00897b",
+      "#f4511e",
+      "#6d4c41",
+      "#546e7a",
+      "#5e35b1",
+    ];
 
     return {
-      labels,
+      labels: labels.map((label) =>
+        label.length > 10 ? label.substring(0, 8) + "..." : label
+      ),
       datasets: [{ data }],
+      colors: data.map((_, index) => coresRegioes[index % coresRegioes.length]),
     };
   };
 
-  // Processar dados para gráfico de linha (semanal)
-  const processarDadosLinha = () => {
+  const processarDadosDiasSemana = () => {
     if (!ocorrencias || ocorrencias.length === 0) {
       return {
-        labels: ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"],
-        datasets: [{ data: [0, 0, 0, 0, 0, 0, 0] }],
+        labels: ["Sem dados"],
+        datasets: [{ data: [1] }],
+        colors: ["#9e9e9e"],
       };
     }
 
-    // Agrupar por dia da semana (últimos 7 dias)
-    const ultimos7Dias = Array.from({ length: 7 }, (_, i) => {
-      const data = new Date();
-      data.setDate(data.getDate() - i);
-      return data.toISOString().split("T")[0];
-    }).reverse();
+    const dias = {
+      Domingo: 0,
+      Segunda: 0,
+      Terça: 0,
+      Quarta: 0,
+      Quinta: 0,
+      Sexta: 0,
+      Sábado: 0,
+    };
 
-    const diasSemana = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
-    const contagemPorDia = ultimos7Dias.map((data) => {
-      return ocorrencias.filter((oc) => {
-        const dataOcorrencia = oc.dataHora ? oc.dataHora.split("T")[0] : null;
-        return dataOcorrencia === data;
-      }).length;
+    ocorrencias.forEach((oc) => {
+      if (!oc.dataHora) return;
+      const date = new Date(oc.dataHora);
+      const dia = date.getDay();
+      const nomes = [
+        "Domingo",
+        "Segunda",
+        "Terça",
+        "Quarta",
+        "Quinta",
+        "Sexta",
+        "Sábado",
+      ];
+      dias[nomes[dia]]++;
     });
 
+    const data = Object.values(dias);
+
+    const coresDias = [
+      "#1e88e5",
+      "#43a047",
+      "#fb8c00",
+      "#8e24aa",
+      "#3949ab",
+      "#00897b",
+      "#f4511e",
+    ];
+
     return {
-      labels: ultimos7Dias.map(
-        (data, index) => diasSemana[new Date(data).getDay()]
-      ),
-      datasets: [
-        {
-          data: contagemPorDia,
-          color: (opacity = 1) => `rgba(54, 162, 235, ${opacity})`,
-        },
-      ],
+      labels: Object.keys(dias),
+      datasets: [{ data }],
+      colors: coresDias,
     };
   };
 
-  // Processar dados para gráfico de turnos
   const processarDadosTurnos = () => {
     if (!ocorrencias || ocorrencias.length === 0) {
-      return {
-        labels: ["Manhã", "Tarde", "Noite", "Madrugada"],
-        datasets: [{ data: [0, 0, 0, 0] }],
-      };
+      return [
+        {
+          name: "Sem dados",
+          population: 1,
+          color: "#9e9e9e",
+          legendFontColor: "#777",
+        },
+      ];
     }
 
-    const turnos = {
-      Manhã: 0,
-      Tarde: 0,
-      Noite: 0,
-      Madrugada: 0,
-    };
+    const turnos = { Manhã: 0, Tarde: 0, Noite: 0, Madrugada: 0 };
 
-    ocorrencias.forEach((ocorrencia) => {
-      if (ocorrencia.dataHora) {
-        const hora = new Date(ocorrencia.dataHora).getHours();
-        if (hora >= 6 && hora < 12) turnos["Manhã"]++;
-        else if (hora >= 12 && hora < 18) turnos["Tarde"]++;
-        else if (hora >= 18 && hora < 24) turnos["Noite"]++;
-        else turnos["Madrugada"]++;
-      }
+    ocorrencias.forEach((oc) => {
+      if (!oc.dataHora) return;
+      const hora = new Date(oc.dataHora).getHours();
+      if (hora >= 6 && hora < 12) turnos.Manhã++;
+      else if (hora >= 12 && hora < 18) turnos.Tarde++;
+      else if (hora >= 18 && hora < 24) turnos.Noite++;
+      else turnos.Madrugada++;
     });
 
-    return {
-      labels: Object.keys(turnos),
-      datasets: [{ data: Object.values(turnos) }],
-    };
+    const total = Object.values(turnos).reduce((a, b) => a + b, 0);
+    const cores = ["#1e88e5", "#43a047", "#fb8c00", "#8e24aa"];
+
+    return Object.entries(turnos).map(([name, population], index) => {
+      const pct = total > 0 ? ((population / total) * 100).toFixed(1) : 0;
+      return {
+        name: `${name} (${pct}%)`,
+        population,
+        color: cores[index],
+        legendFontColor: "#555",
+      };
+    });
   };
 
   const dashboardData = processarDadosDashboard();
   const pieData = processarDadosPizza();
   const barData = processarDadosBarras();
-  const lineData = processarDadosLinha();
   const turnoData = processarDadosTurnos();
+  const diasSemanaData = processarDadosDiasSemana();
 
   const chartConfig = {
-    backgroundGradientFrom: "#fff",
-    backgroundGradientTo: "#fff",
-    color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-    strokeWidth: 2,
-    barPercentage: 0.6,
+    backgroundGradientFrom: "#ffffff",
+    backgroundGradientTo: "#ffffff",
+    color: (opacity = 1) => `rgba(30, 60, 90, ${opacity})`,
+    labelColor: (opacity = 1) => `rgba(60, 60, 60, ${opacity})`,
     decimalPlaces: 0,
-    propsForLabels: {
-      fontSize: 10,
-    },
+    barPercentage: 0.7,
+    propsForLabels: { fontSize: 10 },
+  };
+
+  const pieChartConfig = {
+    color: (opacity = 1) => `rgba(30, 60, 90, ${opacity})`,
+    labelColor: (opacity = 1) => `rgba(60, 60, 60, ${opacity})`,
   };
 
   const formatarData = (timestamp) => {
@@ -222,11 +264,22 @@ const DashboardScreen = () => {
     return new Date(timestamp).toLocaleString("pt-BR");
   };
 
+  const pctAtendidas =
+    ocorrencias?.length > 0
+      ? Math.round(
+          (dashboardData.ocorrenciasAtendidas /
+            dashboardData.totalOcorrencias) *
+            100
+        )
+      : 0;
+
+  const pctNaoAtendidas = 100 - pctAtendidas;
+
   if (loading && !refreshing) {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#36A2EB" />
+          <ActivityIndicator size="large" color="#1e88e5" />
           <Text style={styles.loadingText}>Carregando dados...</Text>
         </View>
       </SafeAreaView>
@@ -236,17 +289,14 @@ const DashboardScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
-        style={styles.scrollView}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
             onRefresh={atualizarDados}
-            colors={["#36A2EB"]}
-            tintColor="#36A2EB"
+            colors={["#1e88e5"]}
           />
         }
       >
-        {/* Cabeçalho com Status */}
         <View style={styles.header}>
           <View style={styles.headerRow}>
             <Text style={styles.title}>Dashboard Operacional</Text>
@@ -254,7 +304,7 @@ const DashboardScreen = () => {
               onPress={recarregarDados}
               style={styles.syncButton}
             >
-              <Ionicons name="refresh" size={24} color="#36A2EB" />
+              <Ionicons name="refresh" size={24} color="#1e88e5" />
             </TouchableOpacity>
           </View>
 
@@ -277,9 +327,9 @@ const DashboardScreen = () => {
           </View>
         </View>
 
-        {/* Visão Geral */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Visão Geral</Text>
+
           <View style={styles.statsContainer}>
             <View style={styles.statItem}>
               <Text style={styles.statValue}>
@@ -287,96 +337,139 @@ const DashboardScreen = () => {
               </Text>
               <Text style={styles.statLabel}>Total de Ocorrências</Text>
             </View>
+
             <View style={styles.statItem}>
-              <Text style={[styles.statValue, styles.emphasis]}>
+              <Text style={[styles.statValue, { color: "#fb8c00" }]}>
                 {dashboardData.emAndamento}
               </Text>
               <Text style={styles.statLabel}>Em Andamento</Text>
             </View>
+
             <View style={styles.statItem}>
-              <Text style={[styles.statValue, styles.success]}>
+              <Text style={[styles.statValue, { color: "#43a047" }]}>
                 {dashboardData.ocorrenciasAtendidas}
               </Text>
-              <Text style={styles.statLabel}>Ocorrências Atendidas</Text>
+              <Text style={styles.statLabel}>Atendidas</Text>
             </View>
+
             <View style={styles.statItem}>
+              <Text style={[styles.statValue, { color: "#e53935" }]}>
+                {dashboardData.naoAtendidas}
+              </Text>
+              <Text style={styles.statLabel}>Não Atendidas</Text>
+            </View>
+
+            <View style={[styles.statItem, styles.fullWidth]}>
               <Text style={styles.statValue}>
                 {dashboardData.tempoMedioResposta}
               </Text>
-              <Text style={styles.statLabel}>Tempo Médio Resposta</Text>
+              <Text style={styles.statLabel}>
+                Tempo Médio de Resposta
+              </Text>
             </View>
           </View>
         </View>
 
-        {/* Divisor */}
-        <View style={styles.divider} />
-
-        {/* Análise de Dados */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Análise de Dados</Text>
+          <Text style={styles.sectionTitle}>Taxa de Atendimento</Text>
 
-          {/* Gráfico de Pizza - Ocorrências por Natureza */}
-          <View style={styles.chartSection}>
-            <Text style={styles.chartTitle}>Ocorrências por Natureza</Text>
-            <PieChart
-              data={pieData}
-              width={ScreenWidth - 40}
-              height={200}
-              chartConfig={chartConfig}
-              accessor="population"
-              backgroundColor="transparent"
-              paddingLeft="15"
-              hasLegend={true}
-            />
-          </View>
+          <View style={styles.rowPercent}>
+            <View style={styles.percentBox}>
+              <Text style={[styles.percentValue, { color: "#43a047" }]}>
+                {pctAtendidas}%
+              </Text>
+              <Text style={styles.percentLabel}>Atendidas</Text>
+            </View>
 
-          {/* Gráfico de Barras - Ocorrências por Região */}
-          <View style={styles.chartSection}>
-            <Text style={styles.chartTitle}>Ocorrências por Região</Text>
-            <BarChart
-              data={barData}
-              width={ScreenWidth - 40}
-              height={220}
-              chartConfig={chartConfig}
-              verticalLabelRotation={30}
-              fromZero
-              showBarTops={false}
-            />
-          </View>
-
-          {/* Gráfico de Linha - Ocorrências Semanais */}
-          <View style={styles.chartSection}>
-            <Text style={styles.chartTitle}>Ocorrências Semanais</Text>
-            <LineChart
-              data={lineData}
-              width={ScreenWidth - 40}
-              height={220}
-              chartConfig={chartConfig}
-              bezier
-              withVerticalLines={false}
-              withHorizontalLines={false}
-            />
-          </View>
-
-          {/* Gráfico de Barras - Ocorrências por Turno */}
-          <View style={styles.chartSection}>
-            <Text style={styles.chartTitle}>Ocorrências por Turno</Text>
-            <BarChart
-              data={turnoData}
-              width={ScreenWidth - 40}
-              height={220}
-              chartConfig={chartConfig}
-              verticalLabelRotation={0}
-              fromZero
-              showBarTops={false}
-            />
+            <View style={styles.percentBox}>
+              <Text style={[styles.percentValue, { color: "#e53935" }]}>
+                {pctNaoAtendidas}%
+              </Text>
+              <Text style={styles.percentLabel}>Não Atendidas</Text>
+            </View>
           </View>
         </View>
 
-        {/* Informações Adicionais */}
+        {/* Pizza */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Análises</Text>
+
+          <View style={styles.chartSection}>
+            <Text style={styles.chartTitle}>
+              Ocorrências por Natureza
+            </Text>
+            <View style={styles.centeredChart}>
+              <PieChart
+                data={pieData}
+                width={ScreenWidth - 40}
+                height={220}
+                chartConfig={pieChartConfig}
+                accessor="population"
+                backgroundColor="transparent"
+                hasLegend
+                absolute
+              />
+            </View>
+          </View>
+
+          {/* Região */}
+          <View style={styles.chartSection}>
+            <Text style={styles.chartTitle}>Ocorrências por Região</Text>
+            <View style={styles.centeredChart}>
+              <BarChart
+                data={barData}
+                width={ScreenWidth - 30}
+                height={220}
+                chartConfig={chartConfig}
+                fromZero
+                showBarTops
+                withCustomBarColor
+                flatColor
+                verticalLabelRotation={30}
+              />
+            </View>
+          </View>
+
+          {/* Dias da Semana */}
+          <View style={styles.chartSection}>
+            <Text style={styles.chartTitle}>
+              Ocorrências por dia da Semana
+            </Text>
+            <View style={styles.centeredChart}>
+              <BarChart
+                data={diasSemanaData}
+                width={ScreenWidth - 30}
+                height={220}
+                chartConfig={chartConfig}
+                fromZero
+                showBarTops
+                withCustomBarColor
+                flatColor
+              />
+            </View>
+          </View>
+
+          {/* Turnos */}
+          <View style={styles.chartSection}>
+            <Text style={styles.chartTitle}>Ocorrências por Turno</Text>
+            <View style={styles.centeredChart}>
+              <PieChart
+                data={turnoData}
+                width={ScreenWidth - 40}
+                height={220}
+                chartConfig={pieChartConfig}
+                accessor="population"
+                backgroundColor="transparent"
+                absolute
+                hasLegend
+              />
+            </View>
+          </View>
+        </View>
+
         <View style={styles.infoSection}>
           <Text style={styles.infoText}>
-            💡 Os dados são atualizados automaticamente. Arraste para baixo para
+            💡 Dados atualizados automaticamente. Puxe para baixo para
             atualizar.
           </Text>
         </View>

@@ -1,87 +1,74 @@
+// styles/DashboardStyles.js
 import { StyleSheet } from "react-native";
 
-export const styles = StyleSheet.create({
+export default StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
-  },
-  scrollView: {
-    flex: 1,
+    backgroundColor: "#f3f4f6",
   },
   header: {
     backgroundColor: "#fff",
-    paddingVertical: 20,
-    paddingHorizontal: 16,
+    padding: 20,
     borderBottomWidth: 1,
     borderBottomColor: "#e0e0e0",
   },
   headerRow: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
     alignItems: "center",
-    marginBottom: 8,
   },
   title: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: "bold",
     color: "#333",
-    flex: 1,
     textAlign: "center",
   },
   syncButton: {
-    padding: 8,
     position: "absolute",
     right: 0,
   },
   subtitle: {
+    marginTop: 8,
     fontSize: 14,
     color: "#666",
     textAlign: "center",
-    marginBottom: 8,
   },
   errorBanner: {
+    marginTop: 10,
+    padding: 8,
+    backgroundColor: "#e53935",
+    borderRadius: 4,
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#e74c3c",
-    padding: 8,
-    borderRadius: 4,
-    marginBottom: 8,
   },
   errorText: {
     color: "#fff",
     marginLeft: 8,
-    fontSize: 12,
     flex: 1,
   },
   syncInfo: {
+    marginTop: 6,
     flexDirection: "row",
-    alignItems: "center",
     justifyContent: "center",
   },
   syncText: {
-    fontSize: 12,
+    marginLeft: 6,
     color: "#666",
-    marginLeft: 4,
+    fontSize: 12,
   },
   section: {
     backgroundColor: "#fff",
     margin: 16,
-    borderRadius: 8,
     padding: 16,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 3,
+    borderRadius: 10,
+    elevation: 2,
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: "600",
     color: "#333",
     marginBottom: 16,
+    textAlign: "center",
   },
   statsContainer: {
     flexDirection: "row",
@@ -90,33 +77,45 @@ export const styles = StyleSheet.create({
   },
   statItem: {
     width: "48%",
-    alignItems: "center",
-    marginBottom: 16,
-    padding: 12,
     backgroundColor: "#f8f9fa",
-    borderRadius: 6,
+    padding: 14,
+    borderRadius: 8,
+    marginBottom: 12,
+    alignItems: "center",
+  },
+  fullWidth: {
+    width: "100%",
   },
   statValue: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: "bold",
-    color: "#2c3e50",
-    marginBottom: 4,
-  },
-  emphasis: {
-    color: "#e74c3c",
-  },
-  success: {
-    color: "#27ae60",
+    color: "#1e293b",
   },
   statLabel: {
     fontSize: 12,
     color: "#666",
+    marginTop: 4,
     textAlign: "center",
   },
-  divider: {
-    height: 1,
-    backgroundColor: "#e0e0e0",
-    marginHorizontal: 16,
+  rowPercent: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  percentBox: {
+    width: "48%",
+    backgroundColor: "#f8f9fa",
+    padding: 20,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  percentValue: {
+    fontSize: 28,
+    fontWeight: "bold",
+  },
+  percentLabel: {
+    marginTop: 6,
+    fontSize: 14,
+    color: "#555",
   },
   chartSection: {
     marginBottom: 24,
@@ -126,29 +125,21 @@ export const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#333",
     marginBottom: 12,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#f5f5f5",
-  },
-  loadingText: {
-    marginTop: 12,
-    fontSize: 16,
-    color: "#666",
-  },
-  infoSection: {
-    backgroundColor: "#e3f2fd",
-    margin: 16,
-    borderRadius: 8,
-    padding: 12,
-  },
-  infoText: {
-    fontSize: 12,
-    color: "#1976d2",
     textAlign: "center",
   },
+  centeredChart: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  infoSection: {
+    margin: 16,
+    padding: 12,
+    backgroundColor: "#e3f2fd",
+    borderRadius: 8,
+  },
+  infoText: {
+    textAlign: "center",
+    color: "#1e88e5",
+    fontSize: 13,
+  },
 });
-
-export default styles;
