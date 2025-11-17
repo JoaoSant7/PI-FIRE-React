@@ -4,12 +4,15 @@ import { StyleSheet, View, Switch, ScrollView, ActivityIndicator, TouchableOpaci
 import ScaledText from "../components/ScaledText";
 import { useSettings } from "../contexts/SettingsContext";
 
+// Import dos estilos
+import styles from "../styles/ConfiguracoesStyles";
+
 export default function ConfiguracoesScreen() {
   const { settings, updateSetting, loading } = useSettings();
 
   if (loading || !settings) {
     return (
-      <View style={{ flex:1, justifyContent:'center', alignItems:'center' }}>
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator size="large" color="#bc010c" />
       </View>
     );
@@ -25,7 +28,7 @@ export default function ConfiguracoesScreen() {
           <View style={styles.switchContainer}>
             <ScaledText style={styles.switchText}>Notificações Gerais</ScaledText>
             <Switch
-              onValueChange={v => updateSetting('notifications', v)}
+              onValueChange={(v) => updateSetting("notifications", v)}
               value={settings.notifications}
             />
           </View>
@@ -36,7 +39,7 @@ export default function ConfiguracoesScreen() {
           <View style={styles.switchContainer}>
             <ScaledText style={styles.switchText}>Modo Escuro</ScaledText>
             <Switch
-              onValueChange={v => updateSetting('darkMode', v)}
+              onValueChange={(v) => updateSetting("darkMode", v)}
               value={settings.darkMode}
             />
           </View>
@@ -47,14 +50,14 @@ export default function ConfiguracoesScreen() {
           <View style={styles.switchContainer}>
             <ScaledText style={styles.switchText}>Som de Notificações</ScaledText>
             <Switch
-              onValueChange={v => updateSetting('sound', v)}
+              onValueChange={(v) => updateSetting("sound", v)}
               value={settings.sound}
             />
           </View>
           <View style={styles.switchContainer}>
             <ScaledText style={styles.switchText}>Vibração</ScaledText>
             <Switch
-              onValueChange={v => updateSetting('vibration', v)}
+              onValueChange={(v) => updateSetting("vibration", v)}
               value={settings.vibration}
             />
           </View>
