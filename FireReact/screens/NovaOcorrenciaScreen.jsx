@@ -10,11 +10,10 @@ import {
   Alert,
   Keyboard,
   Image,
-  PermissionsAndroid,
   Platform,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { launchCamera, launchImageLibrary } from "react-native-image-picker";
+import * as ImagePicker from "expo-image-picker"; // ✅ SUBSTITUIÇÃO
 
 // Import dos componentes
 import Section from "../components/Section";
@@ -236,61 +235,15 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  // Função para solicitar permissão da câmera
-  const requestCameraPermission = async () => {
-    if (Platform.OS === "android") {
-      try {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.CAMERA,
-          {
-            title: "Permissão da Câmera",
-            message:
-              "Este app precisa acessar sua câmera para tirar fotos das ocorrências",
-            buttonNeutral: "Perguntar depois",
-            buttonNegative: "Cancelar",
-            buttonPositive: "OK",
-          }
-        );
-        return granted === PermissionsAndroid.RESULTS.GRANTED;
-      } catch (err) {
-        console.warn(err);
-        return false;
-      }
-    }
-    return true;
-  };
-
-  // Função para solicitar permissão da galeria
-  const requestGalleryPermission = async () => {
-    if (Platform.OS === "android") {
-      try {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-          {
-            title: "Permissão da Galeria",
-            message:
-              "Este app precisa acessar sua galeria para selecionar fotos",
-            buttonNeutral: "Perguntar depois",
-            buttonNegative: "Cancelar",
-            buttonPositive: "OK",
-          }
-        );
-        return granted === PermissionsAndroid.RESULTS.GRANTED;
-      } catch (err) {
-        console.warn(err);
-        return false;
-      }
-    }
-    return true;
-  };
+  // ✅ NOVAS FUNÇÕES COM EXPO-IMAGE-PICKER (SUBSTITUINDO AS ANTIGAS)
 
   // Função para abrir a câmera
   const abrirCamera = async () => {
     console.log("Abrindo câmera...");
 
-    const hasPermission = await requestCameraPermission();
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
 
-    if (!hasPermission) {
+    if (status !== "granted") {
       Alert.alert(
         "Permissão Negada",
         "Não é possível acessar a câmera sem permissão."
@@ -298,46 +251,27 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
       return;
     }
 
-    const options = {
-      mediaType: "photo",
-      includeBase64: false,
-      maxHeight: 2000,
-      maxWidth: 2000,
+    let result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
       quality: 0.8,
-      cameraType: "back",
-      saveToPhotos: true,
-    };
-
-    launchCamera(options, (response) => {
-      console.log("Resposta da câmera:", response);
-
-      if (response.didCancel) {
-        console.log("Usuário cancelou a câmera");
-      } else if (response.error) {
-        console.log("Erro da câmera: ", response.error);
-        Alert.alert(
-          "Erro",
-          `Não foi possível abrir a câmera: ${response.error}`
-        );
-      } else if (response.assets && response.assets.length > 0) {
-        // Foto tirada com sucesso
-        const photo = response.assets[0];
-        console.log("Foto capturada:", photo);
-        setFotoOcorrencia(photo);
-      } else {
-        console.log("Resposta inesperada:", response);
-        Alert.alert("Erro", "Não foi possível capturar a foto");
-      }
     });
+
+    console.log("Resultado da câmera:", result);
+
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+      setFotoOcorrencia(result.assets[0]);
+    }
   };
 
   // Função para abrir a galeria
   const abrirGaleria = async () => {
     console.log("Abrindo galeria...");
 
-    const hasPermission = await requestGalleryPermission();
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-    if (!hasPermission) {
+    if (status !== "granted") {
       Alert.alert(
         "Permissão Negada",
         "Não é possível acessar a galeria sem permissão."
@@ -345,52 +279,23 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
       return;
     }
 
-    const options = {
-      mediaType: "photo",
-      includeBase64: false,
-      maxHeight: 2000,
-      maxWidth: 2000,
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
       quality: 0.8,
-    };
-
-    launchImageLibrary(options, (response) => {
-      console.log("Resposta da galeria:", response);
-
-      if (response.didCancel) {
-        console.log("Usuário cancelou a seleção");
-      } else if (response.error) {
-        console.log("Erro da galeria: ", response.error);
-        Alert.alert(
-          "Erro",
-          `Não foi possível acessar a galeria: ${response.error}`
-        );
-      } else if (response.assets && response.assets.length > 0) {
-        const photo = response.assets[0];
-        console.log("Foto selecionada:", photo);
-        setFotoOcorrencia(photo);
-      } else {
-        console.log("Resposta inesperada:", response);
-        Alert.alert("Erro", "Não foi possível selecionar a foto");
-      }
     });
+
+    console.log("Resultado da galeria:", result);
+
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+      setFotoOcorrencia(result.assets[0]);
+    }
   };
 
-  // Função para mostrar opções de foto
+  // Função para mostrar opções de foto - ATUALIZADA
   const mostrarOpcoesFoto = () => {
     console.log("Mostrando opções de foto...");
-
-    // Verifica se as funções estão disponíveis
-    if (
-      typeof launchCamera === "undefined" ||
-      typeof launchImageLibrary === "undefined"
-    ) {
-      Alert.alert(
-        "Funcionalidade Não Disponível",
-        "A funcionalidade de câmera não está disponível no momento. Verifique se o react-native-image-picker foi instalado corretamente.",
-        [{ text: "OK" }]
-      );
-      return;
-    }
 
     Alert.alert("Adicionar Foto", "Como deseja adicionar a foto?", [
       {
@@ -620,13 +525,13 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
                 horaChegadaLocal: formatHoraToString(horaLocal),
                 horaSaidaLocal: formatHoraToString(horaSaidaLocal),
 
-                // Adiciona a foto ao registro
+                // ✅ ATUALIZADO - Compatível com expo-image-picker
                 foto: fotoOcorrencia
                   ? {
                       uri: fotoOcorrencia.uri,
-                      type: fotoOcorrencia.type,
-                      fileName: fotoOcorrencia.fileName,
-                      fileSize: fotoOcorrencia.fileSize,
+                      type: fotoOcorrencia.type || "image/jpeg",
+                      fileName:
+                        fotoOcorrencia.fileName || `foto_${Date.now()}.jpg`,
                     }
                   : null,
 
