@@ -1,6 +1,5 @@
 // screens/NovaOcorrenciaScreen.js
 import React, { useState, useEffect } from "react";
-import { Picker } from "@react-native-picker/picker";
 import { REGIOES } from "../constants/pickerData";
 import {
   View,
@@ -13,14 +12,13 @@ import {
   Platform,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import * as ImagePicker from "expo-image-picker"; // ✅ SUBSTITUIÇÃO
+import * as ImagePicker from "expo-image-picker";
 
 // Import dos componentes
 import Section from "../components/Section";
 import InputGroup from "../components/InputGroup";
 import DateTimePickerInput from "../components/DateTimePickerInput";
 import DatePickerInput from "../components/DatePickerInput";
-import PickerInput from "../components/PickerInput";
 import TextInput from "../components/TextInput";
 import SearchablePicker from "../components/SearchablePicker";
 
@@ -691,7 +689,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
           </InputGroup>
 
           <InputGroup label="Grupamento" required>
-            <PickerInput
+            <SearchablePicker
               selectedValue={formData.grupamento}
               onValueChange={(value) => updateFormData("grupamento", value)}
               items={GRUPAMENTOS}
@@ -711,7 +709,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
         {/* Seção: Ocorrência */}
         <Section title="Ocorrência">
           <InputGroup label="Natureza da Ocorrência" required>
-            <PickerInput
+            <SearchablePicker
               selectedValue={formData.natureza}
               onValueChange={(value) => updateFormData("natureza", value)}
               items={NATUREZAS}
@@ -744,7 +742,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
           </InputGroup>
 
           <InputGroup label="Situação da Ocorrência" required>
-            <PickerInput
+            <SearchablePicker
               selectedValue={formData.situacao}
               onValueChange={(value) => updateFormData("situacao", value)}
               items={SITUACOES}
@@ -781,23 +779,14 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
           {shouldShowMotivo && (
             <>
               <InputGroup label="Motivo do Não Atendimento">
-                <View style={styles.pickerContainer}>
-                  <Picker
-                    selectedValue={formData.motivoNaoAtendida}
-                    onValueChange={(value) =>
-                      updateFormData("motivoNaoAtendida", value)
-                    }
-                    style={styles.picker}
-                  >
-                    {MOTIVOS_NAO_ATENDIMENTO.map((item) => (
-                      <Picker.Item
-                        key={item.value}
-                        label={item.label}
-                        value={item.value}
-                      />
-                    ))}
-                  </Picker>
-                </View>
+                <SearchablePicker
+                  selectedValue={formData.motivoNaoAtendida}
+                  onValueChange={(value) =>
+                    updateFormData("motivoNaoAtendida", value)
+                  }
+                  items={MOTIVOS_NAO_ATENDIMENTO}
+                  placeholder="Selecione o motivo"
+                />
               </InputGroup>
 
               {/* Campo para "Outro" motivo */}
@@ -930,7 +919,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
           </InputGroup>
 
           <InputGroup label="Sexo da Vítima">
-            <PickerInput
+            <SearchablePicker
               selectedValue={formData.sexo}
               onValueChange={(value) => updateFormData("sexo", value)}
               items={SEXOS}
@@ -950,7 +939,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
           </InputGroup>
 
           <InputGroup label="Classificação da Vítima">
-            <PickerInput
+            <SearchablePicker
               selectedValue={formData.classificacao}
               onValueChange={(value) => updateFormData("classificacao", value)}
               items={CLASSIFICACOES}
@@ -959,7 +948,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
           </InputGroup>
 
           <InputGroup label="Destino da Vítima">
-            <PickerInput
+            <SearchablePicker
               selectedValue={formData.destino}
               onValueChange={(value) => updateFormData("destino", value)}
               items={DESTINOS}
@@ -987,7 +976,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
           </InputGroup>
 
           <InputGroup label="Forma de Acionamento">
-            <PickerInput
+            <SearchablePicker
               selectedValue={formData.acionamento}
               onValueChange={(value) => updateFormData("acionamento", value)}
               items={ACIONAMENTOS}
@@ -1018,7 +1007,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
           </InputGroup>
 
           <InputGroup label="Região" required>
-            <PickerInput
+            <SearchablePicker
               selectedValue={formData.regiao}
               onValueChange={(value) => updateFormData("regiao", value)}
               items={REGIOES}
@@ -1035,7 +1024,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
           </InputGroup>
 
           <InputGroup label="Tipo de Logradouro" required>
-            <PickerInput
+            <SearchablePicker
               selectedValue={formData.tipoLogradouro}
               onValueChange={(value) => updateFormData("tipoLogradouro", value)}
               items={TIPOS_LOGRADOURO}
