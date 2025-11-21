@@ -10,6 +10,7 @@ import {
   Keyboard,
   Image,
   Platform,
+  ActivityIndicator,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import * as ImagePicker from "expo-image-picker";
@@ -27,6 +28,9 @@ import CameraIcon from "../components/CameraIcon";
 
 // Import do contexto CORRIGIDO
 import { useOcorrenciasContext } from "../contexts/OcorrenciasContext";
+
+// Import do contexto de Localização
+import { useLocation } from "../contexts/LocationContext";
 
 // Import dos dados dos pickers
 import {
@@ -168,6 +172,9 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
   // Hook do contexto CORRIGIDO
   const { adicionarOcorrencia } = useOcorrenciasContext();
 
+  // Hook do contexto de Localização
+  const { currentLocation, getCurrentLocation } = useLocation();
+
   // Estado principal do formulário - REMOVIDOS OS CAMPOS DE HORÁRIO DO formData
   const [formData, setFormData] = useState({
     // Dados Internos - númeroAviso será gerado automaticamente
@@ -218,6 +225,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [enviando, setEnviando] = useState(false);
   const [fotoOcorrencia, setFotoOcorrencia] = useState(null);
+  const [locationLoading, setLocationLoading] = useState(false);
 
   // Efeito para atualizar o número do aviso quando a data/hora mudar
   useEffect(() => {
@@ -228,9 +236,70 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
     }));
   }, [dataHora]);
 
+  // Efeito para preencher automaticamente os campos de localização
+  useEffect(() => {
+    if (
+      currentLocation.municipio ||
+      currentLocation.latitude ||
+      currentLocation.longitude
+    ) {
+      setFormData((prev) => ({
+        ...prev,
+        municipio: currentLocation.municipio || prev.municipio,
+        bairro: currentLocation.bairro || prev.bairro,
+        logradouro: currentLocation.endereco || prev.logradouro,
+        latitude: currentLocation.latitude || prev.latitude,
+        longitude: currentLocation.longitude || prev.longitude,
+      }));
+    }
+  }, [currentLocation]);
+
   // Função para atualizar o formData
   const updateFormData = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  // Função para obter localização automática
+  const handleGetLocation = async () => {
+    try {
+      setLocationLoading(true);
+
+      Alert.alert(
+        "Localização Automática",
+        "Deseja usar sua localização atual para preencher automaticamente os campos de endereço?",
+        [
+          {
+            text: "Cancelar",
+            style: "cancel",
+            onPress: () => setLocationLoading(false),
+          },
+          {
+            text: "Usar Localização",
+            onPress: async () => {
+              try {
+                await getCurrentLocation();
+                Alert.alert(
+                  "Sucesso",
+                  "Localização obtida com sucesso! Campos preenchidos automaticamente.",
+                  [{ text: "OK" }]
+                );
+              } catch (error) {
+                Alert.alert(
+                  "Erro de Localização",
+                  "Não foi possível obter a localização. Verifique as permissões do app.",
+                  [{ text: "OK" }]
+                );
+              } finally {
+                setLocationLoading(false);
+              }
+            },
+          },
+        ]
+      );
+    } catch (error) {
+      setLocationLoading(false);
+      Alert.alert("Erro", "Não foi possível acessar a localização.");
+    }
   };
 
   // ✅ NOVAS FUNÇÕES COM EXPO-IMAGE-PICKER (SUBSTITUINDO AS ANTIGAS)
@@ -655,7 +724,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
         enableResetScrollToCoords={false}
         showsVerticalScrollIndicator={true}
       >
-        {/*Seção: Dados Internos */}
+        {}
         <Section title="Dados Internos">
           <InputGroup label="Data e Hora" required>
             <DatePickerInput
@@ -706,7 +775,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
           </InputGroup>
         </Section>
 
-        {/* Seção: Ocorrência */}
+        {}
         <Section title="Ocorrência">
           <InputGroup label="Natureza da Ocorrência" required>
             <SearchablePicker
@@ -717,7 +786,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
             />
           </InputGroup>
 
-          {/* Grupo da Ocorrência com SearchablePicker */}
+          {}
           <InputGroup label="Grupo da Ocorrência" required>
             <SearchablePicker
               selectedValue={formData.grupoOcorrencia}
@@ -729,7 +798,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
             />
           </InputGroup>
 
-          {/* Subgrupo da Ocorrência com SearchablePicker */}
+          {}
           <InputGroup label="Subgrupo da Ocorrência" required>
             <SearchablePicker
               selectedValue={formData.subgrupoOcorrencia}
@@ -750,7 +819,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
             />
           </InputGroup>
 
-          {/* Horários COM DATETIMEPICKER */}
+          {}
           <View style={styles.row}>
             <InputGroup label="Saída do Quartel" required style={styles.flex1}>
               <DateTimePickerInput
@@ -775,7 +844,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
             </InputGroup>
           </View>
 
-          {/* Motivo para ocorrência não atendida ou sem atuação */}
+          {}
           {shouldShowMotivo && (
             <>
               <InputGroup label="Motivo do Não Atendimento">
@@ -789,7 +858,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
                 />
               </InputGroup>
 
-              {/* Campo para "Outro" motivo */}
+              {}
               {formData.motivoNaoAtendida === "Outro" && (
                 <InputGroup label="Descreva o motivo (máx. 100 caracteres)">
                   <TextInput
@@ -823,7 +892,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
             />
           </InputGroup>
 
-          {/* Vítima Socorrida pelo SAMU - BOTÕES SIM/NÃO */}
+          {}
           <InputGroup label="Vítima socorrida pelo SAMU">
             <View style={styles.buttonGroup}>
               <TouchableOpacity
@@ -870,9 +939,9 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
           </InputGroup>
         </Section>
 
-        {/* Seção: Informações da Vítima */}
+        {}
         <Section title="Informações da Vítima">
-          {/* Vítima Envolvida - BOTÕES SIM/NÃO */}
+          {}
           <InputGroup label="Vítima Envolvida">
             <View style={styles.buttonGroup}>
               <TouchableOpacity
@@ -957,7 +1026,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
           </InputGroup>
         </Section>
 
-        {/* Seção: Viatura e Acionamento */}
+        {}
         <Section title="Viatura e Acionamento">
           <InputGroup label="Viatura Empregada">
             <TextInput
@@ -995,8 +1064,33 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
           </InputGroup>
         </Section>
 
-        {/* Seção: Endereço */}
+        {}
         <Section title="Endereço da Ocorrência">
+          {}
+          <View style={styles.locationButtonContainer}>
+            <TouchableOpacity
+              style={[
+                styles.locationButton,
+                locationLoading && styles.locationButtonDisabled,
+              ]}
+              onPress={handleGetLocation}
+              disabled={locationLoading}
+            >
+              {locationLoading ? (
+                <ActivityIndicator size="small" color="#FFFFFF" />
+              ) : (
+                <Text style={styles.locationButtonText}>
+                  📍 Usar Minha Localização Atual
+                </Text>
+              )}
+            </TouchableOpacity>
+            {currentLocation.error && (
+              <Text style={styles.locationErrorText}>
+                Erro: {currentLocation.error}
+              </Text>
+            )}
+          </View>
+
           <InputGroup label="Município" required>
             <SearchablePicker
               selectedValue={formData.municipio}
@@ -1076,7 +1170,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
           </View>
         </Section>
 
-        {/* Nova Seção: Registro Fotográfico */}
+        {}
         <Section title="Registro Fotográfico">
           <View style={styles.photoSection}>
             {fotoOcorrencia ? (
@@ -1127,7 +1221,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
           </View>
         </Section>
 
-        {/* Botões de Ação */}
+        {}
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             style={[styles.button, styles.clearButton]}

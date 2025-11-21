@@ -198,6 +198,35 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     marginLeft: 5,
   },
+  locationButtonContainer: {
+  marginBottom: 16,
+  alignItems: 'center',
+},
+locationButton: {
+  backgroundColor: '#bc010c',
+  paddingVertical: 12,
+  paddingHorizontal: 20,
+  borderRadius: 8,
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'center',
+  minWidth: 200,
+},
+locationButtonDisabled: {
+  backgroundColor: '#cccccc',
+},
+locationButtonText: {
+  color: '#FFFFFF',
+  fontSize: 16,
+  fontWeight: '600',
+  marginLeft: 8,
+},
+locationErrorText: {
+  color: '#ff3b30',
+  fontSize: 12,
+  marginTop: 4,
+  textAlign: 'center',
+},
 });
 
 export default styles;

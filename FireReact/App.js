@@ -20,6 +20,7 @@ import LocalizacaoScreen from './screens/LocalizacaoScreen'; // ADICIONE ESTA LI
 import { AuthProvider, AuthContext } from './contexts/AuthContext';
 import { OcorrenciasProvider } from './contexts/OcorrenciasContext';
 import { SettingsProvider } from './contexts/SettingsContext';
+import { LocationProvider } from './contexts/LocationContext'; // ADICIONE ESTA LINHA
 
 // Configurações do tema
 const THEME_COLORS = {
@@ -114,7 +115,7 @@ const MainStack = () => (
         title: 'DETALHES DA OCORRÊNCIA'
       }}
     />
-    {/* ADICIONE ESTA TELA */}
+    {}
     <Stack.Screen
       name="Localizacao"
       component={LocalizacaoScreen}
@@ -155,7 +156,9 @@ export default function App() {
     <SettingsProvider>
       <AuthProvider>
         <OcorrenciasProvider>
-          <AppContent />
+          <LocationProvider>
+            <AppContent />
+          </LocationProvider>
         </OcorrenciasProvider>
       </AuthProvider>
     </SettingsProvider>
