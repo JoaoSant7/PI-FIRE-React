@@ -51,6 +51,10 @@ export const styles = StyleSheet.create({
   registrar: {
     backgroundColor: "#BC010C",
   },
+  // ADICIONE ESTE ESTILO PARA O BOTÃO DE LOCALIZAÇÃO
+  localizacao: {
+    backgroundColor: "#4CAF50", // Verde para diferenciar
+  },
   buttonText: {
     color: "white",
     fontSize: 14,
