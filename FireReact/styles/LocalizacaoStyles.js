@@ -1,4 +1,6 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Dimensions } from "react-native";
+
+const { width, height } = Dimensions.get('window');
 
 export const LocalizacaoStyles = StyleSheet.create({
   container: {
@@ -15,12 +17,12 @@ export const LocalizacaoStyles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "600",
     color: "#333",
-    marginBottom: 40,
+    marginBottom: 20,
     textAlign: "center",
   },
   button: {
     width: "100%",
-    height: 140,
+    height: 120,
     borderRadius: 16,
     marginBottom: 16,
     elevation: 6,
@@ -38,9 +40,6 @@ export const LocalizacaoStyles = StyleSheet.create({
   obterLocalizacao: {
     backgroundColor: "#BC010C",
   },
-  compartilharLocalizacao: {
-    backgroundColor: "#3E4095",
-  },
   buttonText: {
     color: "white",
     fontSize: 14,
@@ -50,8 +49,46 @@ export const LocalizacaoStyles = StyleSheet.create({
     textAlign: "center",
     marginTop: 12,
   },
+  // Estilos do Mapa
+  mapContainer: {
+    width: '100%',
+    height: 300,
+    borderRadius: 16,
+    overflow: 'hidden',
+    marginBottom: 20,
+    position: 'relative',
+    elevation: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+  },
+  map: {
+    width: '100%',
+    height: '100%',
+  },
+  centerButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    backgroundColor: '#fff',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  centerButtonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+  },
   locationContainer: {
-    marginTop: 20,
     padding: 20,
     backgroundColor: "#F8F8F8",
     borderRadius: 16,
@@ -121,6 +158,7 @@ export const LocalizacaoStyles = StyleSheet.create({
     backgroundColor: "#E8F5E8",
     borderRadius: 6,
     alignItems: "center",
+    marginBottom: 15,
   },
   accuracyText: {
     fontSize: 12,
@@ -128,7 +166,7 @@ export const LocalizacaoStyles = StyleSheet.create({
     fontWeight: "500",
   },
   loadingContainer: {
-    marginTop: 20,
+    marginTop: 10,
     alignItems: "center",
   },
   loadingText: {
@@ -149,23 +187,14 @@ export const LocalizacaoStyles = StyleSheet.create({
     textAlign: "center",
     fontWeight: "500",
   },
-  actionsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 15,
-  },
   actionButton: {
-    flex: 1,
-    padding: 12,
+    padding: 15,
     borderRadius: 8,
-    marginHorizontal: 5,
     alignItems: "center",
+    marginTop: 10,
   },
   shareButton: {
     backgroundColor: "#4CAF50",
-  },
-  mapsButton: {
-    backgroundColor: "#2196F3",
   },
   actionButtonText: {
     color: "white",

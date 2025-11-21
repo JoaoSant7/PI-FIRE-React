@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -7,15 +7,20 @@ import {
   ActivityIndicator,
   Share,
   Platform,
+  Dimensions,
 } from "react-native";
 import * as Location from "expo-location";
-import LocalizacaoStyles from "../styles/LocalizacaoStyles";
+import MapView, { Marker, Circle } from "react-native-maps";
+import LocalizacaoStyles from "./LocalizacaoStyles";
+
+const { width, height } = Dimensions.get("window");
 
 const LocalizacaoScreen = () => {
   const [location, setLocation] = useState(null);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
   const [address, setAddress] = useState(null);
+  const mapRef = useRef(null);
 
   // Verificar e solicitar permissões
   useEffect(() => {
@@ -32,6 +37,21 @@ const LocalizacaoScreen = () => {
       }
     })();
   }, []);
+
+  // Centralizar o mapa na localização
+  const centerMapOnLocation = () => {
+    if (mapRef.current && location) {
+      mapRef.current.animateToRegion(
+        {
+          latitude: location.latitude,
+          longitude: location.longitude,
+          latitudeDelta: 0.005,
+          longitudeDelta: 0.005,
+        },
+        1000
+      );
+    }
+  };
 
   // Obter localização atual
   const getLocation = async () => {
@@ -58,19 +78,26 @@ const LocalizacaoScreen = () => {
       }
 
       // Obter localização
-      let location = await Location.getCurrentPositionAsync({
+      let locationData = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.High,
         timeout: 15000,
       });
 
-      const { latitude, longitude } = location.coords;
+      const { latitude, longitude } = locationData.coords;
 
-      setLocation({
+      const newLocation = {
         latitude,
         longitude,
-        accuracy: location.coords.accuracy,
+        accuracy: locationData.coords.accuracy,
         timestamp: new Date().toLocaleString("pt-BR"),
-      });
+      };
+
+      setLocation(newLocation);
+
+      // Centralizar mapa na nova localização
+      setTimeout(() => {
+        centerMapOnLocation();
+      }, 500);
 
       // Tentar obter endereço reverso (opcional)
       try {
@@ -108,7 +135,7 @@ const LocalizacaoScreen = () => {
     }
 
     try {
-      const message = `Minha localização:\nLatitude: ${location.latitude.toFixed(
+      const message = `📍 Minha localização:\nLatitude: ${location.latitude.toFixed(
         6
       )}\nLongitude: ${location.longitude.toFixed(6)}${
         address ? `\nEndereço: ${address}` : ""
@@ -117,7 +144,6 @@ const LocalizacaoScreen = () => {
       const result = await Share.share({
         message: message,
         title: "Minha Localização",
-        url: `https://maps.google.com/?q=${location.latitude},${location.longitude}`,
       });
 
       if (result.action === Share.sharedAction) {
@@ -129,34 +155,18 @@ const LocalizacaoScreen = () => {
     }
   };
 
-  // Abrir no Google Maps
-  const openInMaps = () => {
-    if (!location) return;
-
-    const url = Platform.select({
-      ios: `maps://?q=${location.latitude},${location.longitude}`,
-      android: `geo://?q=${location.latitude},${location.longitude}`,
-    });
-
-    // Para web ou fallback
-    const webUrl = `https://maps.google.com/?q=${location.latitude},${location.longitude}`;
-
-    // Aqui você pode usar Linking.openURL(url) se quiser abrir no app nativo
-    Alert.alert(
-      "Abrir no Maps",
-      `Coordenadas: ${location.latitude.toFixed(
-        6
-      )}, ${location.longitude.toFixed(6)}`,
-      [{ text: "Cancelar", style: "cancel" }, { text: "OK" }]
-    );
+  // Região inicial do mapa (centro do Brasil como fallback)
+  const initialRegion = {
+    latitude: -15.77972,
+    longitude: -47.92972,
+    latitudeDelta: 10,
+    longitudeDelta: 10,
   };
 
   return (
     <View style={LocalizacaoStyles.container}>
       <View style={LocalizacaoStyles.content}>
-        <Text style={LocalizacaoStyles.sectionTitle}>
-          Clique no botão abaixo
-        </Text>
+        <Text style={LocalizacaoStyles.sectionTitle}>Geolocalização</Text>
 
         {errorMsg && (
           <View style={LocalizacaoStyles.errorContainer}>
@@ -174,7 +184,7 @@ const LocalizacaoScreen = () => {
               <ActivityIndicator size="large" color="#FFF" />
             ) : (
               <Text style={LocalizacaoStyles.buttonText}>
-                Obter Localização
+                Obter Minha Localização
               </Text>
             )}
           </View>
@@ -189,10 +199,59 @@ const LocalizacaoScreen = () => {
           </View>
         )}
 
+        {/* Mapa */}
+        <View style={LocalizacaoStyles.mapContainer}>
+          <MapView
+            ref={mapRef}
+            style={LocalizacaoStyles.map}
+            initialRegion={initialRegion}
+            showsUserLocation={false}
+            showsMyLocationButton={false}
+            showsCompass={true}
+            zoomEnabled={true}
+            scrollEnabled={true}
+          >
+            {location && (
+              <>
+                <Marker
+                  coordinate={{
+                    latitude: location.latitude,
+                    longitude: location.longitude,
+                  }}
+                  title="Sua Localização"
+                  description={address || "Localização atual"}
+                  pinColor="#BC010C"
+                />
+                {location.accuracy && (
+                  <Circle
+                    center={{
+                      latitude: location.latitude,
+                      longitude: location.longitude,
+                    }}
+                    radius={location.accuracy}
+                    strokeColor="rgba(188, 1, 12, 0.3)"
+                    fillColor="rgba(188, 1, 12, 0.1)"
+                    strokeWidth={1}
+                  />
+                )}
+              </>
+            )}
+          </MapView>
+
+          {location && (
+            <TouchableOpacity
+              style={LocalizacaoStyles.centerButton}
+              onPress={centerMapOnLocation}
+            >
+              <Text style={LocalizacaoStyles.centerButtonText}>⟲</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+
         {location && (
           <View style={LocalizacaoStyles.locationContainer}>
             <Text style={LocalizacaoStyles.locationText}>
-              Localização Encontrada
+              📍 Localização Encontrada
             </Text>
 
             <View style={LocalizacaoStyles.coordinatesContainer}>
@@ -227,31 +286,17 @@ const LocalizacaoScreen = () => {
               </View>
             )}
 
-            <View style={LocalizacaoStyles.actionsContainer}>
-              <TouchableOpacity
-                style={[
-                  LocalizacaoStyles.actionButton,
-                  LocalizacaoStyles.shareButton,
-                ]}
-                onPress={shareLocation}
-              >
-                <Text style={LocalizacaoStyles.actionButtonText}>
-                  Compartilhar
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[
-                  LocalizacaoStyles.actionButton,
-                  LocalizacaoStyles.mapsButton,
-                ]}
-                onPress={openInMaps}
-              >
-                <Text style={LocalizacaoStyles.actionButtonText}>
-                  Ver no Maps
-                </Text>
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity
+              style={[
+                LocalizacaoStyles.actionButton,
+                LocalizacaoStyles.shareButton,
+              ]}
+              onPress={shareLocation}
+            >
+              <Text style={LocalizacaoStyles.actionButtonText}>
+                Compartilhar Localização
+              </Text>
+            </TouchableOpacity>
           </View>
         )}
       </View>
