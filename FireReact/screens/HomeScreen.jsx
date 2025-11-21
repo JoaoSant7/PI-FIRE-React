@@ -49,6 +49,11 @@ export default function HomeScreen({ navigation }) {
     navigation.navigate("NovaOcorrencia");
   };
 
+  // ADICIONE ESTA FUNÇÃO PARA LOCALIZAÇÃO
+  const handleLocalizacao = () => {
+    navigation.navigate("Localizacao");
+  };
+
   // Componente para botões modernos com ícones
   const ModernButton = ({ title, type, onPress, iconName }) => {
     const getButtonStyle = () => {
@@ -59,6 +64,8 @@ export default function HomeScreen({ navigation }) {
           return [styles.button, styles.listar];
         case "registrar":
           return [styles.button, styles.registrar];
+        case "localizacao": // ADICIONE ESTE CASE
+          return [styles.button, styles.localizacao];
         default:
           return [styles.button, styles.dashboard];
       }
@@ -105,6 +112,14 @@ export default function HomeScreen({ navigation }) {
             type="registrar"
             onPress={handleRegistrarOcorrencia}
             iconName="plus-circle"
+          />
+
+          {/* ADICIONE ESTE BOTÃO PARA LOCALIZAÇÃO */}
+          <ModernButton
+            title="Geolocalização"
+            type="localizacao"
+            onPress={handleLocalizacao}
+            iconName="map-marker"
           />
         </View>
       </View>

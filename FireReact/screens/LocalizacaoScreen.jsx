@@ -6,7 +6,7 @@ import {
   Alert,
   ActivityIndicator,
 } from "react-native";
-import { LocalizacaoStyles } from "./LocalizacaoStyles";
+import { LocalizacaoStyles } from "../styles/LocalizacaoStyles";
 
 const LocalizacaoScreen = () => {
   const [location, setLocation] = useState(null);
