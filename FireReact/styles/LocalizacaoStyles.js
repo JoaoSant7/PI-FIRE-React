@@ -63,16 +63,16 @@ export const LocalizacaoStyles = StyleSheet.create({
     shadowRadius: 4,
   },
   locationText: {
-    fontSize: 16,
+    fontSize: 18,
     color: "#333",
-    marginBottom: 10,
+    marginBottom: 15,
     textAlign: "center",
-    fontWeight: "500",
+    fontWeight: "600",
   },
   coordinatesContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 10,
+    marginBottom: 15,
   },
   coordinateBox: {
     flex: 1,
@@ -91,11 +91,41 @@ export const LocalizacaoStyles = StyleSheet.create({
     fontSize: 12,
     color: "#666",
     marginBottom: 4,
+    fontWeight: "500",
   },
   coordinateValue: {
     fontSize: 14,
     color: "#333",
     fontWeight: "600",
+  },
+  addressContainer: {
+    backgroundColor: "#E3F2FD",
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 10,
+  },
+  addressLabel: {
+    fontSize: 11,
+    color: "#1976D2",
+    fontWeight: "600",
+    marginBottom: 4,
+  },
+  addressText: {
+    fontSize: 14,
+    color: "#333",
+    fontWeight: "500",
+  },
+  accuracyContainer: {
+    marginTop: 8,
+    padding: 8,
+    backgroundColor: "#E8F5E8",
+    borderRadius: 6,
+    alignItems: "center",
+  },
+  accuracyText: {
+    fontSize: 12,
+    color: "#2E7D32",
+    fontWeight: "500",
   },
   loadingContainer: {
     marginTop: 20,
@@ -105,6 +135,42 @@ export const LocalizacaoStyles = StyleSheet.create({
     fontSize: 14,
     color: "#333",
     marginTop: 10,
+  },
+  errorContainer: {
+    backgroundColor: "#FFEBEE",
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 15,
+    width: "100%",
+  },
+  errorText: {
+    fontSize: 14,
+    color: "#C62828",
+    textAlign: "center",
+    fontWeight: "500",
+  },
+  actionsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 15,
+  },
+  actionButton: {
+    flex: 1,
+    padding: 12,
+    borderRadius: 8,
+    marginHorizontal: 5,
+    alignItems: "center",
+  },
+  shareButton: {
+    backgroundColor: "#4CAF50",
+  },
+  mapsButton: {
+    backgroundColor: "#2196F3",
+  },
+  actionButtonText: {
+    color: "white",
+    fontSize: 14,
+    fontWeight: "600",
   },
 });
 
