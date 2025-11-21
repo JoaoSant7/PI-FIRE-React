@@ -20,16 +20,19 @@ export const styles = StyleSheet.create({
   },
   buttonsContainer: {
     width: "100%",
+  },
+  // Nova linha para organizar os botões em pares
+  buttonRow: {
     flexDirection: "row",
-    flexWrap: "wrap",
     justifyContent: "space-between",
+    width: "100%",
+    marginBottom: 16,
   },
   // Estilos para os botões modernos
   button: {
     width: "48%", // Dois botões por linha com espaçamento
     height: 140,
     borderRadius: 16,
-    marginBottom: 16,
     elevation: 6,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 3 },

@@ -177,31 +177,6 @@ const LocalizacaoScreen = () => {
           </View>
         )}
 
-        <TouchableOpacity
-          style={[LocalizacaoStyles.button, LocalizacaoStyles.obterLocalizacao]}
-          onPress={getLocation}
-          disabled={loading}
-        >
-          <View style={LocalizacaoStyles.buttonContent}>
-            {loading ? (
-              <ActivityIndicator size="large" color="#FFF" />
-            ) : (
-              <Text style={LocalizacaoStyles.buttonText}>
-                Obter Minha Localização
-              </Text>
-            )}
-          </View>
-        </TouchableOpacity>
-
-        {loading && (
-          <View style={LocalizacaoStyles.loadingContainer}>
-            <ActivityIndicator size="small" color="#3E4095" />
-            <Text style={LocalizacaoStyles.loadingText}>
-              Obtendo localização...
-            </Text>
-          </View>
-        )}
-
         {/* Mapa */}
         <View style={LocalizacaoStyles.mapContainer}>
           <MapView
@@ -250,6 +225,32 @@ const LocalizacaoScreen = () => {
             </TouchableOpacity>
           )}
         </View>
+
+        {/* Botão de obter localização movido para abaixo do mapa */}
+        <TouchableOpacity
+          style={[LocalizacaoStyles.button, LocalizacaoStyles.obterLocalizacao]}
+          onPress={getLocation}
+          disabled={loading}
+        >
+          <View style={LocalizacaoStyles.buttonContent}>
+            {loading ? (
+              <ActivityIndicator size="large" color="#FFF" />
+            ) : (
+              <Text style={LocalizacaoStyles.buttonText}>
+                Obter Minha Localização
+              </Text>
+            )}
+          </View>
+        </TouchableOpacity>
+
+        {loading && (
+          <View style={LocalizacaoStyles.loadingContainer}>
+            <ActivityIndicator size="small" color="#3E4095" />
+            <Text style={LocalizacaoStyles.loadingText}>
+              Obtendo localização...
+            </Text>
+          </View>
+        )}
 
         {location && (
           <View style={LocalizacaoStyles.locationContainer}>

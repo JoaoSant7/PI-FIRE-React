@@ -92,35 +92,39 @@ export default function HomeScreen({ navigation }) {
         <Text style={styles.sectionTitle}>O que você deseja acessar?</Text>
 
         <View style={styles.buttonsContainer}>
-          {/* Botões de Acesso */}
-          <ModernButton
-            title="Dashboard"
-            type="dashboard"
-            onPress={handleDashboard}
-            iconName="view-dashboard"
-          />
+          {/* Primeira linha: Dashboard e Listar Ocorrências */}
+          <View style={styles.buttonRow}>
+            <ModernButton
+              title="Dashboard"
+              type="dashboard"
+              onPress={handleDashboard}
+              iconName="view-dashboard"
+            />
 
-          <ModernButton
-            title="Listar Ocorrências"
-            type="listar"
-            onPress={handleListarOcorrencias}
-            iconName="format-list-bulleted"
-          />
+            <ModernButton
+              title="Listar Ocorrências"
+              type="listar"
+              onPress={handleListarOcorrencias}
+              iconName="format-list-bulleted"
+            />
+          </View>
 
-          <ModernButton
-            title="Registrar Nova Ocorrência"
-            type="registrar"
-            onPress={handleRegistrarOcorrencia}
-            iconName="plus-circle"
-          />
+          {/* Segunda linha: Geolocalização (esquerda) e Registrar (direita) */}
+          <View style={styles.buttonRow}>
+            <ModernButton
+              title="Geolocalização"
+              type="localizacao"
+              onPress={handleLocalizacao}
+              iconName="map-marker"
+            />
 
-          {/* ADICIONE ESTE BOTÃO PARA LOCALIZAÇÃO */}
-          <ModernButton
-            title="Geolocalização"
-            type="localizacao"
-            onPress={handleLocalizacao}
-            iconName="map-marker"
-          />
+            <ModernButton
+              title="Registrar Nova Ocorrência"
+              type="registrar"
+              onPress={handleRegistrarOcorrencia}
+              iconName="plus-circle"
+            />
+          </View>
         </View>
       </View>
 
