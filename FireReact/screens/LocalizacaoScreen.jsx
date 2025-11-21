@@ -8,10 +8,11 @@ import {
   Share,
   Platform,
   Dimensions,
+  ScrollView,
 } from "react-native";
 import * as Location from "expo-location";
 import MapView, { Marker, Circle } from "react-native-maps";
-import LocalizacaoStyles from "./LocalizacaoStyles";
+import LocalizacaoStyles from "../styles/LocalizacaoStyles";
 
 const { width, height } = Dimensions.get("window");
 
@@ -165,7 +166,11 @@ const LocalizacaoScreen = () => {
 
   return (
     <View style={LocalizacaoStyles.container}>
-      <View style={LocalizacaoStyles.content}>
+      <ScrollView
+        style={LocalizacaoStyles.scrollView}
+        contentContainerStyle={LocalizacaoStyles.scrollContent}
+        showsVerticalScrollIndicator={true}
+      >
         <Text style={LocalizacaoStyles.sectionTitle}>Geolocalização</Text>
 
         {errorMsg && (
@@ -299,7 +304,7 @@ const LocalizacaoScreen = () => {
             </TouchableOpacity>
           </View>
         )}
-      </View>
+      </ScrollView>
     </View>
   );
 };

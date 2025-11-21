@@ -7,11 +7,14 @@ export const LocalizacaoStyles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
   },
-  content: {
+  scrollView: {
     flex: 1,
+  },
+  scrollContent: {
     paddingHorizontal: 20,
     paddingTop: 20,
     alignItems: "center",
+    paddingBottom: 40, // Espaço extra no final para scroll
   },
   sectionTitle: {
     fontSize: 22,
@@ -98,6 +101,7 @@ export const LocalizacaoStyles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
+    marginBottom: 20, // Espaço extra no final
   },
   locationText: {
     fontSize: 18,
