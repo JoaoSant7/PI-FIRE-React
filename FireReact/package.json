@@ -50,5 +50,9 @@
     "rimraf": "6.1.0"
   },
   "private": true,
-  "packageManager": "yarn@1.22.22"
+  "packageManager": "yarn@1.22.22",
+  "devDependencies": {
+    "@types/react": "~19.1.10",
+    "typescript": "~5.9.2"
+  }
 }

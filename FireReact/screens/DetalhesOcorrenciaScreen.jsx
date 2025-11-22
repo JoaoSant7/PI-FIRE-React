@@ -1,17 +1,13 @@
 // screens/DetalhesOcorrenciaScreen.js
 import React from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  ScrollView,
-  TouchableOpacity,
-} from "react-native";
+import { View, ScrollView, Text, Image, Dimensions } from "react-native";
 import { MaterialIcons as Icon } from "@expo/vector-icons";
 import BottomNav from "../components/BottomNav";
+import styles from "../styles/DetalhesStyles";
 
 export default function DetalhesOcorrenciaScreen({ route, navigation }) {
   const { ocorrencia } = route.params;
+  const { width: screenWidth } = Dimensions.get("window");
 
   // Função para obter a cor do status
   const getStatusColor = (status) => {
@@ -95,6 +91,43 @@ export default function DetalhesOcorrenciaScreen({ route, navigation }) {
         <Text style={styles.infoLabel}>{label}:</Text>
         <Text style={styles.infoValue}>{value}</Text>
       </View>
+    );
+  };
+
+  // Função para renderizar as fotos
+  const renderFotos = () => {
+    // Verifica se existem fotos no array
+    if (!ocorrencia.fotos || ocorrencia.fotos.length === 0) {
+      return (
+        <View style={styles.noPhotosContainer}>
+          <Icon name="photo-camera" size={40} color="#ccc" />
+          <Text style={styles.noPhotosText}>
+            Não há registro fotográfico desta ocorrência
+          </Text>
+        </View>
+      );
+    }
+
+    return (
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={true}
+        style={styles.photosScrollView}
+      >
+        <View style={styles.photosContainer}>
+          {ocorrencia.fotos.map((foto, index) => (
+            <Image
+              key={index}
+              source={{ uri: foto }}
+              style={[
+                styles.photo,
+                { width: screenWidth * 0.8, height: screenWidth * 0.6 },
+              ]}
+              resizeMode="cover"
+            />
+          ))}
+        </View>
+      </ScrollView>
     );
   };
 
@@ -204,6 +237,16 @@ export default function DetalhesOcorrenciaScreen({ route, navigation }) {
             {renderInfo("Longitude", ocorrencia.longitude)}
           </View>
 
+          {/* NOVA SEÇÃO: Registro Fotográfico */}
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Icon name="photo-camera" size={20} color="#bc010c" />
+              <Text style={styles.sectionTitle}>Registro Fotográfico</Text>
+            </View>
+
+            {renderFotos()}
+          </View>
+
           {/* Seção: Informações do Sistema */}
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
@@ -246,71 +289,3 @@ export default function DetalhesOcorrenciaScreen({ route, navigation }) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  content: {
-    flex: 1,
-    paddingTop: 10,
-  },
-  card: {
-    margin: 16,
-    backgroundColor: "#f8f8f8",
-    borderRadius: 12,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: "#e1e1e1",
-  },
-  section: {
-    marginBottom: 24,
-    paddingBottom: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#e1e1e1",
-  },
-  sectionHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#333",
-    marginLeft: 8,
-  },
-  infoRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: 12,
-    paddingHorizontal: 4,
-  },
-  infoLabel: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#555",
-    flex: 1,
-  },
-  infoValue: {
-    fontSize: 14,
-    color: "#333",
-    flex: 1.5,
-    textAlign: "right",
-    flexWrap: "wrap",
-  },
-  statusBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
-    minWidth: 100,
-  },
-  statusText: {
-    color: "#fff",
-    fontSize: 12,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-});
