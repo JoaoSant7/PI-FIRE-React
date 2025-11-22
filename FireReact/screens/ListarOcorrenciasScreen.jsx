@@ -51,17 +51,14 @@ export default function ListarOcorrenciasScreen({ navigation }) {
     return false;
   });
 
-  // Funções da barra inferior - CORRIGIDAS
+  // Funções da barra inferior
   const handleInicio = () => navigation.navigate("Home");
   const handleUsuario = () =>
     navigation.navigate("Usuario", { email: "email_do_usuario@exemplo.com" });
-
-  // FUNÇÃO ADICIONADA: Navegação para Nova Ocorrência
   const handleNovaOcorrencia = () => {
     console.log("🔄 Navegando para Nova Ocorrência...");
     navigation.navigate("NovaOcorrencia");
   };
-
   const handleDashboard = () => navigation.navigate("Dashboard");
 
   // Funções de seleção
@@ -88,7 +85,7 @@ export default function ListarOcorrenciasScreen({ navigation }) {
     }
   };
 
-  // Funções de exportação - USANDO DADOS COMPLETOS
+  // Funções de exportação
   const handleExportCSV = async () => {
     const selectedData =
       selectedOccurrences.length > 0
@@ -105,7 +102,6 @@ export default function ListarOcorrenciasScreen({ navigation }) {
     }
 
     try {
-      // Usar os dados COMPLETOS da ocorrência (igual aos detalhes)
       await exportToCSV(selectedData);
       setExportModalVisible(false);
       setSelectedOccurrences([]);
@@ -132,7 +128,6 @@ export default function ListarOcorrenciasScreen({ navigation }) {
     }
 
     try {
-      // Usar os dados COMPLETOS da ocorrência (igual aos detalhes)
       await exportToPDF(selectedData);
       setExportModalVisible(false);
       setSelectedOccurrences([]);
@@ -143,27 +138,29 @@ export default function ListarOcorrenciasScreen({ navigation }) {
     }
   };
 
-  // Funções auxiliares para exibição
+  // Funções auxiliares para exibição - CORRIGIDAS
   const getStatusColor = (status) => {
-    switch (status?.toLowerCase()) {
-      case "em andamento":
-      case "aberta":
-      case "pendente":
-      case "em_andamento":
-        return "#FF9800";
-      case "finalizada":
+    if (!status) return null;
+
+    // Normalizar o texto para comparação
+    const statusNormalizado = status
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+
+    switch (statusNormalizado) {
       case "atendida":
-      case "concluída":
         return "#4CAF50";
-      case "registrada":
-      case "nova":
-        return "#2196F3";
+      case "nao atendida":
       case "não atendida":
-      case "sem atuação":
-      case "cancelada":
         return "#F44336";
-      default:
+      case "cancelada":
         return "#757575";
+      case "sem atuacao":
+      case "sem atuação":
+        return "#FF9800";
+      default:
+        return null;
     }
   };
 
@@ -196,10 +193,31 @@ export default function ListarOcorrenciasScreen({ navigation }) {
     }
   };
 
+  // FUNÇÃO CORRIGIDA: Mostrar apenas status específicos
   const getStatusText = (ocorrencia) => {
-    if (ocorrencia.status) return ocorrencia.status;
-    if (ocorrencia.situacao) return ocorrencia.situacao;
-    return "Registrada";
+    const status = ocorrencia.status || ocorrencia.situacao || "";
+
+    // Normalizar para comparação (remover acentos)
+    const statusNormalizado = status
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+
+    // Lista dos status que devem ser exibidos (normalizados)
+    const statusPermitidos = [
+      "atendida",
+      "nao atendida",
+      "cancelada",
+      "sem atuacao",
+    ];
+
+    // Verifica se o status atual está na lista de permitidos
+    if (statusPermitidos.includes(statusNormalizado)) {
+      return status; // Retorna o texto original com acentos
+    }
+
+    // Para outros status, não retorna nada (não mostra tag)
+    return null;
   };
 
   const getTipoOcorrencia = (ocorrencia) => {
@@ -219,11 +237,6 @@ export default function ListarOcorrenciasScreen({ navigation }) {
     if (ocorrencia.bairro) return ocorrencia.bairro;
     if (ocorrencia.municipio) return ocorrencia.municipio;
     return "Local não informado";
-  };
-
-  const getPrioridade = (ocorrencia) => {
-    if (ocorrencia.prioridade) return ocorrencia.prioridade;
-    return "media";
   };
 
   return (
@@ -327,7 +340,7 @@ export default function ListarOcorrenciasScreen({ navigation }) {
             {ocorrencias.length === 0 && (
               <TouchableOpacity
                 style={styles.novaOcorrenciaButton}
-                onPress={handleNovaOcorrencia} // Usando a mesma função
+                onPress={handleNovaOcorrencia}
               >
                 <Text style={styles.novaOcorrenciaButtonText}>
                   Registrar Primeira Ocorrência
@@ -339,6 +352,8 @@ export default function ListarOcorrenciasScreen({ navigation }) {
           ocorrenciasFiltradas.map((ocorrencia, idx) => {
             const occurrenceId = ocorrencia.id || `ocorrencia-${idx}`;
             const isSelected = selectedOccurrences.includes(occurrenceId);
+            const statusText = getStatusText(ocorrencia);
+            const statusColor = getStatusColor(statusText);
 
             return (
               <TouchableOpacity
@@ -353,7 +368,7 @@ export default function ListarOcorrenciasScreen({ navigation }) {
                 onLongPress={() => handleLongPress(occurrenceId)}
                 delayLongPress={500}
               >
-                {/* Indicador de seleção - POSICIONADO CORRETAMENTE */}
+                {/* Indicador de seleção */}
                 {isSelected && (
                   <View style={styles.selectionIndicator}>
                     <Icon name="check-circle" size={20} color="#bc010c" />
@@ -361,43 +376,23 @@ export default function ListarOcorrenciasScreen({ navigation }) {
                 )}
 
                 <View style={styles.ocorrenciaContent}>
+                  {/* HEADER COM TÍTULO À ESQUERDA E TAG À DIREITA */}
                   <View style={styles.ocorrenciaHeader}>
-                    <View style={styles.ocorrenciaTipoContainer}>
-                      <Text style={styles.ocorrenciaTipo}>
-                        {getTipoOcorrencia(ocorrencia)}
-                      </Text>
+                    <Text style={styles.ocorrenciaTipo}>
+                      {getTipoOcorrencia(ocorrencia)}
+                    </Text>
+
+                    {/* TAG DE STATUS - CANTO SUPERIOR DIREITO */}
+                    {statusText && statusColor && (
                       <View
                         style={[
-                          styles.prioridadeBadge,
-                          {
-                            backgroundColor:
-                              getPrioridade(ocorrencia) === "alta"
-                                ? "#ff4444"
-                                : getPrioridade(ocorrencia) === "media"
-                                ? "#ffaa00"
-                                : "#44ff44",
-                          },
+                          styles.statusBadge,
+                          { backgroundColor: statusColor },
                         ]}
                       >
-                        <Text style={styles.prioridadeText}>
-                          {getPrioridade(ocorrencia).toUpperCase()}
-                        </Text>
+                        <Text style={styles.statusText}>{statusText}</Text>
                       </View>
-                    </View>
-                    <View
-                      style={[
-                        styles.statusBadge,
-                        {
-                          backgroundColor: getStatusColor(
-                            getStatusText(ocorrencia)
-                          ),
-                        },
-                      ]}
-                    >
-                      <Text style={styles.statusText}>
-                        {getStatusText(ocorrencia)}
-                      </Text>
-                    </View>
+                    )}
                   </View>
 
                   {ocorrencia.descricao && (
@@ -501,11 +496,11 @@ export default function ListarOcorrenciasScreen({ navigation }) {
         </View>
       </Modal>
 
-      {/* BOTTOM NAV CORRIGIDO - COM A FUNÇÃO DE NOVA OCORRÊNCIA */}
+      {/* Bottom Nav */}
       <BottomNav
         onHomePress={handleInicio}
         onUserPress={handleUsuario}
-        onNewOccurrencePress={handleNovaOcorrencia} // CORREÇÃO AQUI
+        onNewOccurrencePress={handleNovaOcorrencia}
       />
     </View>
   );

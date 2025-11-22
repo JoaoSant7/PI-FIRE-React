@@ -133,39 +133,33 @@ export const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 8, // Adicionado espaço para o indicador
   },
+  // ATUALIZADO: Header com título à esquerda e tag à direita
   ocorrenciaHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
     marginBottom: 10,
   },
-  ocorrenciaTipoContainer: {
-    flex: 1,
-    marginRight: 10,
-  },
+  // ATUALIZADO: Título ocupa espaço disponível
   ocorrenciaTipo: {
     fontSize: 18,
     fontWeight: "bold",
     color: "#333",
-    marginBottom: 4,
+    flex: 1,
+    marginRight: 8,
   },
-  prioridadeBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 4,
-    alignSelf: "flex-start",
-  },
-  prioridadeText: {
-    color: "#fff",
-    fontSize: 10,
-    fontWeight: "bold",
-  },
+  // REMOVIDO: ocorrenciaTipoContainer não é mais necessário
+  // REMOVIDO: prioridadeBadge e prioridadeText (não são mais usados)
+  
+  // ATUALIZADO: Tag no canto superior direito
   statusBadge: {
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 15,
     minWidth: 80,
     alignItems: "center",
+    alignSelf: "flex-start",
+    marginLeft: "auto", // Empurra a tag para a direita
   },
   statusText: {
     color: "#fff",
@@ -295,6 +289,7 @@ export const styles = StyleSheet.create({
     color: "#666",
     fontSize: 16,
   },
+  // REMOVIDO: tituloETagContainer não é mais necessário
 });
 
 export default styles;

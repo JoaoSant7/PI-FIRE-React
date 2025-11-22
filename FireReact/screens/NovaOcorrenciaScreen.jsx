@@ -603,21 +603,11 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
                 tempoResposta = Math.max(0, localSegundos - saidaSegundos) / 60; // Em minutos
               }
 
-              // Mapear situação para status do Dashboard
+              // ✅ CORREÇÃO: Mapeamento correto para os status específicos
               const mapStatus = (situacao) => {
-                switch (situacao?.toLowerCase()) {
-                  case "finalizada":
-                  case "atendida":
-                    return "finalizada";
-                  case "em andamento":
-                  case "aberta":
-                    return "em_andamento";
-                  case "não atendida":
-                  case "sem atuação":
-                    return "nao_atendida";
-                  default:
-                    return "registrada";
-                }
+                // Retorna o próprio texto da situação para manter consistência
+                // A ListarOcorrenciasScreen já filtra os status permitidos
+                return situacao;
               };
 
               // Formatar AIS antes de salvar (se necessário)
@@ -647,13 +637,12 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
                   formData.municipio ||
                   "Local não informado",
                 regiao: formData.regiao,
-                status: mapStatus(formData.situacao),
-                prioridade:
-                  formData.classificacao === "Emergência"
-                    ? "alta"
-                    : formData.classificacao === "Urgência"
-                    ? "media"
-                    : "baixa",
+
+                // ✅ CORREÇÃO: Usa a situação diretamente do formulário
+                status: formData.situacao,
+                situacao: formData.situacao, // Mantém também no campo original
+
+                // REMOVIDA a prioridade conforme solicitado
                 dataHora: dataHora.toISOString(),
                 dataCriacao: new Date().toISOString(),
                 tempoResposta: Math.round(tempoResposta),
