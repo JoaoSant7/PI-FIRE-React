@@ -11,6 +11,7 @@ import {
 // Import dos estilos e hook de escala de fonte
 import styles, { createUsuarioStyles } from "../styles/UsuarioStyles";
 import { useFontScale } from "../hooks/useFontScale";
+import { AuthContext } from "../contexts/AuthContext";
 
 // Componente reutilizável para as linhas de informação (sem ícones)
 const InfoRow = ({ label, value, dynamicStyles }) => (
@@ -24,6 +25,8 @@ export default function UsuarioScreen({ navigation, route }) {
   // Hook para escala de fonte
   const { scaleFont } = useFontScale();
   const dynamicStyles = React.useMemo(() => createUsuarioStyles(scaleFont), [scaleFont]);
+
+  const { logout } = React.useContext(AuthContext);
 
   // Dados do usuário (em uma aplicação real, viriam do contexto ou API)
   const userData = {
@@ -50,11 +53,14 @@ export default function UsuarioScreen({ navigation, route }) {
         {
           text: "Sair",
           onPress: () => {
-            // Navega para a tela de login e reseta a stack de navegação
-            navigation.reset({
-              index: 0,
-              routes: [{ name: "Login" }],
-            });
+            // Usa o contexto de autenticação para deslogar.
+            // A alteração de `isAuthenticated` faz o AppContent
+            // renderizar o `AuthStack` (tela de Login) automaticamente.
+            try {
+              logout();
+            } catch (e) {
+              console.warn('Erro ao tentar deslogar:', e);
+            }
           },
         },
       ]
