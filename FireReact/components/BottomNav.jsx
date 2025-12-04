@@ -1,9 +1,10 @@
 // components/BottomNav.js
 import React from 'react';
-import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, Text } from 'react-native';
 import HomeIcon from './HomeIcon';
 import UserIcon from './UserIcon';
 import PlusIcon from './PlusIcon';
+import styles from '../styles/BottomNavStyles';
 
 const BottomNav = ({ 
   onHomePress, 
@@ -47,40 +48,5 @@ const BottomNav = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  bottomNav: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    backgroundColor: '#bc010c',
-    paddingVertical: 12,
-    paddingHorizontal: 10,
-    borderTopWidth: 1,
-    borderTopColor: '#a0010a',
-  },
-  navItem: {
-    alignItems: 'center',
-    flex: 1,
-    paddingHorizontal: 5,
-  },
-  centralNavItem: {
-    alignItems: 'center',
-    flex: 1,
-    paddingHorizontal: 5,
-  },
-  iconWrapper: {
-    marginBottom: 4,
-  },
-  centralIconWrapper: {
-    marginBottom: 4,
-  },
-  navText: {
-    color: '#f8f8f8',
-    fontSize: 12,
-    fontWeight: '500',
-    textAlign: 'center',
-  },
-});
 
 export default BottomNav;
