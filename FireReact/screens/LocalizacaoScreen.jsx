@@ -141,7 +141,7 @@ const LocalizacaoScreen = () => {
     }
 
     try {
-      const message = `📍 Minha localização:\nLatitude: ${location.latitude.toFixed(
+      const message = `Minha localização:\nLatitude: ${location.latitude.toFixed(
         6
       )}\nLongitude: ${location.longitude.toFixed(6)}${
         address ? `\nEndereço: ${address}` : ""

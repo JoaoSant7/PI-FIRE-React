@@ -21,7 +21,7 @@ export default function ConfiguracoesScreen() {
   const { scaleFont } = useFontScale();
   const { isDark, setTheme } = useTheme();
 
-  // Criar estilos dinâmicos com escala de fonte
+  // Estilos dinâmicos com escala de fonte
   const dynamicStyles = React.useMemo(
     () => createConfiguracoesStyles(scaleFont),
     [scaleFont]
