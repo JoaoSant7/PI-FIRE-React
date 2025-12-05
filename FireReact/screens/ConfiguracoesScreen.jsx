@@ -13,7 +13,6 @@ import { useTheme } from '../contexts/ThemeContext';
 import { useFontScale } from "../hooks/useFontScale";
 
 // Import dos estilos
-import styles from "../styles/ConfiguracoesStyles";
 import { createConfiguracoesStyles } from "../styles/ConfiguracoesStyles";
 
 export default function ConfiguracoesScreen() {
@@ -39,50 +38,6 @@ export default function ConfiguracoesScreen() {
     <ScrollView style={dynamicStyles.scrollView}>
       <View style={dynamicStyles.container}>
         <Text style={dynamicStyles.title}>Configurações</Text>
-
-        <View style={dynamicStyles.section}>
-          <Text style={dynamicStyles.sectionTitle}>Notificações</Text>
-          <View style={dynamicStyles.switchContainer}>
-            <Text style={dynamicStyles.switchText}>Notificações Gerais</Text>
-            <Switch
-              onValueChange={(v) => updateSetting("notifications", v)}
-              value={settings.notifications}
-            />
-          </View>
-        </View>
-
-        <View style={dynamicStyles.section}>
-          <Text style={dynamicStyles.sectionTitle}>Aparência</Text>
-          <View style={dynamicStyles.switchContainer}>
-            <Text style={dynamicStyles.switchText}>Modo Escuro</Text>
-            <Switch
-              onValueChange={(v) => {
-                // Persistência é feita por SettingsProvider via onThemeChange
-                // então aqui apenas atualizamos o tema.
-                setTheme(v);
-              }}
-              value={isDark}
-            />
-          </View>
-        </View>
-
-        <View style={dynamicStyles.section}>
-          <Text style={dynamicStyles.sectionTitle}>Som e Feedback</Text>
-          <View style={dynamicStyles.switchContainer}>
-            <Text style={dynamicStyles.switchText}>Som de Notificações</Text>
-            <Switch
-              onValueChange={(v) => updateSetting("sound", v)}
-              value={settings.sound}
-            />
-          </View>
-          <View style={dynamicStyles.switchContainer}>
-            <Text style={dynamicStyles.switchText}>Vibração</Text>
-            <Switch
-              onValueChange={(v) => updateSetting("vibration", v)}
-              value={settings.vibration}
-            />
-          </View>
-        </View>
 
         <View style={dynamicStyles.section}>
           <Text style={dynamicStyles.sectionTitle}>Acessibilidade</Text>
