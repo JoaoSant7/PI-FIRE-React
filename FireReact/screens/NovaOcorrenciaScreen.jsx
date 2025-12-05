@@ -1246,13 +1246,13 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
                     style={[dynamicStyles.photoButton, dynamicStyles.retakeButton]}
                     onPress={mostrarOpcoesFoto}
                   >
-                    <Text style={dynamicStyles.photoButtonText}>🔄 Alterar</Text>
+                    <Text style={dynamicStyles.photoButtonText}>Alterar</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={[dynamicStyles.photoButton, dynamicStyles.removeButton]}
                     onPress={removerFoto}
                   >
-                    <Text style={dynamicStyles.photoButtonText}>🗑️ Remover</Text>
+                    <Text style={dynamicStyles.photoButtonText}>Remover</Text>
                   </TouchableOpacity>
                 </View>
               </View>
