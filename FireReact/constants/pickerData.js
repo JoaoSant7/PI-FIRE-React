@@ -3,7 +3,7 @@
 // Regiões organizadas em ordem alfabética
 export const REGIOES = [
   { label: 'Agreste', value: 'Agreste' },
-  { label: 'Rmr', value: 'Rmr' },
+  { label: 'RMR', value: 'RMR' },
   { label: 'Sertão', value: 'Sertão' },
   { label: 'Zona da mata', value: 'Zona da mata' },
 ];
@@ -16,7 +16,7 @@ export const GRUPAMENTOS = [
 ];
 
 export const NATUREZAS = [
-  { label: 'Aph', value: 'APH' },
+  { label: 'APH', value: 'APH' },
   { label: 'Incêndio', value: 'Incêndio' },
   { label: 'Prevenção', value: 'Prevenção' },
   { label: 'Produtos perigosos', value: 'Produtos perigosos' },
