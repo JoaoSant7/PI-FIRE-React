@@ -16,7 +16,7 @@ export const GRUPAMENTOS = [
 ];
 
 export const NATUREZAS = [
-  { label: 'Aph', value: 'Aph' },
+  { label: 'Aph', value: 'APH' },
   { label: 'Incêndio', value: 'Incêndio' },
   { label: 'Prevenção', value: 'Prevenção' },
   { label: 'Produtos perigosos', value: 'Produtos perigosos' },
