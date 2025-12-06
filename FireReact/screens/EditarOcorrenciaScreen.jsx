@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import {
   View,
   Text,
-  TextInput,
   ScrollView,
   TouchableOpacity,
   Alert,
@@ -15,6 +14,37 @@ import { useOcorrenciasContext } from "../contexts/OcorrenciasContext";
 import { createEditarOcorrenciaStyles } from "../styles/EditarOcorrenciaStyles";
 import { useFontScale } from "../hooks/useFontScale";
 
+// Importar componentes de input da NovaOcorrenciaScreen
+import TextInput from "../components/TextInput";
+import SearchablePicker from "../components/SearchablePicker";
+import DateTimePickerInput from "../components/DateTimePickerInput";
+import DatePickerInput from "../components/DatePickerInput";
+
+// Importar dados dos pickers
+import {
+  GRUPAMENTOS,
+  NATUREZAS,
+  GRUPOS_OCORRENCIA,
+  SUBGRUPOS_OCORRENCIA,
+  SITUACOES,
+  SEXOS,
+  CLASSIFICACOES,
+  DESTINOS,
+  ACIONAMENTOS,
+  TIPOS_LOGRADOURO,
+  MUNICIPIOS_PERNAMBUCO,
+  REGIOES,
+} from "../constants/pickerData";
+
+// Motivos de não atendimento
+const MOTIVOS_NAO_ATENDIMENTO = [
+  { label: "Selecione o motivo de não atendimento", value: "" },
+  { label: "Vítima Socorrida pelo Samu", value: "Vítima Socorrida pelo Samu" },
+  { label: "Vítima Socorrida pelos Populares", value: "Vítima Socorrida pelos Populares" },
+  { label: "Recusou Atendimento", value: "Recusou Atendimento" },
+  { label: "Outro", value: "Outro" },
+];
+
 export default function EditarOcorrenciaScreen({ navigation, route }) {
   const { ocorrencia } = route.params;
   const { editarOcorrencia } = useOcorrenciasContext();
@@ -25,8 +55,34 @@ export default function EditarOcorrenciaScreen({ navigation, route }) {
 
   // ====== ESTADOS DOS CAMPOS ======
   
+  // Converter string de data para Date object
+  const parseDataHora = (dataString) => {
+    if (!dataString) return new Date();
+    try {
+      return new Date(dataString);
+    } catch {
+      return new Date();
+    }
+  };
+
+  // Converter string de hora (HH:MM:SS ou HH:MM) para Date object
+  const parseHora = (horaString) => {
+    if (!horaString) return null;
+    try {
+      const hoje = new Date();
+      const partes = horaString.split(':');
+      hoje.setHours(parseInt(partes[0]) || 0);
+      hoje.setMinutes(parseInt(partes[1]) || 0);
+      hoje.setSeconds(parseInt(partes[2]) || 0);
+      return hoje;
+    } catch {
+      return null;
+    }
+  };
+
   // Dados Internos
-  const [dataHora, setDataHora] = useState(ocorrencia.dataHora || "");
+  const [dataHora, setDataHora] = useState(parseDataHora(ocorrencia.dataHora));
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const [numeroAviso, setNumeroAviso] = useState(ocorrencia.numeroAviso || "");
   const [diretoria, setDiretoria] = useState(ocorrencia.diretoria || "");
   const [grupamento, setGrupamento] = useState(ocorrencia.grupamento || "");
@@ -37,9 +93,9 @@ export default function EditarOcorrenciaScreen({ navigation, route }) {
   const [grupoOcorrencia, setGrupoOcorrencia] = useState(ocorrencia.grupoOcorrencia || "");
   const [subgrupoOcorrencia, setSubgrupoOcorrencia] = useState(ocorrencia.subgrupoOcorrencia || "");
   const [situacao, setSituacao] = useState(ocorrencia.situacao || ocorrencia.status || "");
-  const [horaSaidaQuartel, setHoraSaidaQuartel] = useState(ocorrencia.horaSaidaQuartel || "");
-  const [horaLocal, setHoraLocal] = useState(ocorrencia.horaLocal || "");
-  const [horaSaidaLocal, setHoraSaidaLocal] = useState(ocorrencia.horaSaidaLocal || "");
+  const [horaSaidaQuartel, setHoraSaidaQuartel] = useState(parseHora(ocorrencia.horaSaidaQuartel));
+  const [horaLocal, setHoraLocal] = useState(parseHora(ocorrencia.horaLocal || ocorrencia.horaChegadaLocal));
+  const [horaSaidaLocal, setHoraSaidaLocal] = useState(parseHora(ocorrencia.horaSaidaLocal));
   const [motivoNaoAtendida, setMotivoNaoAtendida] = useState(ocorrencia.motivoNaoAtendida || "");
   const [motivoOutro, setMotivoOutro] = useState(ocorrencia.motivoOutro || "");
   const [vitimaSamu, setVitimaSamu] = useState(ocorrencia.vitimaSamu || false);
@@ -73,6 +129,60 @@ export default function EditarOcorrenciaScreen({ navigation, route }) {
 
   const [saving, setSaving] = useState(false);
 
+  // Função para formatar hora para string
+  const formatHoraToString = (date) => {
+    if (!date) return "";
+    return date.toLocaleTimeString("pt-BR", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+    });
+  };
+
+  // Função para lidar com mudança de data
+  const onDateChange = (event, selectedDate) => {
+    setShowDatePicker(false);
+    if (selectedDate) {
+      setDataHora(selectedDate);
+    }
+  };
+
+  // Função para validar e formatar a idade
+  const handleIdadeChange = (value) => {
+    const numericValue = value.replace(/[^0-9]/g, "");
+    if (numericValue === "") {
+      setIdade("");
+      return;
+    }
+    let idadeNum = parseInt(numericValue, 10);
+    if (idadeNum > 125) idadeNum = 125;
+    setIdade(idadeNum.toString());
+  };
+
+  // Função para validar e formatar o AIS
+  const handleAISChange = (value) => {
+    const numericValue = value.replace(/[^0-9]/g, "");
+    if (numericValue === "") {
+      setAis("");
+      return;
+    }
+    let aisNum = parseInt(numericValue, 10);
+    if (aisNum < 1) aisNum = 1;
+    else if (aisNum > 10) aisNum = 10;
+    setAis(aisNum.toString());
+  };
+
+  const handleAISBlur = () => {
+    if (ais && ais !== "") {
+      const aisNumber = parseInt(ais, 10);
+      if (!isNaN(aisNumber) && aisNumber >= 1 && aisNumber <= 10) {
+        const formattedAIS = aisNumber < 10 ? `0${aisNumber}` : aisNumber.toString();
+        setAis(formattedAIS);
+      }
+    }
+  };
+
   const handleSalvar = async () => {
     // Validações básicas
     if (!natureza.trim() && !grupoOcorrencia.trim()) {
@@ -82,9 +192,18 @@ export default function EditarOcorrenciaScreen({ navigation, route }) {
 
     setSaving(true);
 
+    // Formatar AIS antes de salvar
+    let aisToSave = ais;
+    if (aisToSave && aisToSave !== "") {
+      const aisNumber = parseInt(aisToSave, 10);
+      if (!isNaN(aisNumber) && aisNumber >= 1 && aisNumber <= 10) {
+        aisToSave = aisNumber < 10 ? `0${aisNumber}` : aisNumber.toString();
+      }
+    }
+
     const dadosAtualizados = {
       // Dados Internos
-      dataHora: dataHora.trim(),
+      dataHora: dataHora.toISOString(),
       numeroAviso: numeroAviso.trim(),
       diretoria: diretoria.trim(),
       grupamento: grupamento.trim(),
@@ -96,9 +215,10 @@ export default function EditarOcorrenciaScreen({ navigation, route }) {
       subgrupoOcorrencia: subgrupoOcorrencia.trim(),
       situacao: situacao.trim(),
       status: situacao.trim(), // Mantém compatibilidade
-      horaSaidaQuartel: horaSaidaQuartel.trim(),
-      horaLocal: horaLocal.trim(),
-      horaSaidaLocal: horaSaidaLocal.trim(),
+      horaSaidaQuartel: formatHoraToString(horaSaidaQuartel),
+      horaLocal: formatHoraToString(horaLocal),
+      horaChegadaLocal: formatHoraToString(horaLocal), // Compatibilidade
+      horaSaidaLocal: formatHoraToString(horaSaidaLocal),
       motivoNaoAtendida: motivoNaoAtendida.trim(),
       motivoOutro: motivoOutro.trim(),
       vitimaSamu,
@@ -121,7 +241,7 @@ export default function EditarOcorrenciaScreen({ navigation, route }) {
       regiao: regiao.trim(),
       bairro: bairro.trim(),
       tipoLogradouro: tipoLogradouro.trim(),
-      ais: ais.trim(),
+      ais: aisToSave,
       logradouro: logradouro.trim(),
       numero: numero.trim(),
       latitude: latitude.trim(),
@@ -181,57 +301,49 @@ export default function EditarOcorrenciaScreen({ navigation, route }) {
 
           <View style={styles.fieldContainer}>
             <Text style={styles.label}>Data e Hora</Text>
-            <TextInput
-              style={styles.input}
+            <DatePickerInput
               value={dataHora}
-              onChangeText={setDataHora}
-              placeholder="AAAA-MM-DD HH:MM"
-              placeholderTextColor="#999"
+              onDateChange={onDateChange}
+              showPicker={showDatePicker}
+              setShowPicker={setShowDatePicker}
+              placeholder="Selecione a data e hora"
             />
-            <Text style={styles.hint}>Formato: 2024-12-06 14:30</Text>
           </View>
 
           <View style={styles.fieldContainer}>
             <Text style={styles.label}>Número do Aviso</Text>
             <TextInput
-              style={styles.input}
               value={numeroAviso}
               onChangeText={setNumeroAviso}
               placeholder="Número do chamado"
-              placeholderTextColor="#999"
             />
           </View>
 
           <View style={styles.fieldContainer}>
             <Text style={styles.label}>Diretoria</Text>
             <TextInput
-              style={styles.input}
               value={diretoria}
               onChangeText={setDiretoria}
-              placeholder="Ex: 1ª Diretoria"
-              placeholderTextColor="#999"
+              placeholder="Ex: 1ª Diretoria, DIM"
             />
           </View>
 
           <View style={styles.fieldContainer}>
             <Text style={styles.label}>Grupamento</Text>
-            <TextInput
-              style={styles.input}
-              value={grupamento}
-              onChangeText={setGrupamento}
-              placeholder="Ex: 1º GBM"
-              placeholderTextColor="#999"
+            <SearchablePicker
+              selectedValue={grupamento}
+              onValueChange={setGrupamento}
+              items={GRUPAMENTOS}
+              placeholder="Selecione o grupamento"
             />
           </View>
 
           <View style={styles.fieldContainer}>
             <Text style={styles.label}>Ponto Base</Text>
             <TextInput
-              style={styles.input}
               value={pontoBase}
               onChangeText={setPontoBase}
               placeholder="Local da base"
-              placeholderTextColor="#999"
             />
           </View>
 
@@ -245,81 +357,71 @@ export default function EditarOcorrenciaScreen({ navigation, route }) {
             <Text style={styles.label}>
               Natureza <Text style={styles.required}>*</Text>
             </Text>
-            <TextInput
-              style={styles.input}
-              value={natureza}
-              onChangeText={setNatureza}
-              placeholder="Ex: Incêndio, Resgate, Acidente..."
-              placeholderTextColor="#999"
+            <SearchablePicker
+              selectedValue={natureza}
+              onValueChange={setNatureza}
+              items={NATUREZAS}
+              placeholder="Selecione a Natureza da Ocorrência"
             />
           </View>
 
           <View style={styles.fieldContainer}>
             <Text style={styles.label}>Grupo da Ocorrência</Text>
-            <TextInput
-              style={styles.input}
-              value={grupoOcorrencia}
-              onChangeText={setGrupoOcorrencia}
-              placeholder="Grupo/Categoria"
-              placeholderTextColor="#999"
+            <SearchablePicker
+              selectedValue={grupoOcorrencia}
+              onValueChange={setGrupoOcorrencia}
+              items={GRUPOS_OCORRENCIA}
+              placeholder="Selecione o Grupo de Ocorrência"
             />
           </View>
 
           <View style={styles.fieldContainer}>
             <Text style={styles.label}>Subgrupo da Ocorrência</Text>
-            <TextInput
-              style={styles.input}
-              value={subgrupoOcorrencia}
-              onChangeText={setSubgrupoOcorrencia}
-              placeholder="Subgrupo/Subcategoria"
-              placeholderTextColor="#999"
+            <SearchablePicker
+              selectedValue={subgrupoOcorrencia}
+              onValueChange={setSubgrupoOcorrencia}
+              items={SUBGRUPOS_OCORRENCIA}
+              placeholder="Selecione o Subgrupo da Ocorrência"
             />
           </View>
 
           <View style={styles.fieldContainer}>
             <Text style={styles.label}>Situação/Status</Text>
-            <TextInput
-              style={styles.input}
-              value={situacao}
-              onChangeText={setSituacao}
-              placeholder="Ex: Atendida, Não Atendida, Cancelada..."
-              placeholderTextColor="#999"
+            <SearchablePicker
+              selectedValue={situacao}
+              onValueChange={setSituacao}
+              items={SITUACOES}
+              placeholder="Selecione a Situação da Ocorrência"
             />
-            <Text style={styles.hint}>
-              Sugestões: Atendida, Não Atendida, Cancelada, Sem Atuação
-            </Text>
           </View>
 
           <View style={styles.fieldContainer}>
             <Text style={styles.label}>Hora Saída do Quartel</Text>
-            <TextInput
-              style={styles.input}
+            <DateTimePickerInput
               value={horaSaidaQuartel}
-              onChangeText={setHoraSaidaQuartel}
-              placeholder="HH:MM"
-              placeholderTextColor="#999"
+              onDateTimeChange={setHoraSaidaQuartel}
+              placeholder="Selecione a hora"
+              mode="time"
             />
           </View>
 
           <View style={styles.fieldContainer}>
             <Text style={styles.label}>Hora Chegada ao Local</Text>
-            <TextInput
-              style={styles.input}
+            <DateTimePickerInput
               value={horaLocal}
-              onChangeText={setHoraLocal}
-              placeholder="HH:MM"
-              placeholderTextColor="#999"
+              onDateTimeChange={setHoraLocal}
+              placeholder="Selecione a hora"
+              mode="time"
             />
           </View>
 
           <View style={styles.fieldContainer}>
             <Text style={styles.label}>Hora Saída do Local</Text>
-            <TextInput
-              style={styles.input}
+            <DateTimePickerInput
               value={horaSaidaLocal}
-              onChangeText={setHoraSaidaLocal}
-              placeholder="HH:MM"
-              placeholderTextColor="#999"
+              onDateTimeChange={setHoraSaidaLocal}
+              placeholder="Selecione a hora"
+              mode="time"
             />
           </View>
 
@@ -327,12 +429,11 @@ export default function EditarOcorrenciaScreen({ navigation, route }) {
             <>
               <View style={styles.fieldContainer}>
                 <Text style={styles.label}>Motivo Não Atendimento</Text>
-                <TextInput
-                  style={styles.input}
-                  value={motivoNaoAtendida}
-                  onChangeText={setMotivoNaoAtendida}
-                  placeholder="Descreva o motivo"
-                  placeholderTextColor="#999"
+                <SearchablePicker
+                  selectedValue={motivoNaoAtendida}
+                  onValueChange={setMotivoNaoAtendida}
+                  items={MOTIVOS_NAO_ATENDIMENTO}
+                  placeholder="Selecione o motivo"
                 />
               </View>
 
@@ -340,12 +441,16 @@ export default function EditarOcorrenciaScreen({ navigation, route }) {
                 <View style={styles.fieldContainer}>
                   <Text style={styles.label}>Especificar Outro Motivo</Text>
                   <TextInput
-                    style={styles.input}
                     value={motivoOutro}
-                    onChangeText={setMotivoOutro}
-                    placeholder="Especifique o motivo"
-                    placeholderTextColor="#999"
+                    onChangeText={(value) => {
+                      if (value.length <= 100) setMotivoOutro(value);
+                    }}
+                    placeholder="Especifique o motivo (máx. 100 caracteres)"
+                    multiline
+                    numberOfLines={3}
+                    maxLength={100}
                   />
+                  <Text style={styles.hint}>{motivoOutro.length}/100 caracteres</Text>
                 </View>
               )}
             </>
@@ -381,46 +486,43 @@ export default function EditarOcorrenciaScreen({ navigation, route }) {
             <>
               <View style={styles.fieldContainer}>
                 <Text style={styles.label}>Sexo</Text>
-                <TextInput
-                  style={styles.input}
-                  value={sexo}
-                  onChangeText={setSexo}
-                  placeholder="Ex: Masculino, Feminino"
-                  placeholderTextColor="#999"
+                <SearchablePicker
+                  selectedValue={sexo}
+                  onValueChange={setSexo}
+                  items={SEXOS}
+                  placeholder="Selecione o sexo da vítima"
                 />
               </View>
 
               <View style={styles.fieldContainer}>
                 <Text style={styles.label}>Idade</Text>
                 <TextInput
-                  style={styles.input}
                   value={idade}
-                  onChangeText={setIdade}
-                  placeholder="Idade da vítima"
-                  placeholderTextColor="#999"
+                  onChangeText={handleIdadeChange}
+                  placeholder="Digite a idade (0-125)"
                   keyboardType="numeric"
+                  maxLength={3}
                 />
+                <Text style={styles.hint}>Idade limitada a 125 anos</Text>
               </View>
 
               <View style={styles.fieldContainer}>
                 <Text style={styles.label}>Classificação</Text>
-                <TextInput
-                  style={styles.input}
-                  value={classificacao}
-                  onChangeText={setClassificacao}
-                  placeholder="Ex: Leve, Moderado, Grave"
-                  placeholderTextColor="#999"
+                <SearchablePicker
+                  selectedValue={classificacao}
+                  onValueChange={setClassificacao}
+                  items={CLASSIFICACOES}
+                  placeholder="Selecione a Classificação da Vítima"
                 />
               </View>
 
               <View style={styles.fieldContainer}>
                 <Text style={styles.label}>Destino</Text>
-                <TextInput
-                  style={styles.input}
-                  value={destino}
-                  onChangeText={setDestino}
-                  placeholder="Hospital ou local de destino"
-                  placeholderTextColor="#999"
+                <SearchablePicker
+                  selectedValue={destino}
+                  onValueChange={setDestino}
+                  items={DESTINOS}
+                  placeholder="Selecione o Destino da Vítima"
                 />
               </View>
             </>
@@ -435,44 +537,37 @@ export default function EditarOcorrenciaScreen({ navigation, route }) {
           <View style={styles.fieldContainer}>
             <Text style={styles.label}>Viatura Empregada</Text>
             <TextInput
-              style={styles.input}
               value={viatura}
               onChangeText={setViatura}
               placeholder="Tipo de viatura"
-              placeholderTextColor="#999"
             />
           </View>
 
           <View style={styles.fieldContainer}>
             <Text style={styles.label}>Número da Viatura</Text>
             <TextInput
-              style={styles.input}
               value={numeroViatura}
               onChangeText={setNumeroViatura}
               placeholder="Identificação da viatura"
-              placeholderTextColor="#999"
             />
           </View>
 
           <View style={styles.fieldContainer}>
             <Text style={styles.label}>Forma de Acionamento</Text>
-            <TextInput
-              style={styles.input}
-              value={acionamento}
-              onChangeText={setAcionamento}
-              placeholder="Ex: 193, Telefone, Pessoalmente"
-              placeholderTextColor="#999"
+            <SearchablePicker
+              selectedValue={acionamento}
+              onValueChange={setAcionamento}
+              items={ACIONAMENTOS}
+              placeholder="Selecione a Forma de Acionamento"
             />
           </View>
 
           <View style={styles.fieldContainer}>
             <Text style={styles.label}>Local do Acionamento</Text>
             <TextInput
-              style={styles.input}
               value={localAcionamento}
               onChangeText={setLocalAcionamento}
               placeholder="Onde foi feito o chamado"
-              placeholderTextColor="#999"
             />
           </View>
 
@@ -484,89 +579,80 @@ export default function EditarOcorrenciaScreen({ navigation, route }) {
 
           <View style={styles.fieldContainer}>
             <Text style={styles.label}>Município</Text>
-            <TextInput
-              style={styles.input}
-              value={municipio}
-              onChangeText={setMunicipio}
-              placeholder="Nome do município"
-              placeholderTextColor="#999"
+            <SearchablePicker
+              selectedValue={municipio}
+              onValueChange={setMunicipio}
+              items={MUNICIPIOS_PERNAMBUCO}
+              placeholder="Selecione o município"
             />
           </View>
 
           <View style={styles.fieldContainer}>
             <Text style={styles.label}>Região</Text>
-            <TextInput
-              style={styles.input}
-              value={regiao}
-              onChangeText={setRegiao}
-              placeholder="Ex: Norte, Sul, Centro"
-              placeholderTextColor="#999"
+            <SearchablePicker
+              selectedValue={regiao}
+              onValueChange={setRegiao}
+              items={REGIOES}
+              placeholder="Selecione a região"
             />
           </View>
 
           <View style={styles.fieldContainer}>
             <Text style={styles.label}>Bairro</Text>
             <TextInput
-              style={styles.input}
               value={bairro}
               onChangeText={setBairro}
               placeholder="Nome do bairro"
-              placeholderTextColor="#999"
             />
           </View>
 
           <View style={styles.fieldContainer}>
             <Text style={styles.label}>Tipo de Logradouro</Text>
-            <TextInput
-              style={styles.input}
-              value={tipoLogradouro}
-              onChangeText={setTipoLogradouro}
-              placeholder="Ex: Rua, Avenida, Travessa"
-              placeholderTextColor="#999"
+            <SearchablePicker
+              selectedValue={tipoLogradouro}
+              onValueChange={setTipoLogradouro}
+              items={TIPOS_LOGRADOURO}
+              placeholder="Selecione o Tipo de Logradouro"
             />
           </View>
 
           <View style={styles.fieldContainer}>
             <Text style={styles.label}>AIS (Área Integrada de Segurança)</Text>
             <TextInput
-              style={styles.input}
               value={ais}
-              onChangeText={setAis}
-              placeholder="Código AIS"
-              placeholderTextColor="#999"
+              onChangeText={handleAISChange}
+              onBlur={handleAISBlur}
+              placeholder="AIS 1-10"
+              keyboardType="numeric"
+              maxLength={2}
             />
+            <Text style={styles.hint}>AIS deve ser entre 1 e 10</Text>
           </View>
 
           <View style={styles.fieldContainer}>
             <Text style={styles.label}>Logradouro</Text>
             <TextInput
-              style={styles.input}
               value={logradouro}
               onChangeText={setLogradouro}
               placeholder="Nome da rua/avenida"
-              placeholderTextColor="#999"
             />
           </View>
 
           <View style={styles.fieldContainer}>
             <Text style={styles.label}>Número</Text>
             <TextInput
-              style={styles.input}
               value={numero}
               onChangeText={setNumero}
               placeholder="Número do imóvel"
-              placeholderTextColor="#999"
             />
           </View>
 
           <View style={styles.fieldContainer}>
             <Text style={styles.label}>Latitude</Text>
             <TextInput
-              style={styles.input}
               value={latitude}
               onChangeText={setLatitude}
               placeholder="Ex: -8.0476"
-              placeholderTextColor="#999"
               keyboardType="decimal-pad"
             />
           </View>
@@ -574,11 +660,9 @@ export default function EditarOcorrenciaScreen({ navigation, route }) {
           <View style={styles.fieldContainer}>
             <Text style={styles.label}>Longitude</Text>
             <TextInput
-              style={styles.input}
               value={longitude}
               onChangeText={setLongitude}
               placeholder="Ex: -34.8770"
-              placeholderTextColor="#999"
               keyboardType="decimal-pad"
             />
           </View>
@@ -592,14 +676,12 @@ export default function EditarOcorrenciaScreen({ navigation, route }) {
           <View style={styles.fieldContainer}>
             <Text style={styles.label}>Observações</Text>
             <TextInput
-              style={[styles.input, styles.textArea]}
               value={descricao}
               onChangeText={setDescricao}
               placeholder="Descreva detalhes adicionais da ocorrência..."
-              placeholderTextColor="#999"
               multiline
               numberOfLines={5}
-              textAlignVertical="top"
+              style={styles.textArea}
             />
           </View>
 
