@@ -199,6 +199,47 @@ export const createListarOcorrenciaStyles = (scaleFont) => {
       color: "#999",
       marginLeft: 6,
     },
+    // ⭐ NOVOS ESTILOS PARA BOTÕES ADMIN
+    adminActions: {
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+      alignItems: 'center',
+      marginTop: 12,
+      paddingTop: 12,
+      borderTopWidth: 1,
+      borderTopColor: '#e0e0e0',
+      gap: 10,
+    },
+    editButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: '#E3F2FD',
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      borderRadius: 6,
+      gap: 6,
+    },
+    editButtonText: {
+      color: '#2196F3',
+      fontSize: scaleFont(FONT_SIZES.sm),
+      fontWeight: '600',
+    },
+    deleteButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: '#FFEBEE',
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      borderRadius: 6,
+      gap: 6,
+    },
+    deleteButtonText: {
+      color: '#F44336',
+      fontSize: scaleFont(FONT_SIZES.sm),
+      fontWeight: '600',
+    },
     semResultados: {
       alignItems: "center",
       paddingVertical: 40,
@@ -290,7 +331,8 @@ export const createListarOcorrenciaStyles = (scaleFont) => {
   });
 };
 
-export const styles = StyleSheet.create({
+// Estilos estáticos (para compatibilidade com componentes que não usam scaleFont)
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
@@ -483,6 +525,47 @@ export const styles = StyleSheet.create({
     fontSize: FONT_SIZES.sm,
     color: "#999",
     marginLeft: 6,
+  },
+  // ⭐ NOVOS ESTILOS PARA BOTÕES ADMIN (estáticos)
+  adminActions: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    marginTop: 12,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#e0e0e0',
+    gap: 10,
+  },
+  editButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#E3F2FD',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 6,
+    gap: 6,
+  },
+  editButtonText: {
+    color: '#2196F3',
+    fontSize: FONT_SIZES.sm,
+    fontWeight: '600',
+  },
+  deleteButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#FFEBEE',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 6,
+    gap: 6,
+  },
+  deleteButtonText: {
+    color: '#F44336',
+    fontSize: FONT_SIZES.sm,
+    fontWeight: '600',
   },
   semResultados: {
     alignItems: "center",

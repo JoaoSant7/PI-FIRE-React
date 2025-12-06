@@ -13,6 +13,7 @@ const MOCK_USERS = [
     nome: 'Danilo',
     matricula: 'SB-2023-04567',
     telefone: '(11) 99999-9999',
+    role: 'admin', // ⭐ Usuário administrador
   },
   {
     id: 2,
@@ -21,6 +22,7 @@ const MOCK_USERS = [
     nome: 'João Santos',
     matricula: 'BM-2023-04568',
     telefone: '(11) 98888-8888',
+    role: 'user', // 👤 Usuário comum
   },
 ];
 
@@ -106,6 +108,11 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // ✨ Função helper para verificar se é admin
+  const isAdmin = () => {
+    return user?.role === 'admin';
+  };
+
   const authContextValue = {
     isAuthenticated,
     setIsAuthenticated,
@@ -115,6 +122,7 @@ export const AuthProvider = ({ children }) => {
     user,
     setUser,
     updateUser,
+    isAdmin, // Nova função exportada
   };
 
   return (

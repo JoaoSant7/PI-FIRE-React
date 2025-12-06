@@ -8,6 +8,7 @@ const OCORRENCIAS_STORAGE_KEY = '@ocorrencias_data';
 export const OcorrenciasProvider = ({ children }) => {
   const [ocorrencias, setOcorrencias] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   // 🔄 Carregar ocorrências do AsyncStorage ao iniciar
   useEffect(() => {
@@ -33,6 +34,7 @@ export const OcorrenciasProvider = ({ children }) => {
       setOcorrencias([]);
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
 
@@ -83,7 +85,7 @@ export const OcorrenciasProvider = ({ children }) => {
     }
   };
 
-  // 🗑️ Remover ocorrência
+  // 🗑️ Remover ocorrência (NOVO)
   const removerOcorrencia = async (id) => {
     try {
       console.log('🗑️ Removendo ocorrência:', id);
@@ -94,35 +96,51 @@ export const OcorrenciasProvider = ({ children }) => {
       await salvarOcorrencias(novasOcorrencias);
       
       console.log('✅ Ocorrência removida com sucesso!');
+      return { success: true };
     } catch (error) {
       console.error('❌ Erro ao remover ocorrência:', error);
-      throw error;
+      return { success: false, message: 'Erro ao remover ocorrência' };
     }
   };
 
-  // ✏️ Atualizar ocorrência
-  const atualizarOcorrencia = async (id, dadosAtualizados) => {
+  // ✏️ Editar ocorrência (NOVO)
+  const editarOcorrencia = async (id, dadosAtualizados) => {
     try {
-      console.log('✏️ Atualizando ocorrência:', id);
+      console.log('✏️ Editando ocorrência:', id);
       
-      const novasOcorrencias = ocorrencias.map(oc => 
-        oc.id === id 
-          ? { 
-              ...oc, 
-              ...dadosAtualizados, 
-              dataAtualizacao: new Date().toISOString() 
-            }
-          : oc
-      );
+      const indice = ocorrencias.findIndex(oc => oc.id === id);
+      
+      if (indice === -1) {
+        return { success: false, message: 'Ocorrência não encontrada' };
+      }
+      
+      const novasOcorrencias = [...ocorrencias];
+      novasOcorrencias[indice] = {
+        ...novasOcorrencias[indice],
+        ...dadosAtualizados,
+        dataAtualizacao: new Date().toISOString(),
+      };
       
       setOcorrencias(novasOcorrencias);
       await salvarOcorrencias(novasOcorrencias);
       
-      console.log('✅ Ocorrência atualizada com sucesso!');
+      console.log('✅ Ocorrência editada com sucesso!');
+      return { success: true };
     } catch (error) {
-      console.error('❌ Erro ao atualizar ocorrência:', error);
-      throw error;
+      console.error('❌ Erro ao editar ocorrência:', error);
+      return { success: false, message: 'Erro ao editar ocorrência' };
     }
+  };
+
+  // ✏️ Atualizar ocorrência (mantém compatibilidade)
+  const atualizarOcorrencia = async (id, dadosAtualizados) => {
+    return await editarOcorrencia(id, dadosAtualizados);
+  };
+
+  // 🔄 Recarregar ocorrências com pull-to-refresh
+  const atualizarDados = async () => {
+    setRefreshing(true);
+    await carregarOcorrencias();
   };
 
   // 🔄 Recarregar ocorrências
@@ -133,11 +151,14 @@ export const OcorrenciasProvider = ({ children }) => {
   const value = {
     ocorrencias,
     loading,
+    refreshing,
     adicionarOcorrencia,
     removerOcorrencia,
+    editarOcorrencia,
     atualizarOcorrencia,
     recarregarOcorrencias,
     carregarOcorrencias,
+    atualizarDados,
   };
 
   return (

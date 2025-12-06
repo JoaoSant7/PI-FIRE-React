@@ -15,6 +15,7 @@ import NovaOcorrenciaScreen from './screens/NovaOcorrenciaScreen.jsx';
 import OcorrenciaRegistradaScreen from './screens/OcorrenciaRegistradaScreen.jsx';
 import DetalhesOcorrenciaScreen from './screens/DetalhesOcorrenciaScreen.jsx';
 import LocalizacaoScreen from './screens/LocalizacaoScreen';
+import EditarOcorrenciaScreen from './screens/EditarOcorrenciaScreen.jsx';
 
 // Import de Contexts
 import { AuthProvider, AuthContext } from './contexts/AuthContext';
@@ -115,6 +116,16 @@ const MainStack = () => (
         title: 'DETALHES DA OCORRÊNCIA'
       }}
     />
+
+    <Stack.Screen 
+  name="EditarOcorrencia" 
+  component={EditarOcorrenciaScreen}
+  options={{
+    title: "Editar Ocorrência",
+    headerStyle: { backgroundColor: '#bc010c' },
+    headerTintColor: '#fff',
+  }}
+/>
     
     <Stack.Screen
       name="Localizacao"

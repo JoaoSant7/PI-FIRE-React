@@ -1,5 +1,5 @@
 // screens/ListarOcorrenciasScreen.js
-import React, { useState, useLayoutEffect } from "react";
+import React, { useState, useLayoutEffect, useContext } from "react";
 import {
   StyleSheet,
   Text,
@@ -16,6 +16,7 @@ import {
 import { MaterialIcons as Icon } from "@expo/vector-icons";
 import BottomNav from "../components/BottomNav";
 import { useOcorrenciasContext } from "../contexts/OcorrenciasContext";
+import { AuthContext } from "../contexts/AuthContext";
 import { exportToCSV, exportToPDF } from "../services/exportService";
 import styles, { createListarOcorrenciaStyles } from "../styles/ListarOcorrenciaStyles";
 import { useFontScale } from "../hooks/useFontScale";
@@ -25,8 +26,10 @@ export default function ListarOcorrenciasScreen({ navigation }) {
   const { scaleFont } = useFontScale();
   const dynamicStyles = React.useMemo(() => createListarOcorrenciaStyles(scaleFont), [scaleFont]);
 
-  const { ocorrencias, loading, refreshing, atualizarDados } =
+  // Contexts
+  const { ocorrencias, loading, refreshing, atualizarDados, removerOcorrencia } =
     useOcorrenciasContext();
+  const { isAdmin } = useContext(AuthContext);
 
   const [dataFiltro, setDataFiltro] = useState("");
   const [selectedOccurrences, setSelectedOccurrences] = useState([]);
@@ -65,6 +68,37 @@ export default function ListarOcorrenciasScreen({ navigation }) {
     navigation.navigate("NovaOcorrencia");
   };
   const handleDashboard = () => navigation.navigate("Dashboard");
+
+  // 🗑️ NOVA FUNÇÃO: Confirmar e deletar ocorrência
+  const handleDelete = (ocorrencia) => {
+    Alert.alert(
+      "Confirmar Exclusão",
+      `Deseja realmente excluir a ocorrência "${getTipoOcorrencia(ocorrencia)}"?\n\nEsta ação não pode ser desfeita.`,
+      [
+        {
+          text: "Cancelar",
+          style: "cancel"
+        },
+        {
+          text: "Excluir",
+          style: "destructive",
+          onPress: async () => {
+            const result = await removerOcorrencia(ocorrencia.id);
+            if (result.success) {
+              Alert.alert("Sucesso", "Ocorrência excluída com sucesso!");
+            } else {
+              Alert.alert("Erro", result.message || "Falha ao excluir ocorrência");
+            }
+          }
+        }
+      ]
+    );
+  };
+
+  // ✏️ NOVA FUNÇÃO: Navegar para edição
+  const handleEdit = (ocorrencia) => {
+    navigation.navigate("EditarOcorrencia", { ocorrencia });
+  };
 
   // Funções de seleção
   const handleLongPress = (id) => {
@@ -143,11 +177,10 @@ export default function ListarOcorrenciasScreen({ navigation }) {
     }
   };
 
-  // Funções auxiliares para exibição - CORRIGIDAS
+  // Funções auxiliares para exibição
   const getStatusColor = (status) => {
     if (!status) return null;
 
-    // Normalizar o texto para comparação
     const statusNormalizado = status
       .toLowerCase()
       .normalize("NFD")
@@ -198,17 +231,14 @@ export default function ListarOcorrenciasScreen({ navigation }) {
     }
   };
 
-  // FUNÇÃO CORRIGIDA: Mostrar apenas status específicos
   const getStatusText = (ocorrencia) => {
     const status = ocorrencia.status || ocorrencia.situacao || "";
 
-    // Normalizar para comparação (remover acentos)
     const statusNormalizado = status
       .toLowerCase()
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "");
 
-    // Lista dos status que devem ser exibidos (normalizados)
     const statusPermitidos = [
       "atendida",
       "nao atendida",
@@ -216,12 +246,10 @@ export default function ListarOcorrenciasScreen({ navigation }) {
       "sem atuacao",
     ];
 
-    // Verifica se o status atual está na lista de permitidos
     if (statusPermitidos.includes(statusNormalizado)) {
-      return status; // Retorna o texto original com acentos
+      return status;
     }
 
-    // Para outros status, não retorna nada (não mostra tag)
     return null;
   };
 
@@ -447,6 +475,33 @@ export default function ListarOcorrenciasScreen({ navigation }) {
                       )}
                     </Text>
                   </View>
+
+                  {/* ⭐ BOTÕES DE AÇÃO ADMIN */}
+                  {isAdmin() && (
+                    <View style={dynamicStyles.adminActions}>
+                      <TouchableOpacity
+                        style={dynamicStyles.editButton}
+                        onPress={(e) => {
+                          e.stopPropagation();
+                          handleEdit(ocorrencia);
+                        }}
+                      >
+                        <Icon name="edit" size={18} color="#2196F3" />
+                        <Text style={dynamicStyles.editButtonText}>Editar</Text>
+                      </TouchableOpacity>
+                      
+                      <TouchableOpacity
+                        style={dynamicStyles.deleteButton}
+                        onPress={(e) => {
+                          e.stopPropagation();
+                          handleDelete(ocorrencia);
+                        }}
+                      >
+                        <Icon name="delete" size={18} color="#F44336" />
+                        <Text style={dynamicStyles.deleteButtonText}>Excluir</Text>
+                      </TouchableOpacity>
+                    </View>
+                  )}
                 </View>
               </TouchableOpacity>
             );
