@@ -69,7 +69,7 @@ export default function ListarOcorrenciasScreen({ navigation }) {
   };
   const handleDashboard = () => navigation.navigate("Dashboard");
 
-  // 🗑️ NOVA FUNÇÃO: Confirmar e deletar ocorrência
+  //NOVA FUNÇÃO: Confirmar e deletar ocorrência
   const handleDelete = (ocorrencia) => {
     Alert.alert(
       "Confirmar Exclusão",
@@ -95,7 +95,7 @@ export default function ListarOcorrenciasScreen({ navigation }) {
     );
   };
 
-  // ✏️ NOVA FUNÇÃO: Navegar para edição
+  //NOVA FUNÇÃO: Navegar para edição
   const handleEdit = (ocorrencia) => {
     navigation.navigate("EditarOcorrencia", { ocorrencia });
   };
